@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\User; // Pastikan ini ada
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
@@ -16,14 +16,19 @@ class AuthController extends Controller
 
     // 2. PROSES SIMPAN DATA DAFTAR
     public function register(Request $request) {
-        // Proses simpan data (Harus di dalam kurung kurawal ini)
+        // Validasi singkat biar aman
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|min:6|confirmed'
+        ]);
+
         User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
 
-        // Setelah berhasil simpan, baru pindah ke login
         return redirect('/login')->with('success', 'Daftar berhasil! Silakan login.');
     }
 
@@ -38,7 +43,8 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect('/');
+            // Setelah login berhasil, langsung arahkan ke Profile
+            return redirect('/profile');
         }
 
         return back()->with('error', 'Email atau Password salah!');
@@ -47,6 +53,6 @@ class AuthController extends Controller
     // 5. LOGOUT
     public function logout() {
         Auth::logout();
-        return redirect('/login');
+        return redirect('/');
     }
 }
