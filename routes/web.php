@@ -1,30 +1,47 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Models\Product;              // Cukup tulis satu kali saja
-use Illuminate\Support\Facades\DB;   // Cukup tulis satu kali saja
-
-Route::get('/', function () {
-    // Ambil data untuk Slider (Recommendation Utama)
-    $products = Product::all();
-    
-    // Ambil data untuk kartu bawah
-    $recommends = DB::table('recommendations')->get();
-
-    return view('welcome', compact('products', 'recommends'));
-});
-
+use App\Http\Controllers\MenuController;
 use App\Http\Controllers\AuthController;
 
-// Tampilan Form Daftar
-Route::get('/register', [AuthController::class, 'showRegister']);
+/*
+|--------------------------------------------------------------------------
+| Web Routes - Bar Bar Es Duren
+|--------------------------------------------------------------------------
+*/
 
-// Proses Kirim Data ke Database
-Route::post('/register', [AuthController::class, 'register']);
+// 1. HALAMAN UTAMA (Landing Page)
+Route::get('/', [MenuController::class, 'index'])->name('home');
 
-// Route untuk Login
-Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-Route::post('/login', [AuthController::class, 'login']);
+// 2. FITUR MENU & KATEGORI
+Route::get('/menu', function () {
+    return view('menu.index');
+})->name('menu.index');
 
-// Route Logout
-Route::get('/logout', [AuthController::class, 'logout']);
+Route::get('/menu/{kategori}', [MenuController::class, 'showByCategory'])->name('menu.category');
+
+// Halaman Detail Produk
+Route::get('/detail/{id}', [\App\Http\Controllers\MenuController::class, 'show']);
+
+// 3. FITUR AUTENTIKASI (Login, Register, Logout)
+Route::controller(AuthController::class)->group(function () {
+    Route::get('/register', 'showRegister')->name('register');
+    Route::post('/register', 'register');
+    
+    Route::get('/login', 'showLogin')->name('login');
+    Route::post('/login', 'login');
+    
+    // Ini udah diganti jadi POST ya bos
+    Route::post('/logout', 'logout')->name('logout');
+});
+
+// 4. HALAMAN LAINNYA
+// Halaman Contact Us
+Route::get('/contact', function () {
+    return view('contact');
+});
+
+// Halaman Profil User (Udah dibersihin, sisa yang pakai satpam aja)
+Route::get('/profile', function () {
+    return view('profile');
+})->name('profile')->middleware('auth');
