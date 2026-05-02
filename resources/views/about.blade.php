@@ -131,7 +131,7 @@
             </div>
             <div class="flex justify-center">
                 <!-- Stempel Merah -->
-                <img src="{{ asset('image/logo-stempel.png') }}" alt="Logo" class="h-28">
+                <img src="{{ asset('image/logo.png') }}" alt="Logo" class="h-28">
             </div>
             <div class="text-right flex flex-col items-end">
                 <h4 class="font-black text-xl mb-4 italic uppercase">FOLLOW US</h4>

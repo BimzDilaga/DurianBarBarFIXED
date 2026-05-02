@@ -132,7 +132,7 @@
                 <p><a href="/contact">Contact Us</a></p>
             </div>
             <div class="flex justify-center">
-                <img src="{{ asset('image/logo-stempel.png') }}" alt="Stamp" class="h-24">
+                <img src="{{ asset('image/logo.png') }}" alt="Stamp" class="h-24">
             </div>
             <div class="text-right">
                 <h4 class="font-black text-xl text-black mb-4 italic">FOLLOW US</h4>
