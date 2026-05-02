@@ -19,6 +19,10 @@ Route::get('/menu', function () {
 Route::get('/menu/{kategori}', [MenuController::class, 'showByCategory'])->name('menu.category');
 Route::get('/detail/{id}', [MenuController::class, 'show']);
 
+// --- INI YANG KURANG TADI BOS ---
+Route::get('/checkout/{id}', [MenuController::class, 'checkout'])->name('checkout');
+// --------------------------------
+
 // ==========================================
 // 3. HALAMAN STATIS & PROFIL
 // ==========================================

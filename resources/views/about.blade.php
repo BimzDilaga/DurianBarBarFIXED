@@ -3,177 +3,146 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About Us - Durian BarBar</title>
-    <!-- Tailwind CSS -->
+    <title>About Us - Bar Bar Es Duren</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome untuk Icon -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Font Gahar Kita -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     
     <style>
-        body {
-            font-family: 'Nunito', sans-serif;
-            background-color: #ffffff;
+        body { 
+            font-family: 'Montserrat', sans-serif; 
+            display: flex; flex-direction: column; min-height: 100vh;
+            margin: 0; padding: 0; background-color: #ffffff;
+            overflow-x: hidden;
         }
+        main { flex: 1; }
+        
+         /* FIX TOP LINE: Tekstur dulu baru Gradasi */
+    .top-line {
+        width: 100%; 
+        height: 45px;
+        background-image: 
+            url("{{ asset('image/texture.png') }}"), 
+            linear-gradient(to bottom, #39AE1F, #8CFF00);
+        background-repeat: repeat;
+        background-size: auto; /* Biar tekstur aslinya kelihatan */
+        position: relative; 
+        z-index: 99;
+    }
 
-        /* 1. HEADER PATTERN (Gambar Kedua) */
-        .top-pattern {
-            width: 100%;
-            height: 45px;
-            background: linear-gradient(to bottom, #8CFF00, #39AE1F);
-            /* Memanggil gambar header yang mas kirim */
-            background-image: url('{{ asset("image/header_pattern.png") }}'), 
-                              linear-gradient(to bottom, #8CFF00, #39AE1F);
+
+        /* FOOTER LOOPING */
+        .footer-loop {
+            width: 100%; height: 120px;
+            background-image: url('{{ asset('image/footer.png') }}');
             background-repeat: repeat-x;
             background-size: contain;
-            position: relative;
-            z-index: 99;
-        }
-
-        /* 2. FOOTER PATTERN (Gambar Pertama / texture.png) */
-        .bottom-pattern {
-            height: 100px;
-            width: 100%;
-            /* Memanggil gambar footer kuning yang mas kirim */
-            background-image: url('{{ asset("image/texture.png") }}');
-            background-repeat: repeat-x;
             background-position: bottom;
-            background-size: contain;
-        }
-
-        /* Efek Glow Putih di belakang Logo */
-        .logo-glow {
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .logo-glow::before {
-            content: '';
-            position: absolute;
-            width: 120px; height: 120px;
-            background: radial-gradient(circle, rgba(255,255,255,1) 40%, rgba(255,255,255,0) 70%);
-            border-radius: 50%;
-            z-index: -1;
         }
     </style>
 </head>
-<body class="text-gray-800 flex flex-col min-h-screen">
+<body>
 
-    <!-- BAGIAN PALING ATAS: Header Pattern -->
-    <div class="top-pattern"></div>
+    <!-- TOP LINE -->
+    <div class="top-line"></div>
 
-    <!-- NAVBAR -->
-    <header class="bg-white py-3 border-b border-gray-100 shadow-sm relative z-20">
-        <div class="container mx-auto max-w-6xl px-6 flex justify-between items-center">
-            <div class="logo-glow">
-                <a href="/">
-                    <img src="{{ asset('image/Logo.png') }}" alt="Logo Barbar" class="h-[75px] object-contain">
-                </a>
-            </div>
-            <nav class="hidden md:block">
-                <ul class="flex space-x-10 text-[15px] font-extrabold text-gray-500 uppercase">
-                    <li><a href="/" class="hover:text-[#44AD24] transition">Home</a></li>
-                    <li><a href="/menu" class="hover:text-[#44AD24] transition">Menu</a></li>
-                    <li><a href="/outlet" class="hover:text-[#44AD24] transition">Outlet</a></li>
-                    <li><a href="/about" class="text-[#44AD24]">About Us</a></li>
-                    <li><a href="/contact" class="hover:text-[#44AD24] transition">Contact Us</a></li>
-                </ul>
-            </nav>
-            <div class="user-profile text-[#39AE1F]">
-                <a href="/profile">
-                    <i class="fa-solid fa-circle-user text-[40px] hover:scale-110 transition duration-300"></i>
-                </a>
-            </div>
+    <!-- NAVBAR KONSISTEN -->
+    <nav class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center w-full">
+        <img src="{{ asset('image/logo.png') }}" alt="Logo" class="h-16">
+        <ul class="hidden md:flex gap-8 text-gray-800 font-black text-xs uppercase tracking-widest">
+            <li><a href="/" class="hover:text-yellow-500">Home</a></li>
+            <li><a href="/menu" class="hover:text-yellow-500">Menu</a></li>
+            <li><a href="/outlet" class="hover:text-yellow-500">Outlet</a></li>
+            <li><a href="/about" class="text-yellow-500 border-b-2 border-yellow-500 pb-1">About Us</a></li>
+            <li><a href="/contact" class="hover:text-yellow-500">Contact Us</a></li>
+        </ul>
+        <div class="text-[#39AE1F] text-4xl">
+            <a href="/profile"><i class="fas fa-user-circle hover:scale-110 transition"></i></a>
         </div>
-    </header>
+    </nav>
 
-    <!-- BANNER ABOUT US (Ukuran dikecilkan sedikit) -->
-    <div class="bg-[#FFD429] py-6 shadow-sm relative z-10">
-    <h1 class="text-center text-4xl md:text-5xl font-black text-white uppercase tracking-[0.05em]">About us</h1>
+    <!-- BANNER KUNING -->
+    <div class="bg-[#FFC107] w-full py-3 shadow-md text-center">
+        <h1 class="text-white text-5xl font-black italic uppercase tracking-tighter">About Us</h1>
     </div>
 
     <!-- KONTEN UTAMA -->
-    <main class="flex-grow relative py-16 overflow-hidden text-center">
-        <!-- Watermark Logo -->
-        <div class="absolute inset-0 flex justify-center items-center z-0 pointer-events-none opacity-5">
-            <img src="{{ asset('image/Logo.png') }}" alt="Watermark" class="w-[500px] object-contain">
+    <main class="max-w-5xl mx-auto mt-12 p-6 w-full mb-20 text-center relative">
+        
+        <!-- Watermark Logo Transparan di Background -->
+        <div class="absolute inset-0 flex justify-center items-center z-0 pointer-events-none opacity-[0.03]">
+            <img src="{{ asset('image/logo.png') }}" alt="Watermark" class="w-[500px] object-contain">
         </div>
 
-        <div class="container mx-auto max-w-5xl px-6 relative z-10">
-            <h2 class="text-3xl md:text-4xl font-black mb-10">
-                <span class="text-[#39AE1F]">Selamat datang</span> 
-                <span class="text-[#facc15]">di website kami!</span>
+        <div class="relative z-10">
+            <!-- Judul Selamat Datang -->
+            <h2 class="text-4xl md:text-5xl font-black italic uppercase tracking-tighter mb-8">
+                <span class="text-[#39AE1F]">Selamat Datang</span> 
+                <span class="text-[#FFC107]">Di Bar Bar!</span>
             </h2>
 
-            <p class="text-[#333] font-bold text-lg md:text-[17px] leading-[1.8] mb-16 px-2 md:px-10">
+            <!-- Teks Penjelasan -->
+            <p class="text-gray-600 font-bold text-lg leading-relaxed mb-16 max-w-4xl mx-auto">
                 Kami menyediakan berbagai makanan dan minuman favorit seperti es durian, mie ayam, es dawet, dan aneka camilan dengan rasa terbaik dan kualitas terjamin. Kami berkomitmen memberikan pengalaman kuliner yang mudah, cepat, dan menyenangkan dengan mengutamakan bahan berkualitas, pelayanan ramah, serta harga terjangkau. Kami juga terus berinovasi menghadirkan menu baru sesuai selera pelanggan.
             </p>
 
-            <!-- Visi & Misi Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-14 text-left">
-                <div>
-                    <img src="{{ asset('image/Outlet.jpg') }}" alt="Outlet BarBar" class="w-full h-64 object-cover rounded-[35px] shadow-lg mb-6">
-                    <h3 class="text-[#39AE1F] text-2xl font-black mb-3 uppercase">Visi:</h3>
-                    <p class="text-[#333] text-base font-bold leading-relaxed">
-                        Menjadi pilihan utama masyarakat dalam menikmati makanan dan minuman berkualitas.
+            <!-- Visi & Misi Grid (Dibuat gaya kotak membulat) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-14 text-left">
+                
+                <!-- VISI -->
+                <div class="border-4 border-gray-100 rounded-[40px] p-6 shadow-lg bg-white hover:-translate-y-2 transition duration-300">
+                    <img src="{{ asset('image/Outlet.jpg') }}" alt="Outlet BarBar" class="w-full h-64 object-cover rounded-[25px] mb-6">
+                    <h3 class="text-[#39AE1F] text-3xl font-black mb-3 italic uppercase tracking-tighter">Visi:</h3>
+                    <p class="text-gray-600 text-base font-bold leading-relaxed">
+                        Menjadi pilihan utama masyarakat dalam menikmati makanan dan minuman berkualitas dengan porsi dan rasa yang benar-benar "Bar Bar".
                     </p>
                 </div>
-                <div>
-                    <img src="{{ asset('image/EsDawetMenu.png') }}" alt="Poster Es Dawet" class="w-full h-64 object-cover rounded-[35px] shadow-lg mb-6">
-                    <h3 class="text-[#facc15] text-2xl font-black mb-3 uppercase">Misi:</h3>
-                    <ul class="text-[#333] text-base font-bold leading-relaxed list-disc pl-5 space-y-2">
-                        <li>Menyediakan produk berkualitas tinggi</li>
-                        <li>Memberikan pelayanan terbaik</li>
-                        <li>Terus berinovasi dalam menu</li>
+
+                <!-- MISI -->
+                <div class="border-4 border-gray-100 rounded-[40px] p-6 shadow-lg bg-white hover:-translate-y-2 transition duration-300">
+                    <img src="{{ asset('image/EsDawetMenu.png') }}" alt="Poster Es Dawet" class="w-full h-64 object-cover rounded-[25px] mb-6">
+                    <h3 class="text-[#FFC107] text-3xl font-black mb-3 italic uppercase tracking-tighter">Misi:</h3>
+                    <ul class="text-gray-600 text-base font-bold leading-relaxed list-disc pl-5 space-y-2">
+                        <li>Menyediakan produk berkualitas tinggi.</li>
+                        <li>Memberikan pelayanan terbaik dan ramah.</li>
+                        <li>Terus berinovasi dalam menu sesuai selera.</li>
                     </ul>
                 </div>
+
             </div>
 
+            <!-- Pesan Penutup -->
             <div class="mt-20">
-                <p class="font-black text-black text-base md:text-lg">
-                    Terima kasih telah mempercayai kami. Kami berharap dapat menjadi bagian dari momen spesial Anda.
+                <p class="font-black text-gray-700 text-xl italic uppercase tracking-tighter">
+                    Terima kasih telah mempercayai kami. Gak Bar-Bar, Gak Enak!
                 </p>
             </div>
         </div>
     </main>
 
-    <!-- FOOTER (Sesuai Gambar Pertama) -->
-    <footer class="bg-white relative z-10 pt-16">
-        <div class="container mx-auto max-w-6xl px-8 grid grid-cols-1 md:grid-cols-3 gap-10 items-center text-center">
-            
-            <div class="md:text-left">
-                <h4 class="font-black text-2xl text-black mb-5">LINKS</h4>
-                <div class="flex flex-col space-y-2 text-lg font-extrabold text-gray-500">
-                    <a href="/about" class="hover:text-[#44AD24] transition">About Us</a>
-                    <a href="/contact" class="hover:text-[#44AD24] transition">Contact Us</a>
+    <!-- FOOTER KONSISTEN -->
+    <footer class="w-full mt-auto">
+        <div class="max-w-6xl mx-auto px-6 py-10 grid grid-cols-3 items-center">
+            <div class="space-y-1">
+                <h4 class="font-black text-xl mb-4 italic uppercase">LINKS</h4>
+                <p class="font-bold text-gray-500 text-sm uppercase"><a href="/about">About Us</a></p>
+                <p class="font-bold text-gray-500 text-sm uppercase"><a href="/contact">Contact Us</a></p>
+            </div>
+            <div class="flex justify-center">
+                <!-- Stempel Merah -->
+                <img src="{{ asset('image/logo-stempel.png') }}" alt="Logo" class="h-28">
+            </div>
+            <div class="text-right flex flex-col items-end">
+                <h4 class="font-black text-xl mb-4 italic uppercase">FOLLOW US</h4>
+                <div class="flex gap-4 text-3xl">
+                    <i class="fab fa-instagram text-pink-600 hover:scale-110 cursor-pointer transition"></i>
+                    <i class="fab fa-tiktok text-black hover:scale-110 cursor-pointer transition"></i>
+                    <i class="fab fa-whatsapp text-green-500 hover:scale-110 cursor-pointer transition"></i>
                 </div>
             </div>
-
-            <div class="flex justify-center logo-glow">
-                <img src="{{ asset('image/Logo.png') }}" alt="Logo BarBar" class="h-28 object-contain">
-            </div>
-
-            <div class="md:text-right flex flex-col md:items-end items-center">
-                <h4 class="font-black text-2xl text-black mb-5 uppercase">Follow Us</h4>
-                <div class="flex space-x-4">
-                    <a href="#" class="w-12 h-12 rounded-full flex items-center justify-center text-white shadow-lg" style="background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);">
-                        <i class="fab fa-instagram text-2xl"></i>
-                    </a>
-                    <a href="#" class="w-12 h-12 rounded-full flex items-center justify-center text-white bg-black shadow-lg">
-                        <i class="fab fa-tiktok text-xl"></i>
-                    </a>
-                    <a href="#" class="w-12 h-12 rounded-full flex items-center justify-center text-white bg-[#25D366] shadow-lg">
-                        <i class="fab fa-whatsapp text-2xl"></i>
-                    </a>
-                </div>
-            </div>
-
         </div>
-
-        <!-- PALING BAWAH: Texture Kuning Berulang -->
-        <div class="bottom-pattern mt-40"></div>
+        <div class="footer-loop"></div>
     </footer>
 
 </body>

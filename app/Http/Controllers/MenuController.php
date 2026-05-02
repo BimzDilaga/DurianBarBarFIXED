@@ -39,4 +39,9 @@ class MenuController extends Controller
         return view('detail', compact('product'));
     }
 
+    public function checkout($id) {
+    $product = \App\Models\Product::findOrFail($id);
+    return view('checkout', compact('product'));
+}
+
 } // <--- NAH, KURUNG KURAWAL PENUTUP CLASS ITU HARUSNYA CUMA ADA DI PALING BAWAH SINI
