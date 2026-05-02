@@ -27,7 +27,7 @@
         .logo-area img { height: 70px; }
         nav ul { display: flex; list-style: none; gap: 25px; margin: 0; padding: 0; }
         nav ul li a { text-decoration: none; color: #555; font-weight: 800; font-size: 14px; text-transform: uppercase; }
-        nav ul li a.active { color: #44AD24; border-bottom: 3px solid #44AD24; }
+        nav ul li a.active, nav ul li a:hover { color: #44AD24; border-bottom: 3px solid #44AD24; }
         .user-profile i { font-size: 35px; color: #4CAF50; }
 
         /* HERO SLIDER */
@@ -51,7 +51,7 @@
         .discount-badge {
             position: absolute; top: -10px; left: -10px;
             background: #ef4444; color: white; width: 50px; height: 50px;
-            border-radius: 50%; display: flex; items-center; justify-content: center;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
             font-weight: 900; border: 3px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
 
@@ -79,7 +79,7 @@
             border: 2px solid #f3f4f6; border-radius: 40px; padding: 30px; 
             transition: 0.3s; background: white;
         }
-        .card:hover { transform: translateY(-10px); shadow: 0 20px 40px rgba(0,0,0,0.05); }
+        .card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.05); }
         .card img { width: 100%; height: 200px; object-fit: contain; margin-bottom: 20px; }
         .card h3 { font-weight: 800; font-size: 20px; margin: 10px 0; }
         .card a { color: #4CAF50; text-decoration: none; font-weight: 800; text-transform: lowercase; font-style: italic; }
@@ -88,6 +88,8 @@
         footer { padding: 50px 0 0 0; background: white; margin-top: 50px; }
         .footer-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; align-items: start; }
         .footer-links h4, .footer-social h4 { font-weight: 900; margin-bottom: 20px; }
+        .footer-links a { color: #333; text-decoration: none; display: block; margin-bottom: 10px; font-weight: bold; }
+        .footer-links a:hover { color: #44AD24; }
         .footer-logo img { height: 90px; opacity: 0.4; filter: grayscale(1); }
         .social-icons { display: flex; justify-content: flex-start; gap: 20px; font-size: 30px; }
         .pattern-bg { 
@@ -107,26 +109,23 @@
 <header>
     <div class="container navbar">
         <div class="logo-area">
-            <img src="{{ asset('image/logo.png') }}" alt="Logo Barbar">
+            <img src="{{ asset('image/Logo.png') }}" alt="Logo Barbar">
         </div>
         <nav>
             <ul>
                 <li><a href="/" class="active">Home</a></li>
-                
-                <!-- UBAH BAGIAN INI BOS -->
-                <!-- Tadinya <a href="#">Menu</a>, ganti jadi: -->
                 <li><a href="/menu">Menu</a></li>
-                
                 <li><a href="/outlet">Outlet</a></li>
-                <li><a href="/About">About Us</a></li>
+                <!-- HURUF A SUDAH DIJADIKAN KECIL -->
+                <li><a href="/about">About Us</a></li>
                 <li><a href="/contact">Contact Us</a></li>
             </ul>
         </nav>
-       <div class="user-profile">
-    <a href="/profile">
-        <i class="fas fa-circle-user text-green-500 hover:scale-110 transition duration-300 cursor-pointer"></i>
-    </a>
-</div>
+        <div class="user-profile">
+            <a href="/profile">
+                <i class="fas fa-circle-user text-green-500 hover:scale-110 transition duration-300 cursor-pointer"></i>
+            </a>
+        </div>
     </div>
 </header>
 
@@ -166,10 +165,7 @@
             <div class="card">
                 <img src="{{ asset('image/' . $rec->gambar) }}" alt="{{ $rec->nama }}">
                 <h3>{{ $rec->nama }}</h3>
-                
-                <!-- UBAH JADI BEGINI BOS: -->
-               <a href="/detail/{{ $rec->id }}">details</a>
-                
+                <a href="/detail/{{ $rec->id }}">details</a>
             </div>
             @endforeach
         </div>
@@ -180,18 +176,19 @@
     <div class="container footer-grid">
         <div class="footer-links">
             <h4>LINKS</h4>
-            <p>About Us</p>
-            <p>Contact Us</p>
+            <!-- LINK FOOTER SUDAH DIPERBAIKI BISA DIKLIK -->
+            <a href="/about">About Us</a>
+            <a href="/contact">Contact Us</a>
         </div>
         <div class="footer-logo">
-            <img src="{{ asset('image/logo.png') }}" alt="Footer Logo">
+            <img src="{{ asset('image/Logo.png') }}" alt="Footer Logo">
         </div>
         <div class="footer-social">
             <h4>FOLLOW US</h4>
             <div class="social-icons">
-                <i class="fab fa-instagram" style="color: #E1306C;"></i>
-                <i class="fab fa-tiktok"></i>
-                <i class="fab fa-whatsapp" style="color: #25D366;"></i>
+                <i class="fab fa-instagram" style="color: #E1306C; cursor: pointer;"></i>
+                <i class="fab fa-tiktok" style="color: #000000; cursor: pointer;"></i>
+                <i class="fab fa-whatsapp" style="color: #25D366; cursor: pointer;"></i>
             </div>
         </div>
     </div>
