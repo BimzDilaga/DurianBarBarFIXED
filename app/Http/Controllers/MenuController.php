@@ -3,45 +3,72 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product; 
-use App\Models\Recommendation; 
 use Illuminate\Http\Request;
 
 class MenuController extends Controller
 {
-    // 1. Fungsi untuk halaman utama (welcome.blade.php)
- public function index()
-{
-    // Mengambil semua produk untuk slider atas
-    $products = \App\Models\Product::all();
-    
-    // Kita ambil data Udang Keju (ID 8) dkk LANGSUNG dari tabel products
-    // Supaya $rec->id nilainya 8, bukan 1.
-    $recommendations = \App\Models\Product::whereIn('id', [8, 1, 2])->get(); 
-    
-    return view('welcome', compact('products', 'recommendations'));
-}
-    // 2. Fungsi untuk halaman list kategori (es durian, mie ayam, dll)
-    // Posisinya HARUS DI DALAM class MenuController (sebelum kurung penutup paling bawah)
-   public function showByCategory($kategori)
+    public function index()
+    {
+        $products = Product::all();
+        // Sesuaikan ID ini dengan data di database kamu untuk rekomendasi
+        $recommendations = Product::whereIn('id', [8, 1, 2])->get(); 
+        return view('welcome', compact('products', 'recommendations'));
+    }
+
+    // INI DIA YANG TADI HILANG BIAR GAK EROR LAGI
+    public function showByCategory($kategori)
     {
         $products = Product::where('kategori', $kategori)->get();
         $title = ucwords(str_replace('-', ' ', $kategori));
-
         return view('menu.category', compact('products', 'title'));
-    } // <--- NAH INI YANG KETINGGALAN BOS!
+    }
 
     public function show($id)
     {
-        // Cari produk berdasarkan ID
-        $product = \App\Models\Product::findOrFail($id);
-
-        // Kirim data produk ke halaman detail
+        $product = Product::findOrFail($id);
         return view('detail', compact('product'));
     }
 
-    public function checkout($id) {
-    $product = \App\Models\Product::findOrFail($id);
-    return view('checkout', compact('product'));
-}
+    public function beli($id)
+    {
+        $product = Product::findOrFail($id);
+        $cart = session()->get('cart', []);
 
-} // <--- NAH, KURUNG KURAWAL PENUTUP CLASS ITU HARUSNYA CUMA ADA DI PALING BAWAH SINI
+        if(isset($cart[$id])) {
+            $cart[$id]['quantity']++;
+        } else {
+            $cart[$id] = [
+                "id" => $product->id,
+                "nama" => $product->nama,
+                "gambar" => $product->gambar,
+                "harga_baru" => $product->harga_baru,
+                "quantity" => 1
+            ];
+        }
+        session()->put('cart', $cart);
+        
+        // Setelah klik beli, langsung lari ke halaman checkout
+        return redirect()->route('checkout');
+    }
+
+    public function kurang($id)
+    {
+        $cart = session()->get('cart', []);
+
+        if(isset($cart[$id])) {
+            if($cart[$id]['quantity'] > 1) {
+                $cart[$id]['quantity']--;
+            } else {
+                // Kalau cuma 1 terus dikurang, hapus dari keranjang
+                unset($cart[$id]);
+            }
+            session()->put('cart', $cart);
+        }
+        return redirect()->route('checkout');
+    }
+
+    public function checkout() 
+    {
+        return view('checkout');
+    }
+}

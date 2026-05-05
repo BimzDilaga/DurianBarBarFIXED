@@ -19,17 +19,34 @@
         }
         main { flex: 1; }
 
-        /* TOP LINE DENGAN TEKSTUR */
+        /* FIX TOP LINE: Tekstur dulu baru Gradasi (Sama persis kayak Home & Menu) */
         .top-line {
-            width: 100%; height: 45px;
-            background-image: url("{{ asset('image/texture.png') }}"), linear-gradient(to bottom, #39AE1F, #8CFF00);
+            width: 100%; 
+            height: 45px;
+            background-image: 
+                url("{{ asset('image/texture.png') }}"), 
+                linear-gradient(to bottom, #39AE1F, #8CFF00);
             background-repeat: repeat;
-            position: relative; z-index: 99;
+            background-size: auto; 
+            position: relative; 
+            z-index: 99;
         }
 
-        /* NAVBAR SINKRON */
-        nav ul li a { transition: 0.3s; font-size: 12px; }
-        nav ul li a:hover { color: #FFC107; }
+        /* Efek Glow Putih di belakang Logo */
+        .logo-glow {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .logo-glow::before {
+            content: '';
+            position: absolute;
+            width: 130px; height: 130px;
+            background: radial-gradient(circle, rgba(255,255,255,1) 40%, rgba(255,255,255,0) 70%);
+            border-radius: 50%;
+            z-index: -1;
+        }
 
         /* FOOTER LOOPING SESUAI LANDING PAGE */
         .footer-loop {
@@ -46,29 +63,53 @@
     <!-- TOP LINE -->
     <div class="top-line"></div>
 
-    <!-- NAVBAR UTAMA -->
-    <nav class="max-w-5xl mx-auto px-6 py-4 flex justify-between items-center w-full">
-        <img src="{{ asset('image/logo.png') }}" alt="Bar Bar Es Duren" class="h-16">
-        
-        <ul class="hidden md:flex gap-8 text-gray-800 font-black text-xs uppercase tracking-wider">
-            <li><a href="/" class="hover:text-yellow-500">Home</a></li>
-            <li><a href="/menu" class="hover:text-yellow-500">Menu</a></li>
-            <li><a href="/outlet" class="hover:text-yellow-500">Outlet</a></li>
-            <li><a href="/about" class="hover:text-yellow-500">About Us</a></li>
-            <li><a href="/contact" class="text-yellow-500">Contact Us</a></li>
-        </ul>
+    <!-- NAVBAR YAG SUDAH DIPERBESAR DAN DISAMAKAN -->
+    <header class="bg-white py-6 relative z-20">
+        <div class="container mx-auto max-w-7xl px-8 flex justify-between items-center">
+            
+            <!-- LOGO DIBESARKAN (h-[100px]) + GLOW -->
+            <div class="logo-glow">
+                <a href="/">
+                    <img src="{{ asset('image/logo.png') }}" alt="Bar Bar Es Duren" class="h-[100px] object-contain">
+                </a>
+            </div>
 
-        <div class="text-[#39AE1F] text-4xl">
-            <a href="/profile" class="hover:scale-110 transition duration-300 inline-block">
-                <i class="fas fa-user-circle"></i>
-            </a>
+            <!-- MENU DIBESARKAN (text-[18px] font-[900]) -->
+            <nav class="hidden md:block">
+                <ul class="flex space-x-12 text-[18px] font-[900] text-gray-700 uppercase tracking-tight">
+                    <li><a href="/" class="hover:text-[#39AE1F] transition">Home</a></li>
+                    <li><a href="/menu" class="hover:text-[#39AE1F] transition">Menu</a></li>
+                    <li><a href="/outlet" class="hover:text-[#39AE1F] transition">Outlet</a></li>
+                    <li><a href="/about" class="hover:text-[#39AE1F] transition">About Us</a></li>
+
+                    <!-- MENU CONTACT US AKTIF DENGAN GARIS BAWAH KUNING -->
+                    <li><a href="/contact" class="text-[#39AE1F] border-b-4 border-[#39AE1F] pb-1">Contact Us</a></li>
+                </ul>
+            </nav>
+
+            <!-- INI BAGIAN YANG DIUBAH! LOGIKA LOGIN/BELUM LOGIN SAMA KAYAK HOME/MENU/ABOUT -->
+            <div class="user-profile text-[55px] relative z-50">
+                @auth
+                    <!-- Sudah Login -> Ikon Hijau -> Ke Halaman Profile -->
+                    <a href="/profile" class="block cursor-pointer relative z-50 text-[#39AE1F]">
+                        <i class="fas fa-user-circle shadow-sm bg-white rounded-full hover:scale-110 transition duration-300"></i>
+                    </a>
+                @else
+                    <!-- Belum Login -> Ikon Abu-abu -> Ke Halaman Login -->
+                    <a href="/login" class="block cursor-pointer relative z-50 text-gray-400">
+                        <i class="fas fa-user-circle shadow-sm bg-white rounded-full hover:scale-110 transition duration-300"></i>
+                    </a>
+                @endauth
+            </div>
+            <!-- SELESAI BAGIAN YANG DIUBAH -->
+
         </div>
-    </nav>
+    </header>
 
     <main>
         <!-- BANNER JUDUL -->
-        <div class="bg-[#FFC107] w-full py-6 shadow-sm">
-            <h1 class="text-center text-white text-5xl font-black italic uppercase tracking-tighter">Contact Us Here</h1>
+        <div class="bg-[#FFD429] w-full py-6 shadow-sm">
+            <h1 class="text-center text-white text-[50px] font-black italic uppercase tracking-tighter m-0">Contact Us Here</h1>
         </div>
 
         <!-- FORM LAYOUT -->
@@ -120,8 +161,26 @@
         </div>
     </main>
 
-    <!-- FOOTER KONSISTEN (LOOPING IMAGE) -->
-    <footer class="w-full mt-20">
+    <!-- FOOTER KONSISTEN (DIKEMBALIKAN FULL SUPAYA SAMA DENGAN PAGE LAIN) -->
+    <footer class="w-full mt-auto pt-10">
+        <div class="max-w-6xl mx-auto px-6 py-10 grid grid-cols-3 items-center">
+            <div class="space-y-1">
+                <h4 class="font-black text-xl mb-4 italic uppercase text-black">LINKS</h4>
+                <p class="font-bold text-gray-500 text-sm uppercase"><a href="/about" class="hover:text-green-500 transition">About Us</a></p>
+                <p class="font-bold text-gray-500 text-sm uppercase"><a href="/contact" class="hover:text-green-500 transition">Contact Us</a></p>
+            </div>
+            <div class="flex justify-center">
+                <img src="{{ asset('image/Logo.png') }}" alt="Logo" class="h-28">
+            </div>
+            <div class="text-right flex flex-col items-end">
+                <h4 class="font-black text-xl mb-4 italic uppercase text-black">FOLLOW US</h4>
+                <div class="flex gap-4 text-3xl">
+                    <i class="fab fa-instagram text-pink-600 hover:scale-110 cursor-pointer transition"></i>
+                    <i class="fab fa-tiktok text-black hover:scale-110 cursor-pointer transition"></i>
+                    <i class="fab fa-whatsapp text-green-500 hover:scale-110 cursor-pointer transition"></i>
+                </div>
+            </div>
+        </div>
         <div class="footer-loop"></div>
     </footer>
 

@@ -19,12 +19,15 @@ Route::get('/menu', function () {
 Route::get('/menu/{kategori}', [MenuController::class, 'showByCategory'])->name('menu.category');
 Route::get('/detail/{id}', [MenuController::class, 'show']);
 
-// --- INI YANG KURANG TADI BOS ---
-Route::get('/checkout/{id}', [MenuController::class, 'checkout'])->name('checkout');
-// --------------------------------
+// ==========================================
+// 3. FITUR KERANJANG (INI YANG BIKIN GAK 404)
+// ==========================================
+Route::get('/beli/{id}', [MenuController::class, 'beli']); // Buat masukin barang ke keranjang
+Route::get('/kurang/{id}', [MenuController::class, 'kurang']); // Buat ngurangin barang
+Route::get('/checkout', [MenuController::class, 'checkout'])->name('checkout'); // Buat buka halaman kasir
 
 // ==========================================
-// 3. HALAMAN STATIS & PROFIL
+// 4. HALAMAN STATIS & PROFIL
 // ==========================================
 Route::get('/about', function () {
     return view('about');
@@ -39,7 +42,7 @@ Route::get('/profile', function () {
 })->name('profile');
 
 // ==========================================
-// 4. AUTENTIKASI (LOGIN, REGISTER, LOGOUT)
+// 5. AUTENTIKASI (LOGIN, REGISTER, LOGOUT)
 // ==========================================
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 Route::post('/register', [AuthController::class, 'register']);
