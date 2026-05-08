@@ -195,7 +195,7 @@
                             <div class="discount-badge-top" style="z-index: 20;"><img src="{{ asset('image/Percent.png') }}" class="w-10 h-10"></div>
                             <div class="promo-img-box">
                                 <img src="{{ asset('image/Logo.png') }}" class="watermark-logo" alt="Watermark"> 
-                                <img src="{{ asset('image/es durian original.png') }}" class="product-img" alt="Es Durian Original" style="transform: translateY(-50px) scale(1.2);">
+                                <img src="{{ asset('image/EsDurianOri.png') }}" class="product-img" alt="Es Durian Original" style="transform: translateY(-50px) scale(1.2);">
                             </div>
                         </div>
 
@@ -249,7 +249,7 @@
                             <div class="discount-badge-top" style="z-index: 20;"><img src="{{ asset('image/Percent.png') }}" class="w-10 h-10"></div>
                             <div class="promo-img-box">
                                 <img src="{{ asset('image/Logo.png') }}" class="watermark-logo" alt="Watermark">
-                                <img src="{{ asset('image/mie ayam jamur.png') }}" class="product-img" alt="Mie Ayam Jamur" style="transform: translateY(-15px) scale(0.8);">
+                                <img src="{{ asset('image/MieAyamJamur.png') }}" class="product-img" alt="Mie Ayam Jamur" style="transform: translateY(-15px) scale(0.8);">
                             </div>
                         </div>
 
@@ -295,29 +295,27 @@
                     <div class="w-full text-left flex flex-col flex-grow">
                         <h3 class="font-black text-[22px] mb-1 text-gray-500">Udang Keju</h3>
                         <div class="mt-auto pt-4">
-                            <a href="/detail/1" class="text-[#39AE1F] font-bold italic border-b-[3px] border-[#39AE1F] pb-[2px] inline-block transition hover:opacity-75 cursor-pointer relative z-50">details</a>
+                            <a href="/detail/17" class="text-[#39AE1F] font-bold italic border-b-[3px] border-[#39AE1F] pb-[2px] inline-block transition hover:opacity-75 cursor-pointer relative z-50">details</a>
                         </div>
                     </div>
                 </div>
 
-                <!-- Card 2: Es Dawet -->
                 <div class="bg-white p-6 transition duration-300 hover:shadow-xl flex flex-col relative z-40" style="border: 1px solid #9CA3AF; border-radius: 35px; height: 100%;">
-                    <img src="{{ asset('image/dawet durian jumbo.png') }}" alt="Es Dawet" class="w-full h-52 object-cover mb-5 rounded-2xl">
+                    <img src="{{ asset('image/DawetDurianJumbo.png') }}" alt="Es Dawet" class="w-full h-52 object-cover mb-5 rounded-2xl">
                     <div class="w-full text-left flex flex-col flex-grow">
                         <h3 class="font-black text-[22px] mb-1 text-gray-500 leading-tight">Es Dawet Durian (Jumbo)</h3>
                         <div class="mt-auto pt-4">
-                            <a href="/detail/2" class="text-[#39AE1F] font-bold italic border-b-[3px] border-[#39AE1F] pb-[2px] inline-block transition hover:opacity-75 cursor-pointer relative z-50">details</a>
+                            <a href="/detail/12" class="text-[#39AE1F] font-bold italic border-b-[3px] border-[#39AE1F] pb-[2px] inline-block transition hover:opacity-75 cursor-pointer relative z-50">details</a>
                         </div>
                     </div>
                 </div>
 
-                <!-- Card 3: Mie Ayam -->
                 <div class="bg-white p-6 transition duration-300 hover:shadow-xl flex flex-col relative z-40" style="border: 1px solid #9CA3AF; border-radius: 35px; height: 100%;">
                     <img src="{{ asset('image/mie ayam bakso.png') }}" alt="Mie Ayam Bakso" class="w-full h-52 object-cover object-bottom mb-5 rounded-2xl">
                     <div class="w-full text-left flex flex-col flex-grow">
                         <h3 class="font-black text-[22px] mb-1 text-gray-500">Mie Ayam Bakso</h3>
                         <div class="mt-auto pt-4">
-                            <a href="/detail/3" class="text-[#39AE1F] font-bold italic border-b-[3px] border-[#39AE1F] pb-[2px] inline-block transition hover:opacity-75 cursor-pointer relative z-50">details</a>
+                            <a href="/detail/9" class="text-[#39AE1F] font-bold italic border-b-[3px] border-[#39AE1F] pb-[2px] inline-block transition hover:opacity-75 cursor-pointer relative z-50">details</a>
                         </div>
                     </div>
                 </div>

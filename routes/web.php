@@ -12,9 +12,8 @@ Route::get('/', [MenuController::class, 'index'])->name('home');
 // ==========================================
 // 2. MENU & DETAIL PRODUK
 // ==========================================
-Route::get('/menu', function () {
-    return view('menu.index');
-})->name('menu.index');
+// INI YANG DIPERBAIKI: Mengarah ke fungsi halamanMenu di Controller
+Route::get('/menu', [MenuController::class, 'halamanMenu'])->name('menu.index');
 
 Route::get('/menu/{kategori}', [MenuController::class, 'showByCategory'])->name('menu.category');
 Route::get('/detail/{id}', [MenuController::class, 'show']);
@@ -40,6 +39,10 @@ Route::get('/contact', function () {
 Route::get('/profile', function () {
     return view('profile');
 })->name('profile');
+
+Route::get('/outlet', function () {
+    return view('outlet');
+});
 
 // ==========================================
 // 5. AUTENTIKASI (LOGIN, REGISTER, LOGOUT)

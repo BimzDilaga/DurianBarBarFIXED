@@ -4,18 +4,38 @@ namespace App\Http\Controllers;
 
 use App\Models\Product; 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB; // WAJIB DITAMBAH: Biar bisa manggil tabel recommendations
 
 class MenuController extends Controller
 {
+    // ==========================================
+    // 1. HALAMAN HOME (Landing Page)
+    // ==========================================
     public function index()
     {
         $products = Product::all();
-        // Sesuaikan ID ini dengan data di database kamu untuk rekomendasi
-        $recommendations = Product::whereIn('id', [8, 1, 2])->get(); 
+        // Sedot data dari tabel recommendations hasil seeder tadi (bukan hardcode ID lagi)
+        $recommendations = DB::table('recommendations')->get(); 
+        
         return view('welcome', compact('products', 'recommendations'));
     }
 
-    // INI DIA YANG TADI HILANG BIAR GAK EROR LAGI
+    // ==========================================
+    // 2. HALAMAN SEMUA MENU (Berdasarkan Kategori)
+    // ==========================================
+    // ==========================================
+    // 2. HALAMAN SEMUA MENU (Berdasarkan Kategori)
+    // ==========================================
+    public function halamanMenu()
+    {
+        $menus = Product::all()->groupBy('kategori');
+        
+        // INI YANG DIGANTI: Tambahin .index biar dia nyari ke dalam folder menu
+        return view('menu.index', compact('menus')); 
+    }
+    // ==========================================
+    // 3. HALAMAN SPESIFIK 1 KATEGORI (Yang Tadi Sempat Hilang)
+    // ==========================================
     public function showByCategory($kategori)
     {
         $products = Product::where('kategori', $kategori)->get();
@@ -23,12 +43,18 @@ class MenuController extends Controller
         return view('menu.category', compact('products', 'title'));
     }
 
+    // ==========================================
+    // 4. HALAMAN DETAIL PRODUK
+    // ==========================================
     public function show($id)
     {
         $product = Product::findOrFail($id);
         return view('detail', compact('product'));
     }
 
+    // ==========================================
+    // 5. FITUR KERANJANG (CART) & CHECKOUT
+    // ==========================================
     public function beli($id)
     {
         $product = Product::findOrFail($id);
@@ -71,4 +97,6 @@ class MenuController extends Controller
     {
         return view('checkout');
     }
+
+    
 }
