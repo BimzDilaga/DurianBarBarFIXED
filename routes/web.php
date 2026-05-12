@@ -12,18 +12,16 @@ Route::get('/', [MenuController::class, 'index'])->name('home');
 // ==========================================
 // 2. MENU & DETAIL PRODUK
 // ==========================================
-// INI YANG DIPERBAIKI: Mengarah ke fungsi halamanMenu di Controller
 Route::get('/menu', [MenuController::class, 'halamanMenu'])->name('menu.index');
-
 Route::get('/menu/{kategori}', [MenuController::class, 'showByCategory'])->name('menu.category');
 Route::get('/detail/{id}', [MenuController::class, 'show']);
 
 // ==========================================
-// 3. FITUR KERANJANG (INI YANG BIKIN GAK 404)
+// 3. FITUR KERANJANG & CHECKOUT
 // ==========================================
-Route::get('/beli/{id}', [MenuController::class, 'beli']); // Buat masukin barang ke keranjang
-Route::get('/kurang/{id}', [MenuController::class, 'kurang']); // Buat ngurangin barang
-Route::get('/checkout', [MenuController::class, 'checkout'])->name('checkout'); // Buat buka halaman kasir
+Route::get('/beli/{id}', [MenuController::class, 'beli']); 
+Route::get('/kurang/{id}', [MenuController::class, 'kurang']); 
+Route::get('/checkout', [MenuController::class, 'checkout'])->name('checkout'); 
 
 // ==========================================
 // 4. HALAMAN STATIS & PROFIL
@@ -45,12 +43,20 @@ Route::get('/outlet', function () {
 });
 
 // ==========================================
-// 5. AUTENTIKASI (LOGIN, REGISTER, LOGOUT)
+// 5. PEMBAYARAN SUKSES (Udah dibersihin)
+// ==========================================
+Route::get('/pembayaran-sukses', function () {
+    // Kosongin keranjang belanja karena udah dibayar!
+    session()->forget('cart'); 
+    return view('pembayaran-sukses');
+})->name('pembayaran.sukses');
+
+// ==========================================
+// 6. AUTENTIKASI (LOGIN, REGISTER, LOGOUT)
 // ==========================================
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 Route::post('/register', [AuthController::class, 'register']);
 
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
-
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');

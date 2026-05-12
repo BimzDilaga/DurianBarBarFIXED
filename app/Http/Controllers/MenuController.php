@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Product; 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB; // WAJIB DITAMBAH: Biar bisa manggil tabel recommendations
+use Illuminate\Support\Facades\DB;
+use Midtrans\Config;
+use Midtrans\Snap;
 
 class MenuController extends Controller
 {
@@ -14,7 +16,6 @@ class MenuController extends Controller
     public function index()
     {
         $products = Product::all();
-        // Sedot data dari tabel recommendations hasil seeder tadi (bukan hardcode ID lagi)
         $recommendations = DB::table('recommendations')->get(); 
         
         return view('welcome', compact('products', 'recommendations'));
@@ -23,18 +24,15 @@ class MenuController extends Controller
     // ==========================================
     // 2. HALAMAN SEMUA MENU (Berdasarkan Kategori)
     // ==========================================
-    // ==========================================
-    // 2. HALAMAN SEMUA MENU (Berdasarkan Kategori)
-    // ==========================================
     public function halamanMenu()
     {
         $menus = Product::all()->groupBy('kategori');
         
-        // INI YANG DIGANTI: Tambahin .index biar dia nyari ke dalam folder menu
         return view('menu.index', compact('menus')); 
     }
+
     // ==========================================
-    // 3. HALAMAN SPESIFIK 1 KATEGORI (Yang Tadi Sempat Hilang)
+    // 3. HALAMAN SPESIFIK 1 KATEGORI
     // ==========================================
     public function showByCategory($kategori)
     {
@@ -73,7 +71,6 @@ class MenuController extends Controller
         }
         session()->put('cart', $cart);
         
-        // Setelah klik beli, langsung lari ke halaman checkout
         return redirect()->route('checkout');
     }
 
@@ -85,7 +82,6 @@ class MenuController extends Controller
             if($cart[$id]['quantity'] > 1) {
                 $cart[$id]['quantity']--;
             } else {
-                // Kalau cuma 1 terus dikurang, hapus dari keranjang
                 unset($cart[$id]);
             }
             session()->put('cart', $cart);
@@ -93,10 +89,42 @@ class MenuController extends Controller
         return redirect()->route('checkout');
     }
 
-    public function checkout() 
+    // ==========================================
+    // INI DIA FUNGSI CHECKOUT YANG UDAH DIBALIKIN NORMAL
+    // ==========================================
+    public function checkout()
     {
-        return view('checkout');
-    }
+        $cart = session('cart');
+        
+        // Kalau keranjang kosong, lempar balik ke menu
+        if (!$cart || count($cart) == 0) {
+            return redirect('/menu');
+        }
 
-    
+        // Hitung total harga
+        $totalHarga = 0;
+        foreach ($cart as $id => $details) {
+            $totalHarga += $details['harga_baru'] * $details['quantity'];
+        }
+
+        // Konfigurasi Midtrans
+        Config::$serverKey = env('MIDTRANS_SERVER_KEY');
+        Config::$isProduction = env('MIDTRANS_IS_PRODUCTION', false);
+        Config::$isSanitized = true;
+        Config::$is3ds = true;
+
+        // Siapin data pesanan untuk Midtrans
+        $params = array(
+            'transaction_details' => array(
+                'order_id' => 'BARBAR-' . rand(), 
+                'gross_amount' => $totalHarga, 
+            ),
+        );
+
+        // Bikin Token Snap Midtrans
+        $snapToken = Snap::getSnapToken($params);
+
+        // Kirim token ke view checkout
+        return view('checkout', compact('totalHarga', 'snapToken'));
+    }
 }

@@ -7,53 +7,58 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
-   <style>
-    body { 
-        font-family: 'Montserrat', sans-serif; 
-        display: flex; flex-direction: column; min-height: 100vh;
-        margin: 0; padding: 0; background-color: #ffffff;
-        overflow-x: hidden;
-    }
-    main { flex: 1; }
     
-    .top-line {
-        width: 100%; 
-        height: 45px;
-        background-image: 
-            url("{{ asset('image/texture.png') }}"), 
-            linear-gradient(to bottom, #39AE1F, #8CFF00);
-        background-repeat: repeat;
-        background-size: auto; 
-        position: relative; 
-        z-index: 99;
-    }
+    <style>
+        body { 
+            font-family: 'Montserrat', sans-serif; 
+            display: flex; flex-direction: column; min-height: 100vh;
+            margin: 0; padding: 0; background-color: #ffffff;
+            overflow-x: hidden;
+        }
+        main { flex: 1; }
+        
+        .top-line {
+            width: 100%; 
+            height: 45px;
+            background-image: 
+                url("{{ asset('image/texture.png') }}"), 
+                linear-gradient(to bottom, #39AE1F, #8CFF00);
+            background-repeat: repeat;
+            background-size: auto; 
+            position: relative; 
+            z-index: 99;
+        }
 
-    .logo-glow {
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    .logo-glow::before {
-        content: '';
-        position: absolute;
-        width: 130px; height: 130px;
-        background: radial-gradient(circle, rgba(255,255,255,1) 40%, rgba(255,255,255,0) 70%);
-        border-radius: 50%;
-        z-index: -1;
-    }
+        .logo-glow {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .logo-glow::before {
+            content: '';
+            position: absolute;
+            width: 130px; height: 130px;
+            background: radial-gradient(circle, rgba(255,255,255,1) 40%, rgba(255,255,255,0) 70%);
+            border-radius: 50%;
+            z-index: -1;
+        }
 
-    .footer-loop {
-        width: 100%; 
-        height: 120px;
-        background-image: url('{{ asset('image/footer.png') }}');
-        background-repeat: repeat-x;
-        background-size: contain;
-        background-position: bottom;
-    }
-</style>
+        .footer-loop {
+            width: 100%; 
+            height: 120px;
+            background-image: url('{{ asset('image/footer.png') }}');
+            background-repeat: repeat-x;
+            background-size: contain;
+            background-position: bottom;
+        }
+    </style>
+
+    <script type="text/javascript"
+      src="https://app.sandbox.midtrans.com/snap/snap.js"
+      data-client-key="{{ env('MIDTRANS_CLIENT_KEY') }}"></script>
 </head>
-<body>
+<body class="bg-white">
 
     <div class="top-line"></div>
 
@@ -94,12 +99,11 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-16">
             
-            <!-- KIRI: Payment Detail -->
             <div>
-                <h3 class="text-xl font-black text-gray-500 mb-2">Payment Detail</h3>
+                <h3 class="text-xl font-black text-gray-500 mb-2">Supported Payments</h3>
                 <div class="w-full border-t-2 border-gray-400 mb-6"></div>
                 
-                <div class="border-[3px] border-gray-200 rounded-[25px] p-6 space-y-6">
+                <div class="border-[3px] border-gray-200 rounded-[25px] p-6 space-y-6 bg-gray-50">
                     @php
                         $payments = [
                             ['name' => 'Card', 'img' => 'https://upload.wikimedia.org/wikipedia/commons/d/d6/Visa_2021.svg'],
@@ -116,22 +120,19 @@
                         </div>
                         <div class="flex flex-col items-start gap-1">
                             <span class="font-black text-gray-600 text-lg">{{ $p['name'] }}</span>
-                            <button class="bg-[#5cd61e] text-white px-8 py-1 rounded-sm font-black text-sm hover:bg-green-600 transition shadow-sm">Pay</button>
                         </div>
                     </div>
                     @endforeach
                 </div>
             </div>
 
-            <!-- KANAN: Product Detail -->
             <div>
                 <h3 class="text-xl font-black text-gray-500 mb-2">Product Detail</h3>
                 <div class="w-full border-t-2 border-gray-400 mb-6"></div>
                 
                 @php $totalHarga = 0; @endphp
 
-                <!-- 1. Looping Keranjang Belanja -->
-                @if(session('cart'))
+                @if(session('cart') && count(session('cart')) > 0)
                     @foreach(session('cart') as $id => $details)
                         @php $totalHarga += $details['harga_baru'] * $details['quantity']; @endphp
                         
@@ -158,7 +159,6 @@
                     </div>
                 @endif
 
-                <!-- 2. Tambah Produk (HIASAN UNGU SUDAH DIHAPUS) -->
                 <a href="/menu" class="flex items-center gap-6 mb-8 group cursor-pointer transition-all duration-300 hover:-translate-y-1">
                     <div class="bg-[#39AE1F] rounded-2xl w-[100px] h-[100px] flex items-center justify-center shadow-md flex-shrink-0 text-white text-5xl font-black relative group-hover:bg-green-600 transition shadow-sm">
                         +
@@ -169,7 +169,6 @@
                     </div>
                 </a>
 
-                <!-- Total Section -->
                 <div class="mt-10">
                     <div class="w-full border-t-[3px] border-gray-400 mb-4"></div>
                     <div class="flex justify-start items-center gap-4">
@@ -178,6 +177,16 @@
                             Rp. {{ number_format($totalHarga, 0, ',', '.') }}
                         </span>
                     </div>
+
+                    @if($totalHarga > 0)
+                        <button id="tombol-bayar" class="w-full mt-8 bg-[#39AE1F] text-white py-4 rounded-full font-black text-2xl hover:bg-green-700 transition shadow-xl uppercase italic tracking-tighter">
+                            <i class="fas fa-lock mr-2"></i> Bayar Sekarang
+                        </button>
+                    @else
+                        <button disabled class="w-full mt-8 bg-gray-400 text-white py-4 rounded-full font-black text-2xl cursor-not-allowed shadow-md uppercase italic tracking-tighter">
+                            Keranjang Kosong
+                        </button>
+                    @endif
                 </div>
 
             </div>
@@ -192,7 +201,7 @@
                 <p class="font-bold text-gray-500 text-sm"><a href="/contact" class="hover:text-[#39AE1F] transition">Contact Us</a></p>
             </div>
             <div class="flex justify-center">
-                <img src="{{ asset('image/Logo.png') }}" alt="Logo" class="h-28">
+                <img src="{{ asset('image/Logo.png') }}" alt="Logo" class="h-28 object-contain">
             </div>
             <div class="text-right flex flex-col items-end">
                 <h4 class="font-black text-xl mb-4 text-black">FOLLOW US</h4>
@@ -205,6 +214,27 @@
         </div>
         <div class="footer-loop"></div>
     </footer>
+
+    @if(isset($snapToken))
+    <script type="text/javascript">
+      document.getElementById('tombol-bayar').onclick = function () {
+        window.snap.pay('{{ $snapToken }}', {
+          onSuccess: function(result){
+            window.location.href = "/pembayaran-sukses"; 
+          },
+          onPending: function(result){
+            alert("Harap selesaikan pembayaran sesuai instruksi!");
+          },
+          onError: function(result){
+            alert("Waduh bos, pembayaran gagal!");
+          },
+          onClose: function(){
+            alert('Loh kok pop-up ditutup? Belum bayar lho bos!');
+          }
+        });
+      };
+    </script>
+    @endif
 
 </body>
 </html>
