@@ -9,6 +9,14 @@ class Product extends Model
 {
     use HasFactory;
 
-    // Pastikan tulisannya 'protected' dan '$fillable' (pakai dolar)
-    protected $fillable = ['nama', 'deskripsi', 'harga_lama', 'harga_baru', 'gambar', 'warna_bg'];
+    // 'detail_lengkap' sudah ditambahkan ke dalam array fillable
+    protected $fillable = [
+        'nama', 
+        'deskripsi', 
+        'detail_lengkap', 
+        'harga_lama', 
+        'harga_baru', 
+        'gambar', 
+        'warna_bg'
+    ];
 }

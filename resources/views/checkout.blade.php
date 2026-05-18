@@ -6,51 +6,90 @@
     <title>Checkout - Bar Bar Es Duren</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
+        /* ================= LOADING SCREEN ANIMATION ================= */
+        #loading-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: white; z-index: 9999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: opacity 0.5s ease, visibility 0.5s;
+        }
+
+        .loader-logo {
+            width: 150px; margin-bottom: 30px;
+            animation: bounce 1.5s infinite ease-in-out;
+        }
+
+        .progress-container {
+            width: 250px; height: 10px;
+            background-color: #f3f4f6; border-radius: 20px;
+            overflow: hidden; position: relative; border: 2px solid #39AE1F;
+        }
+
+        .progress-bar {
+            height: 100%; width: 0%;
+            background: linear-gradient(to right, #39AE1F, #8CFF00);
+            transition: width 0.3s ease;
+        }
+
+        .loading-text {
+            margin-top: 15px; font-weight: 900; color: #39AE1F;
+            font-size: 18px; font-style: italic;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-20px) scale(1.1); }
+        }
+
+        .loaded #loading-screen { opacity: 0; visibility: hidden; }
+
+        /* ================= PENGATURAN UMUM ================= */
         body { 
-            font-family: 'Montserrat', sans-serif; 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
             display: flex; flex-direction: column; min-height: 100vh;
             margin: 0; padding: 0; background-color: #ffffff;
             overflow-x: hidden;
         }
-        main { flex: 1; }
+        main { flex: 1; position: relative; }
         
         .top-line {
-            width: 100%; 
-            height: 45px;
-            background-image: 
-                url("{{ asset('image/texture.png') }}"), 
-                linear-gradient(to bottom, #39AE1F, #8CFF00);
-            background-repeat: repeat;
-            background-size: auto; 
-            position: relative; 
-            z-index: 99;
+            width: 100%; height: 45px;
+            background-image: url("{{ asset('image/texture.png') }}"), linear-gradient(to bottom, #39AE1F, #8CFF00);
+            background-repeat: repeat; background-size: auto; position: relative; z-index: 100;
         }
 
         .logo-glow {
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            position: relative; display: flex; align-items: center; justify-content: center;
         }
         .logo-glow::before {
-            content: '';
-            position: absolute;
-            width: 130px; height: 130px;
+            content: ''; position: absolute; width: 130px; height: 130px;
             background: radial-gradient(circle, rgba(255,255,255,1) 40%, rgba(255,255,255,0) 70%);
-            border-radius: 50%;
-            z-index: -1;
+            border-radius: 50%; z-index: -1;
         }
 
-        .footer-loop {
-            width: 100%; 
-            height: 120px;
-            background-image: url('{{ asset('image/footer.png') }}');
-            background-repeat: repeat-x;
-            background-size: contain;
-            background-position: bottom;
+        /* CUSTOM ANIMASI UNDERLINE UNTUK NAV LINK */
+        .nav-link {
+            position: relative;
+            padding-bottom: 4px;
+        }
+        .nav-link::after {
+            content: ''; position: absolute; width: 0; height: 3px;
+            bottom: 0; left: 50%; background-color: #39AE1F;
+            transition: width 0.3s ease, left 0.3s ease;
+        }
+        .nav-link:hover::after {
+            width: 100%; left: 0;
+        }
+
+        /* AUTOMATIC TYPOGRAPHY HIERARCHY MANAGER */
+        h1, h2, h3, h4, h5, h6, .loading-text, button {
+            font-family: 'Outfit', sans-serif !important;
+        }
+        footer, footer p, footer a, footer h4, footer span, footer div {
+            font-family: 'Plus Jakarta Sans', sans-serif !important;
         }
     </style>
 
@@ -60,75 +99,86 @@
 </head>
 <body class="bg-white">
 
-    <div class="top-line"></div>
-
-    <header class="bg-white py-6 relative z-30 w-full">
-        <div class="container mx-auto max-w-7xl px-8 flex justify-between items-center">
-            <div class="logo-glow">
-                <a href="/"><img src="{{ asset('image/Logo.png') }}" alt="Logo" class="h-[100px] object-contain"></a>
-            </div>
-            <nav class="hidden md:block">
-                <ul class="flex space-x-12 text-[18px] font-[900] text-gray-800 uppercase tracking-tight">
-                    <li><a href="/" class="hover:text-[#39AE1F] transition">Home</a></li>
-                    <li><a href="/menu" class="hover:text-[#39AE1F] transition">Menu</a></li>
-                    <li><a href="/outlet" class="hover:text-[#39AE1F] transition">Outlet</a></li>
-                    <li><a href="/about" class="hover:text-[#39AE1F] transition">About Us</a></li>
-                    <li><a href="/contact" class="hover:text-[#39AE1F] transition">Contact Us</a></li>
-                </ul>
-            </nav>
-            <div class="user-profile text-[55px] relative z-50">
-                @auth
-                    <a href="/profile" class="block cursor-pointer relative z-50 text-[#39AE1F]">
-                        <i class="fas fa-user-circle shadow-sm bg-white rounded-full hover:scale-110 transition duration-300"></i>
-                    </a>
-                @else
-                    <a href="/login" class="block cursor-pointer relative z-50 text-gray-400">
-                        <i class="fas fa-user-circle shadow-sm bg-white rounded-full hover:scale-110 transition duration-300"></i>
-                    </a>
-                @endauth
-            </div>
+    <div id="loading-screen">
+        <img src="{{ asset('image/Logo.png') }}" alt="Logo Bar Bar" class="loader-logo">
+        <div class="progress-container">
+            <div class="progress-bar" id="bar"></div>
         </div>
-    </header>
-
-    <div class="bg-[#FFC107] w-full py-4 shadow-md text-center">
-        <h1 class="text-white text-[45px] font-black tracking-tighter m-0">Checkout Page</h1>
+        <div class="loading-text" id="percent">0%</div>
     </div>
 
-    <main class="max-w-5xl mx-auto mt-10 p-6 w-full mb-20">
-        <h2 class="text-[#39AE1F] text-5xl font-black mb-10 tracking-tighter">Checkout</h2>
+    <div class="top-line"></div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-16">
+    <header class="sticky top-0 bg-white/95 backdrop-blur-md py-4 shadow-sm border-b border-gray-100 z-50 transition duration-300">
+        <div class="container mx-auto max-w-7xl px-6 flex justify-between items-center">
             
-            <div>
-                <h3 class="text-xl font-black text-gray-500 mb-2">Supported Payments</h3>
-                <div class="w-full border-t-2 border-gray-400 mb-6"></div>
-                
-                <div class="border-[3px] border-gray-200 rounded-[25px] p-6 space-y-6 bg-gray-50">
-                    @php
-                        $payments = [
-                            ['name' => 'Card', 'img' => 'https://upload.wikimedia.org/wikipedia/commons/d/d6/Visa_2021.svg'],
-                            ['name' => 'M-banking', 'img' => 'https://upload.wikimedia.org/wikipedia/commons/e/e4/BCA_logo.svg'],
-                            ['name' => 'E-Wallet', 'img' => 'https://upload.wikimedia.org/wikipedia/commons/e/eb/Logo_ovo_purple.svg'],
-                            ['name' => 'Qris', 'img' => 'https://upload.wikimedia.org/wikipedia/commons/a/a2/Logo_QRIS.svg']
-                        ];
-                    @endphp
-
-                    @foreach($payments as $p)
-                    <div class="flex items-center gap-6">
-                        <div class="w-20 flex justify-center">
-                            <img src="{{ $p['img'] }}" alt="{{ $p['name'] }}" class="max-h-8 object-contain">
-                        </div>
-                        <div class="flex flex-col items-start gap-1">
-                            <span class="font-black text-gray-600 text-lg">{{ $p['name'] }}</span>
-                        </div>
-                    </div>
-                    @endforeach
-                </div>
+            <div class="logo-glow">
+                <a href="/" class="block transform hover:scale-105 transition duration-300">
+                    <img src="{{ asset('image/Logo.png') }}" alt="Logo" class="h-[80px] md:h-[90px] object-contain">
+                </a>
             </div>
 
-            <div>
-                <h3 class="text-xl font-black text-gray-500 mb-2">Product Detail</h3>
-                <div class="w-full border-t-2 border-gray-400 mb-6"></div>
+            <nav class="hidden md:block">
+                <ul class="flex space-x-10 text-[15px] font-[900] text-zinc-700 uppercase tracking-wider">
+                    <li><a href="/" class="nav-link hover:text-[#39AE1F] transition duration-300">Home</a></li>
+                    <li><a href="/menu" class="nav-link hover:text-[#39AE1F] transition duration-300">Menu</a></li>
+                    <li><a href="/outlet" class="nav-link hover:text-[#39AE1F] transition duration-300">Outlet</a></li>
+                    <li><a href="/about" class="nav-link hover:text-[#39AE1F] transition duration-300">About Us</a></li>
+                    <li><a href="/contact" class="nav-link hover:text-[#39AE1F] transition duration-300">Contact Us</a></li>
+                </ul>
+            </nav>
+            
+            <div class="flex items-center gap-4">
+                <div class="user-profile relative">
+                    @auth
+                        <a href="/profile" class="group flex items-center justify-center p-1 rounded-full bg-gradient-to-tr from-green-500 to-lime-400 shadow-md group hover:shadow-lg transition duration-300">
+                            <i class="fas fa-user-circle shadow-sm bg-white rounded-full hover:scale-110 transition duration-300 text-[#39AE1F] text-[42px]"></i>
+                        </a>
+                    @else
+                        <a href="/login" class="group flex items-center justify-center p-1 rounded-full bg-gray-100 border border-gray-200 hover:bg-gray-200 shadow-sm transition duration-300">
+                            <i class="fas fa-user-circle text-[42px] text-gray-400 group-hover:text-gray-500 transition duration-300"></i>
+                        </a>
+                    @endauth
+                </div>
+
+                <button id="menuBtn" class="block md:hidden text-gray-700 text-2xl focus:outline-none p-2 hover:text-[#39AE1F] transition">
+                    <i class="fas fa-bars" id="menuIcon"></i>
+                </button>
+            </div>
+        </div>
+
+        <nav id="mobileMenu" class="hidden md:hidden bg-white w-full border-t border-gray-100 shadow-lg absolute top-full left-0 z-50">
+            <ul class="flex flex-col text-[15px] font-[900] text-zinc-800 uppercase tracking-widest py-4">
+                <li><a href="/" class="block px-8 py-3 hover:bg-gray-50 hover:text-[#39AE1F] transition">Home</a></li>
+                <li><a href="/menu" class="block px-8 py-3 hover:bg-gray-50 hover:text-[#39AE1F] transition">Menu</a></li>
+                <li><a href="/outlet" class="block px-8 py-3 hover:bg-gray-50 hover:text-[#39AE1F] transition">Outlet</a></li>
+                <li><a href="/about" class="block px-8 py-3 hover:bg-gray-50 hover:text-[#39AE1F] transition">About Us</a></li>
+                <li><a href="/contact" class="block px-8 py-3 hover:bg-gray-50 hover:text-[#39AE1F] transition">Contact Us</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="bg-[#FFC107] w-full py-4 shadow-md text-center relative z-20">
+        <h1 class="text-white text-[45px] font-black uppercase tracking-tighter m-0">Checkout Page</h1>
+    </div>
+
+    <main class="relative flex-1 w-full overflow-hidden pt-10 pb-16">
+        
+        <div class="absolute inset-y-0 left-0 w-[200px] xl:w-[320px] z-0 pointer-events-none hidden lg:block opacity-80">
+            <img src="{{ asset('image/pohon-durian.png') }}" alt="Pohon Kiri" class="w-full h-full object-cover object-center scale-x-[-1]">
+        </div>
+
+        <div class="absolute inset-y-0 right-0 w-[200px] xl:w-[320px] z-0 pointer-events-none hidden lg:block opacity-80">
+            <img src="{{ asset('image/pohon-durian.png') }}" alt="Pohon Kanan" class="w-full h-full object-cover object-center">
+        </div>
+
+        <div class="max-w-6xl mx-auto px-6 relative z-10">
+            
+            <h2 class="text-[#39AE1F] text-5xl font-black mb-10 tracking-tighter text-center uppercase">Checkout</h2>
+
+            <div class="max-w-2xl mx-auto bg-white shadow-xl rounded-[50px] p-8 border border-gray-100">
+                <h3 class="text-2xl font-black text-gray-400 mb-2 text-center uppercase">Product Detail</h3>
+                <div class="w-full border-t-4 border-[#FFC107] mb-8 rounded-full"></div>
                 
                 @php $totalHarga = 0; @endphp
 
@@ -136,101 +186,165 @@
                     @foreach(session('cart') as $id => $details)
                         @php $totalHarga += $details['harga_baru'] * $details['quantity']; @endphp
                         
-                        <div class="flex items-start gap-6 mb-8">
+                        <div class="flex items-center gap-6 mb-6 bg-gray-50 p-5 rounded-[30px] border border-gray-200">
                             <div class="bg-[#FFC107] p-2 rounded-2xl w-[100px] h-[100px] flex items-center justify-center shadow-md flex-shrink-0">
-                                <img src="{{ asset('image/' . $details['gambar']) }}" alt="{{ $details['nama'] }}" class="max-h-full rounded-lg object-contain">
+                                <img src="{{ asset('image/' . $details['gambar']) }}" class="max-h-full object-contain">
                             </div>
-                            <div class="flex flex-col">
-                                <h4 class="text-2xl font-black text-gray-600 border-b-[3px] border-gray-200 pb-1 mb-1 inline-block">{{ $details['nama'] }}</h4>
-                                <p class="text-[#FFC107] text-2xl font-black">
-                                    Rp. {{ number_format($details['harga_baru'], 0, ',', '.') }}
-                                </p>
-                                <div class="flex items-center bg-[#39AE1F] text-white rounded-full w-[90px] mt-2 px-2 py-1 justify-between shadow-sm">
-                                    <a href="/kurang/{{ $id }}" class="hover:scale-110 transition"><i class="fas fa-minus-circle text-[#FFC107] text-lg"></i></a>
-                                    <span class="font-black text-sm">{{ $details['quantity'] }}</span>
-                                    <a href="/beli/{{ $id }}" class="hover:scale-110 transition"><i class="fas fa-plus-circle text-[#FFC107] text-lg"></i></a>
+                            <div class="flex flex-col flex-grow text-left">
+                                <h4 class="text-2xl font-black text-gray-700 tracking-tighter uppercase leading-none m-0">{{ $details['nama'] }}</h4>
+                                <p class="text-[#39AE1F] text-xl font-black mt-2 mb-0">Rp. {{ number_format($details['harga_baru'], 0, ',', '.') }}</p>
+                                
+                                <div class="flex items-center bg-[#39AE1F] text-white rounded-full w-[100px] mt-3 px-3 py-1 justify-between shadow-sm">
+                                    <a href="/kurang/{{ $id }}"><i class="fas fa-minus-circle text-[#FFD429]"></i></a>
+                                    <span class="font-black">{{ $details['quantity'] }}</span>
+                                    <a href="/beli/{{ $id }}"><i class="fas fa-plus-circle text-[#FFD429]"></i></a>
                                 </div>
                             </div>
                         </div>
                     @endforeach
-                @else
-                    <div class="bg-gray-100 p-6 rounded-2xl mb-8 text-center text-gray-500 font-bold border-2 border-dashed">
-                        Belum ada pesanan nih, yuk jajan dulu!
-                    </div>
                 @endif
 
-                <a href="/menu" class="flex items-center gap-6 mb-8 group cursor-pointer transition-all duration-300 hover:-translate-y-1">
-                    <div class="bg-[#39AE1F] rounded-2xl w-[100px] h-[100px] flex items-center justify-center shadow-md flex-shrink-0 text-white text-5xl font-black relative group-hover:bg-green-600 transition shadow-sm">
-                        +
-                    </div>
-                    <div class="flex flex-col">
-                        <h4 class="text-2xl font-black text-gray-500 border-b-[3px] border-gray-200 pb-1 mb-1 inline-block group-hover:text-[#39AE1F] transition">Tambah Produk</h4>
-                        <p class="text-[#FFC107] text-lg font-bold">Klik untuk pilih menu lain</p>
-                    </div>
-                </a>
+                <div class="flex justify-center mt-4">
+                    <a href="/menu" class="flex items-center gap-4 group">
+                        <div class="bg-[#39AE1F] rounded-xl w-12 h-12 flex items-center justify-center text-white text-2xl font-black group-hover:scale-110 transition">+</div>
+                        <span class="font-black text-gray-400 group-hover:text-[#39AE1F] transition uppercase">Tambah Produk</span>
+                    </a>
+                </div>
 
-                <div class="mt-10">
-                    <div class="w-full border-t-[3px] border-gray-400 mb-4"></div>
-                    <div class="flex justify-start items-center gap-4">
-                        <span class="text-4xl font-black text-gray-600">Total:</span>
-                        <span class="text-[#FFC107] text-4xl font-black tracking-tighter">
+                <div class="mt-10 p-8 bg-[#222222] rounded-[40px] shadow-2xl">
+                    <div class="flex justify-between items-center mb-6">
+                        <span class="text-2xl font-black text-gray-400 uppercase">Total:</span>
+                        <span class="text-[#FFD429] text-4xl font-black tracking-tighter">
                             Rp. {{ number_format($totalHarga, 0, ',', '.') }}
                         </span>
                     </div>
 
                     @if($totalHarga > 0)
-                        <button id="tombol-bayar" class="w-full mt-8 bg-[#39AE1F] text-white py-4 rounded-full font-black text-2xl hover:bg-green-700 transition shadow-xl uppercase italic tracking-tighter">
-                            <i class="fas fa-lock mr-2"></i> Bayar Sekarang
+                        <button id="tombol-bayar" class="w-full bg-[#39AE1F] hover:bg-green-500 text-white py-4 rounded-full font-black text-2xl transition-all uppercase flex items-center justify-center gap-3 tracking-wider">
+                            <i class="fas fa-lock"></i> BAYAR SEKARANG
                         </button>
                     @else
-                        <button disabled class="w-full mt-8 bg-gray-400 text-white py-4 rounded-full font-black text-2xl cursor-not-allowed shadow-md uppercase italic tracking-tighter">
-                            Keranjang Kosong
-                        </button>
+                        <button disabled class="w-full bg-gray-600 text-gray-400 py-4 rounded-full font-black text-2xl cursor-not-allowed uppercase tracking-wider">KOSONG</button>
                     @endif
                 </div>
-
             </div>
+            
         </div>
     </main>
 
-    <footer class="w-full mt-auto pt-10">
-        <div class="max-w-6xl mx-auto px-6 py-10 grid grid-cols-3 items-center">
-            <div class="space-y-1">
-                <h4 class="font-black text-xl mb-4 text-black">LINKS</h4>
-                <p class="font-bold text-gray-500 text-sm"><a href="/about" class="hover:text-[#39AE1F] transition">About Us</a></p>
-                <p class="font-bold text-gray-500 text-sm"><a href="/contact" class="hover:text-[#39AE1F] transition">Contact Us</a></p>
-            </div>
-            <div class="flex justify-center">
-                <img src="{{ asset('image/Logo.png') }}" alt="Logo" class="h-28 object-contain">
-            </div>
-            <div class="text-right flex flex-col items-end">
-                <h4 class="font-black text-xl mb-4 text-black">FOLLOW US</h4>
-                <div class="flex gap-4 text-3xl">
-                    <i class="fab fa-instagram text-pink-600 hover:scale-110 cursor-pointer transition"></i>
-                    <i class="fab fa-tiktok text-black hover:scale-110 cursor-pointer transition"></i>
-                    <i class="fab fa-whatsapp text-green-500 hover:scale-110 cursor-pointer transition"></i>
+    <footer class="mt-8 relative z-30 bg-white border-t-4 border-[#FFD429]">
+        <div class="max-w-7xl mx-auto px-6 py-6 grid grid-cols-1 md:grid-cols-3 gap-6 items-start text-center md:text-left relative z-20">
+            
+            <div class="flex flex-col items-center space-y-3 order-2 md:order-1 mt-6 md:mt-0">
+                <div class="flex flex-col items-start w-fit">
+                    <h4 class="font-black text-lg uppercase text-black italic tracking-tight border-b-[3px] border-[#39AE1F] pb-1 inline-block mb-2">Menu Navigasi</h4>
+                    <div class="flex flex-col space-y-1.5 w-full">
+                        <a href="/" class="font-bold text-gray-500 text-[14px] hover:text-[#39AE1F] hover:translate-x-2 transition duration-300 flex items-center gap-2"><i class="fas fa-chevron-right text-[10px] text-[#FFD429]"></i> Home</a>
+                        <a href="/menu" class="font-bold text-gray-500 text-[14px] hover:text-[#39AE1F] hover:translate-x-2 transition duration-300 flex items-center gap-2"><i class="fas fa-chevron-right text-[10px] text-[#FFD429]"></i> Menu & Kategori</a>
+                        <a href="/outlet" class="font-bold text-gray-500 text-[14px] hover:text-[#39AE1F] hover:translate-x-2 transition duration-300 flex items-center gap-2"><i class="fas fa-chevron-right text-[10px] text-[#FFD429]"></i> Lokasi Outlet</a>
+                        <a href="/about" class="font-bold text-gray-500 text-[14px] hover:text-[#39AE1F] hover:translate-x-2 transition duration-300 flex items-center gap-2"><i class="fas fa-chevron-right text-[10px] text-[#FFD429]"></i> About Us</a>
+                        <a href="/contact" class="font-bold text-gray-500 text-[14px] hover:text-[#39AE1F] hover:translate-x-2 transition duration-300 flex items-center gap-2"><i class="fas fa-chevron-right text-[10px] text-[#FFD429]"></i> Contact Us</a>
+                    </div>
                 </div>
             </div>
+
+            <div class="flex flex-col items-center text-center space-y-3 order-1 md:order-2 border-b-2 md:border-b-0 pb-6 md:pb-0 border-gray-100">
+                <img src="{{ asset('image/Logo.png') }}" alt="Logo Bar Bar" class="h-20 object-contain drop-shadow-md hover:scale-105 transition duration-300">
+                <p class="text-gray-600 font-bold text-sm leading-snug max-w-xs mx-auto">
+                    "Berkomitmen Menyajikan Kebahagiaan Lewat Setiap Mangkok Mie Ayam, Bakso, dan Aneka Cemilan Pilihan, Dipadukan dengan Keaslian Buah Durian Terbaik and Racikan Es Teler Khas yang Disajikan Secara Bar Bar Tanpa Batas!"
+                </p>
+            </div>
+            
+            <div class="flex flex-col items-center space-y-3 order-3 md:order-3 mt-6 md:mt-0">
+                <div class="flex flex-col items-start w-fit">
+                    <h4 class="font-black text-lg uppercase text-black italic tracking-tight border-b-[3px] border-[#39AE1F] pb-1 inline-block mb-2">Hubungi Kami</h4>
+                    <div class="flex flex-col space-y-2 w-full max-w-xs text-[14px]">
+                        <a href="https://wa.me/6285848182655" target="_blank" class="flex items-center justify-start gap-3 font-bold text-zinc-600 hover:text-[#25D366] transition duration-300 group bg-gray-50 p-1.5 rounded-xl border border-gray-100 shadow-sm">
+                            <div class="bg-green-50 text-[#25D366] p-2 rounded-lg text-sm group-hover:bg-[#25D366] group-hover:text-white transition duration-300"><i class="fab fa-whatsapp"></i></div>
+                            <div class="text-left">
+                                <p class="text-[9px] text-zinc-400 uppercase tracking-widest font-black mb-0">WhatsApp CS</p>
+                                <p class="text-[12px] font-black">0858-4818-2655</p>
+                            </div>
+                        </a>
+                        
+                        <a href="mailto:durianbarbarr@gmail.com" class="flex items-center justify-start gap-3 font-bold text-zinc-600 hover:text-red-500 transition duration-300 group bg-gray-50 p-1.5 rounded-xl border border-gray-100 shadow-sm">
+                            <div class="bg-red-50 text-red-500 p-2 rounded-lg text-sm group-hover:bg-red-500 group-hover:text-white transition duration-300"><i class="fa-solid fa-envelope"></i></div>
+                            <div class="text-left">
+                                <p class="text-[9px] text-zinc-400 uppercase tracking-widest font-black mb-0">Email Support</p>
+                                <p class="text-[12px] font-black">durianbarbarr@gmail.com</p>
+                            </div>
+                        </a>
+
+                        <a href="https://instagram.com/dawetdurianbarbarpwt" target="_blank" class="flex items-center justify-start gap-3 font-bold text-zinc-600 hover:text-[#E1306C] transition duration-300 group bg-gray-50 p-1.5 rounded-xl border border-gray-100 shadow-sm">
+                            <div class="bg-pink-50 text-[#E1306C] p-2 rounded-lg text-sm group-hover:bg-[#E1306C] group-hover:text-white transition duration-300"><i class="fa-brands fa-instagram"></i></div>
+                            <div class="text-left">
+                                <p class="text-[9px] text-zinc-400 uppercase tracking-wider font-black mb-0">Instagram</p>
+                                <p class="text-[12px] font-black">@dawetdurianbarbarpwt</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
         </div>
-        <div class="footer-loop"></div>
+
+        <div class="bg-[#39AE1F] text-center py-3 relative z-20 shadow-inner">
+            <p class="font-bold text-white text-xs md:text-sm tracking-widest uppercase">
+                &copy; {{ date('Y') }} <span class="text-[#FFD429] font-black italic">BAR BAR KULINER GROUP</span>. All Rights Reserved.
+            </p>
+        </div>
+
+        <div class="relative z-10" style="width: 100%; height: 200px; background-image: url('{{ asset('image/footer.png') }}'); background-repeat: repeat-x; background-size: contain; background-position: bottom; margin-top: -10px;"></div>
     </footer>
+
+    <script>
+        // 1. LOGIKA LOADING BAR
+        window.addEventListener('load', () => {
+            const bar = document.getElementById('bar');
+            const percentText = document.getElementById('percent');
+            let width = 0;
+            
+            const interval = setInterval(() => {
+                if (width >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        document.body.classList.add('loaded');
+                        setTimeout(() => {
+                            document.getElementById('loading-screen').style.display = 'none';
+                        }, 500);
+                    }, 300);
+                } else {
+                    width += 5;
+                    bar.style.width = width + '%';
+                    percentText.innerText = width + '%';
+                }
+            }, 30);
+        });
+
+        // 2. LOGIKA HAMBURGER MENU MOBILE
+        const menuBtn = document.getElementById('menuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const menuIcon = document.getElementById('menuIcon');
+
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            
+            if (mobileMenu.classList.contains('hidden')) {
+                menuIcon.classList.replace('fa-times', 'fa-bars');
+            } else {
+                menuIcon.classList.replace('fa-bars', 'fa-times');
+            }
+        });
+    </script>
 
     @if(isset($snapToken))
     <script type="text/javascript">
       document.getElementById('tombol-bayar').onclick = function () {
         window.snap.pay('{{ $snapToken }}', {
-          onSuccess: function(result){
-            window.location.href = "/pembayaran-sukses"; 
-          },
-          onPending: function(result){
-            alert("Harap selesaikan pembayaran sesuai instruksi!");
-          },
-          onError: function(result){
-            alert("Waduh bos, pembayaran gagal!");
-          },
-          onClose: function(){
-            alert('Loh kok pop-up ditutup? Belum bayar lho bos!');
-          }
+          onSuccess: function(result){ window.location.href = "/pembayaran-sukses"; },
+          onPending: function(result){ alert("Harap selesaikan pembayaran sesuai instruksi!"); },
+          onError: function(result){ alert("Waduh bos, pembayaran gagal!"); },
+          onClose: function(){ alert('Loh kok pop-up ditutup? Belum bayar lho bos!'); }
         });
       };
     </script>

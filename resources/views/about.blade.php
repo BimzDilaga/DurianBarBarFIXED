@@ -4,188 +4,293 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About Us - Durian BarBar</title>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome untuk Icon -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- Font Gahar Montserrat -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
+        /* ================= LOADING SCREEN ANIMATION ================= */
+        #loading-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: white; z-index: 9999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: opacity 0.5s ease, visibility 0.5s;
+        }
+        .loader-logo { width: 150px; margin-bottom: 30px; animation: bounce 1.5s infinite ease-in-out; }
+        .progress-container { width: 250px; height: 10px; background-color: #f3f4f6; border-radius: 20px; overflow: hidden; position: relative; border: 2px solid #39AE1F; }
+        .progress-bar { height: 100%; width: 0%; background: linear-gradient(to right, #39AE1F, #8CFF00); transition: width 0.3s ease; }
+        .loading-text { margin-top: 15px; font-weight: 900; color: #39AE1F; font-size: 18px; font-style: italic; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-20px) scale(1.1); } }
+        .loaded #loading-screen { opacity: 0; visibility: hidden; }
+
+        /* ================= PENGATURAN UMUM ================= */
         body {
-            font-family: 'Montserrat', sans-serif;
+            font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: #ffffff;
             display: flex; flex-direction: column; min-height: 100vh;
             margin: 0; padding: 0;
             overflow-x: hidden;
         }
+        main { flex: 1; position: relative; }
 
-        main { flex: 1; }
-
-        /* TOP LINE HIJAU GAHAR */
         .top-line {
-            width: 100%; 
-            height: 45px;
-            background-image: 
-                url("{{ asset('image/texture.png') }}"), 
-                linear-gradient(to bottom, #39AE1F, #8CFF00);
-            background-repeat: repeat;
-            background-size: auto; 
-            position: relative; 
-            z-index: 99;
+            width: 100%; height: 45px;
+            background-image: url("{{ asset('image/texture.png') }}"), linear-gradient(to bottom, #39AE1F, #8CFF00);
+            background-repeat: repeat; background-size: auto; position: relative; z-index: 100;
         }
 
-        /* Glow Putih di belakang Logo */
         .logo-glow {
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            position: relative; display: flex; align-items: center; justify-content: center;
         }
         .logo-glow::before {
-            content: '';
-            position: absolute;
-            width: 130px; height: 130px;
+            content: ''; position: absolute; width: 130px; height: 130px;
             background: radial-gradient(circle, rgba(255,255,255,1) 40%, rgba(255,255,255,0) 70%);
-            border-radius: 50%;
-            z-index: -1;
+            border-radius: 50%; z-index: -1;
         }
 
-        /* FOOTER LOOPING */
-        .footer-loop {
-            width: 100%; height: 120px;
-            background-image: url('{{ asset('image/footer.png') }}');
-            background-repeat: repeat-x;
-            background-size: contain;
-            background-position: bottom;
+        /* CUSTOM ANIMASI UNDERLINE UNTUK NAV LINK */
+        .nav-link {
+            position: relative;
+            padding-bottom: 4px;
+        }
+        .nav-link::after {
+            content: ''; position: absolute; width: 0; height: 3px;
+            bottom: 0; left: 50%; background-color: #39AE1F;
+            transition: width 0.3s ease, left 0.3s ease;
+        }
+        .nav-link:hover::after, .nav-link.active::after {
+            width: 100%; left: 0;
+        }
+
+        /* ================= DEKORASI POHON JUMBO ================= */
+        .tree-wrapper { position: relative; width: 100%; max-width: 1400px; margin: 0 auto; }
+        .tree-decor {
+            position: absolute; top: 0; width: 450px; opacity: 0.9; z-index: 0; pointer-events: none;
+        }
+        .tree-left { left: -180px; transform: scaleX(-1); }
+        .tree-right { right: -180px; }
+
+        /* AUTOMATIC TYPOGRAPHY HIERARCHY MANAGER */
+        h1, h2, h3, h4, h5, h6, .loading-text {
+            font-family: 'Outfit', sans-serif !important;
+        }
+        footer, footer p, footer a, footer h4, footer span, footer div {
+            font-family: 'Plus Jakarta Sans', sans-serif !important;
         }
     </style>
 </head>
 <body class="text-gray-800">
 
-    <!-- TOP LINE -->
+    <div id="loading-screen">
+        <img src="{{ asset('image/Logo.png') }}" alt="Logo Bar Bar" class="loader-logo">
+        <div class="progress-container">
+            <div class="progress-bar" id="bar"></div>
+        </div>
+        <div class="loading-text" id="percent">0%</div>
+    </div>
+
     <div class="top-line"></div>
 
-    <!-- NAVBAR DISAMAKAN DENGAN HOME (ABOUT US AKTIF HIJAU) -->
-    <header class="bg-white py-6 relative z-20">
-        <div class="container mx-auto max-w-7xl px-8 flex justify-between items-center">
+    <header class="sticky top-0 bg-white/95 backdrop-blur-md py-4 shadow-sm border-b border-gray-100 z-50 transition duration-300">
+        <div class="container mx-auto max-w-7xl px-6 flex justify-between items-center">
             
             <div class="logo-glow">
-                <a href="/">
-                    <img src="{{ asset('image/logo.png') }}" alt="Logo Barbar" class="h-[100px] object-contain">
+                <a href="/" class="block transform hover:scale-105 transition duration-300">
+                    <img src="{{ asset('image/Logo.png') }}" alt="Logo" class="h-[80px] md:h-[90px] object-contain">
                 </a>
             </div>
 
             <nav class="hidden md:block">
-                <ul class="flex space-x-12 text-[18px] font-[900] text-gray-700 uppercase tracking-tight">
-                    <li><a href="/" class="hover:text-[#39AE1F] transition">Home</a></li>
-                    <li><a href="/menu" class="hover:text-[#39AE1F] transition">Menu</a></li>
-                    <li><a href="/outlet" class="hover:text-[#39AE1F] transition">Outlet</a></li>
-                    
-                    <!-- MENU ABOUT US AKTIF DENGAN WARNA HIJAU SESUAI HOME -->
-                    <li><a href="/about" class="text-[#39AE1F] border-b-4 border-[#39AE1F] pb-1">About Us</a></li>
-                    
-                    <li><a href="/contact" class="hover:text-[#39AE1F] transition">Contact Us</a></li>
+                <ul class="flex space-x-10 text-[15px] font-[900] text-zinc-700 uppercase tracking-wider">
+                    <li><a href="/" class="nav-link hover:text-[#39AE1F] transition duration-300">Home</a></li>
+                    <li><a href="/menu" class="nav-link hover:text-[#39AE1F] transition duration-300">Menu</a></li>
+                    <li><a href="/outlet" class="nav-link hover:text-[#39AE1F] transition duration-300">Outlet</a></li>
+                    <li><a href="/about" class="nav-link text-[#39AE1F] active">About Us</a></li>
+                    <li><a href="/contact" class="nav-link hover:text-[#39AE1F] transition duration-300">Contact Us</a></li>
                 </ul>
             </nav>
-
-            <!-- INI BAGIAN YANG DIUBAH! LOGIKA LOGIN/BELUM LOGIN SAMA KAYAK HOME/MENU -->
-            <div class="user-profile text-[55px] relative z-50">
-                @auth
-                    <!-- Sudah Login -> Ikon Hijau -> Ke Halaman Profile -->
-                    <a href="/profile" class="block cursor-pointer relative z-50 text-[#39AE1F]">
-                        <i class="fas fa-user-circle shadow-sm bg-white rounded-full hover:scale-110 transition duration-300"></i>
-                    </a>
-                @else
-                    <!-- Belum Login -> Ikon Abu-abu -> Ke Halaman Login -->
-                    <a href="/login" class="block cursor-pointer relative z-50 text-gray-400">
-                        <i class="fas fa-user-circle shadow-sm bg-white rounded-full hover:scale-110 transition duration-300"></i>
-                    </a>
-                @endauth
-            </div>
-            <!-- SELESAI BAGIAN YANG DIUBAH -->
             
+            <div class="flex items-center gap-4">
+                <div class="user-profile relative">
+                    @auth
+                        <a href="/profile" class="group flex items-center justify-center p-1 rounded-full bg-gradient-to-tr from-green-500 to-lime-400 shadow-md group hover:shadow-lg transition duration-300">
+                            <i class="fas fa-user-circle shadow-sm bg-white rounded-full hover:scale-110 transition duration-300 text-[#39AE1F] text-[42px]"></i>
+                        </a>
+                    @else
+                        <a href="/login" class="group flex items-center justify-center p-1 rounded-full bg-gray-100 border border-gray-200 hover:bg-gray-200 shadow-sm transition duration-300">
+                            <i class="fas fa-user-circle text-[42px] text-gray-400 group-hover:text-gray-500 transition duration-300"></i>
+                        </a>
+                    @endauth
+                </div>
+
+                <button id="menuBtn" class="block md:hidden text-gray-700 text-2xl focus:outline-none p-2 hover:text-[#39AE1F] transition">
+                    <i class="fas fa-bars" id="menuIcon"></i>
+                </button>
+            </div>
         </div>
+
+        <nav id="mobileMenu" class="hidden md:hidden bg-white w-full border-t border-gray-100 shadow-lg absolute top-full left-0 z-50">
+            <ul class="flex flex-col text-[15px] font-[900] text-zinc-800 uppercase tracking-widest py-4">
+                <li><a href="/" class="block px-8 py-3 hover:bg-gray-50 hover:text-[#39AE1F] transition">Home</a></li>
+                <li><a href="/menu" class="block px-8 py-3 hover:bg-gray-50 hover:text-[#39AE1F] transition">Menu</a></li>
+                <li><a href="/outlet" class="block px-8 py-3 hover:bg-gray-50 hover:text-[#39AE1F] transition">Outlet</a></li>
+                <li><a href="/about" class="block px-8 py-3 bg-green-50 text-[#39AE1F] border-l-4 border-[#39AE1F]">About Us</a></li>
+                <li><a href="/contact" class="block px-8 py-3 hover:bg-gray-50 hover:text-[#39AE1F] transition">Contact Us</a></li>
+            </ul>
+        </nav>
     </header>
 
-    <!-- BANNER ABOUT US (Teks Putih Sesuai Request) -->
-    <div class="bg-[#FFD429] py-6 shadow-sm relative z-10 text-center">
-        <h1 class="text-4xl md:text-[50px] font-black text-white uppercase italic tracking-tighter m-0">ABOUT US</h1>
+    <div class="bg-[#FFD429] py-6 shadow-sm relative z-20 text-center">
+        <h1 class="text-4xl md:text-[50px] font-black text-white uppercase tracking-tighter m-0">ABOUT US</h1>
     </div>
 
-    <!-- KONTEN UTAMA -->
-    <main class="flex-grow relative py-16 overflow-hidden text-center">
-        <!-- Watermark Logo -->
-        <div class="absolute inset-0 flex justify-center items-center z-0 pointer-events-none opacity-5">
-            <img src="{{ asset('image/Logo.png') }}" alt="Watermark" class="w-[500px] object-contain">
-        </div>
+    <main>
+        <div class="tree-wrapper">
+            <img src="{{ asset('image/pohon-durian.png') }}" class="tree-decor tree-left hidden xl:block">
+            <img src="{{ asset('image/pohon-durian.png') }}" class="tree-decor tree-right hidden xl:block">
 
-        <div class="container mx-auto max-w-5xl px-6 relative z-10">
-            <h2 class="text-3xl md:text-[40px] font-black mb-10 tracking-tight">
-                <span class="text-[#39AE1F]">Selamat datang</span> 
-                <span class="text-[#FFD429]">di website kami!</span>
-            </h2>
+            <div class="container mx-auto max-w-5xl px-6 relative z-10 py-16 text-center">
+                <div class="absolute inset-0 flex justify-center items-center z-0 pointer-events-none opacity-5">
+                    <img src="{{ asset('image/Logo.png') }}" alt="Watermark" class="w-[500px] object-contain">
+                </div>
 
-            <p class="text-[#333] font-bold text-lg md:text-[17px] leading-[1.8] mb-16 px-2 md:px-10">
-                Kami menyediakan berbagai makanan dan minuman favorit seperti es durian, mie ayam, es dawet, dan aneka camilan dengan rasa terbaik dan kualitas terjamin. Kami berkomitmen memberikan pengalaman kuliner yang mudah, cepat, dan menyenangkan dengan mengutamakan bahan berkualitas, pelayanan ramah, serta harga terjangkau. Kami juga terus berinovasi menghadirkan menu baru sesuai selera pelanggan.
-            </p>
+                <h2 class="text-3xl md:text-[40px] font-black mb-10 tracking-tight uppercase">
+                    <span class="text-[#39AE1F]">Selamat datang</span> 
+                    <span class="text-[#FFD429]">di website kami!</span>
+                </h2>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-14 text-left">
-                <!-- BAGIAN VISI -->
-                <div>
-                    <!-- Efek Timbul ada di baris class img ini ya koh -->
-                    <img src="{{ asset('image/visi.png') }}" alt="Outlet BarBar" class="w-full h-64 object-cover rounded-[35px] shadow-lg mb-6 border-4 border-white transition-all duration-300 hover:-translate-y-3 hover:scale-[1.03] hover:shadow-2xl cursor-pointer">
-                    
-                    <h3 class="text-[#39AE1F] text-2xl font-black mb-3 uppercase italic">Visi:</h3>
-                    <p class="text-[#333] text-base font-bold leading-relaxed">
-                        Menjadi pilihan utama masyarakat dalam menikmati makanan dan minuman berkualitas.
+                <p class="text-zinc-700 font-bold text-lg md:text-[17px] leading-[1.8] mb-16 px-2 md:px-10 text-justify md:text-center">
+                    Kami menyediakan berbagai makanan dan minuman favorit seperti es durian, mie ayam, es dawet, dan aneka camilan dengan rasa terbaik dan kualitas terjamin. Kami berkomitmen memberikan pengalaman kuliner yang mudah, cepat, dan menyenangkan dengan mengutamakan bahan berkualitas, pelayanan ramah, serta harga terjangkau. Kami juga terus berinovasi menghadirkan menu baru sesuai selera pelanggan.
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-14 text-left">
+                    <div>
+                        <img src="{{ asset('image/visi.png') }}" alt="Visi BarBar" class="w-full h-64 object-cover rounded-[35px] shadow-lg mb-6 border-4 border-white transition-all duration-300 hover:-translate-y-3 hover:scale-[1.03] hover:shadow-2xl cursor-pointer">
+                        <h3 class="text-[#39AE1F] text-2xl font-black mb-3 uppercase tracking-tight">Visi:</h3>
+                        <p class="text-zinc-700 text-base font-bold leading-relaxed">
+                            Menjadi pilihan utama masyarakat dalam menikmati makanan dan minuman berkualitas.
+                        </p>
+                    </div>
+                    <div>
+                        <img src="{{ asset('image/misi.png') }}" alt="Misi BarBar" class="w-full h-64 object-cover rounded-[35px] shadow-lg mb-6 border-4 border-white transition-all duration-300 hover:-translate-y-3 hover:scale-[1.03] hover:shadow-2xl cursor-pointer">
+                        <h3 class="text-[#FFD429] text-2xl font-black mb-3 uppercase tracking-tight">Misi:</h3>
+                        <ul class="text-zinc-700 text-base font-bold leading-relaxed list-disc pl-5 space-y-2">
+                            <li>Menyediakan produk berkualitas tinggi</li>
+                            <li>Memberikan pelayanan terbaik</li>
+                            <li>Terus berinovasi dalam menu</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="mt-20">
+                    <p class="font-black text-zinc-800 text-base md:text-xl uppercase tracking-tight">
+                        Terima kasih telah mempercayai kami. Kami berharap dapat menjadi bagian dari momen spesial Anda.
                     </p>
                 </div>
-                
-                <!-- BAGIAN MISI -->
-                <div>
-                    <!-- Efek Timbul ada di baris class img ini ya koh -->
-                    <img src="{{ asset('image/misi.png') }}" alt="Poster Es Dawet" class="w-full h-64 object-cover rounded-[35px] shadow-lg mb-6 border-4 border-white transition-all duration-300 hover:-translate-y-3 hover:scale-[1.03] hover:shadow-2xl cursor-pointer">
-                    
-                    <h3 class="text-[#FFD429] text-2xl font-black mb-3 uppercase italic">Misi:</h3>
-                    <ul class="text-[#333] text-base font-bold leading-relaxed list-disc pl-5 space-y-2">
-                        <li>Menyediakan produk berkualitas tinggi</li>
-                        <li>Memberikan pelayanan terbaik</li>
-                        <li>Terus berinovasi dalam menu</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="mt-20">
-                <p class="font-black text-black text-base md:text-lg">
-                    Terima kasih telah mempercayai kami. Kami berharap dapat menjadi bagian dari momen spesial Anda.
-                </p>
             </div>
         </div>
     </main>
 
-    <!-- FOOTER KONSISTEN -->
-    <footer class="w-full mt-auto pt-10">
-        <div class="max-w-6xl mx-auto px-6 py-10 grid grid-cols-3 items-center">
-            <div class="space-y-1">
-                <h4 class="font-black text-xl mb-4 italic uppercase text-black">LINKS</h4>
-                <p class="font-bold text-gray-500 text-sm uppercase"><a href="/about" class="hover:text-green-500 transition">About Us</a></p>
-                <p class="font-bold text-gray-500 text-sm uppercase"><a href="/contact" class="hover:text-green-500 transition">Contact Us</a></p>
-            </div>
-            <div class="flex justify-center">
-                <img src="{{ asset('image/Logo.png') }}" alt="Logo" class="h-28">
-            </div>
-            <div class="text-right flex flex-col items-end">
-                <h4 class="font-black text-xl mb-4 italic uppercase text-black">FOLLOW US</h4>
-                <div class="flex gap-4 text-3xl">
-                    <i class="fab fa-instagram text-pink-600 hover:scale-110 cursor-pointer transition"></i>
-                    <i class="fab fa-tiktok text-black hover:scale-110 cursor-pointer transition"></i>
-                    <i class="fab fa-whatsapp text-green-500 hover:scale-110 cursor-pointer transition"></i>
+    <footer class="mt-8 relative z-30 bg-white border-t-4 border-[#FFD429]">
+        <div class="max-w-7xl mx-auto px-6 py-6 grid grid-cols-1 md:grid-cols-3 gap-6 items-start text-center md:text-left relative z-20">
+            
+            <div class="flex flex-col items-center space-y-3 order-2 md:order-1 mt-6 md:mt-0">
+                <div class="flex flex-col items-start w-fit">
+                    <h4 class="font-black text-lg uppercase text-black italic tracking-tight border-b-[3px] border-[#39AE1F] pb-1 inline-block mb-2">Menu Navigasi</h4>
+                    <div class="flex flex-col space-y-1.5 w-full">
+                        <a href="/" class="font-bold text-gray-500 text-[14px] hover:text-[#39AE1F] hover:translate-x-2 transition duration-300 flex items-center gap-2"><i class="fas fa-chevron-right text-[10px] text-[#FFD429]"></i> Home</a>
+                        <a href="/menu" class="font-bold text-gray-500 text-[14px] hover:text-[#39AE1F] hover:translate-x-2 transition duration-300 flex items-center gap-2"><i class="fas fa-chevron-right text-[10px] text-[#FFD429]"></i> Menu & Kategori</a>
+                        <a href="/outlet" class="font-bold text-gray-500 text-[14px] hover:text-[#39AE1F] hover:translate-x-2 transition duration-300 flex items-center gap-2"><i class="fas fa-chevron-right text-[10px] text-[#FFD429]"></i> Lokasi Outlet</a>
+                        <a href="/about" class="font-bold text-gray-500 text-[14px] hover:text-[#39AE1F] hover:translate-x-2 transition duration-300 flex items-center gap-2"><i class="fas fa-chevron-right text-[10px] text-[#FFD429]"></i> About Us</a>
+                        <a href="/contact" class="font-bold text-gray-500 text-[14px] hover:text-[#39AE1F] hover:translate-x-2 transition duration-300 flex items-center gap-2"><i class="fas fa-chevron-right text-[10px] text-[#FFD429]"></i> Contact Us</a>
+                    </div>
                 </div>
             </div>
+
+            <div class="flex flex-col items-center text-center space-y-3 order-1 md:order-2 border-b-2 md:border-b-0 pb-6 md:pb-0 border-gray-100">
+                <img src="{{ asset('image/Logo.png') }}" alt="Logo Bar Bar" class="h-20 object-contain drop-shadow-md hover:scale-105 transition duration-300">
+                <p class="text-gray-600 font-bold text-sm leading-snug max-w-xs mx-auto">
+                    "Berkomitmen Menyajikan Kebahagiaan Lewat Setiap Mangkok Mie Ayam, Bakso, dan Aneka Cemilan Pilihan, Dipadukan dengan Keaslian Buah Durian Terbaik and Racikan Es Teler Khas yang Disajikan Secara Bar Bar Tanpa Batas!"
+                </p>
+            </div>
+            
+            <div class="flex flex-col items-center space-y-3 order-3 md:order-3 mt-6 md:mt-0">
+                <div class="flex flex-col items-start w-fit">
+                    <h4 class="font-black text-lg uppercase text-black italic tracking-tight border-b-[3px] border-[#39AE1F] pb-1 inline-block mb-2">Hubungi Kami</h4>
+                    <div class="flex flex-col space-y-2 w-full max-w-xs text-[14px]">
+                        <a href="https://wa.me/6285848182655" target="_blank" class="flex items-center justify-start gap-3 font-bold text-zinc-600 hover:text-[#25D366] transition duration-300 group bg-gray-50 p-1.5 rounded-xl border border-gray-100 shadow-sm">
+                            <div class="bg-green-50 text-[#25D366] p-2 rounded-lg text-sm group-hover:bg-[#25D366] group-hover:text-white transition duration-300"><i class="fab fa-whatsapp"></i></div>
+                            <div class="text-left">
+                                <p class="text-[9px] text-zinc-400 uppercase tracking-widest font-black mb-0">WhatsApp CS</p>
+                                <p class="text-[12px] font-black">0858-4818-2655</p>
+                            </div>
+                        </a>
+                        
+                        <a href="mailto:durianbarbarr@gmail.com" class="flex items-center justify-start gap-3 font-bold text-zinc-600 hover:text-red-500 transition duration-300 group bg-gray-50 p-1.5 rounded-xl border border-gray-100 shadow-sm">
+                            <div class="bg-red-50 text-red-500 p-2 rounded-lg text-sm group-hover:bg-red-500 group-hover:text-white transition duration-300"><i class="fa-solid fa-envelope"></i></div>
+                            <div class="text-left">
+                                <p class="text-[9px] text-zinc-400 uppercase tracking-widest font-black mb-0">Email Support</p>
+                                <p class="text-[12px] font-black">durianbarbarr@gmail.com</p>
+                            </div>
+                        </a>
+
+                        <a href="https://instagram.com/dawetdurianbarbarpwt" target="_blank" class="flex items-center justify-start gap-3 font-bold text-zinc-600 hover:text-[#E1306C] transition duration-300 group bg-gray-50 p-1.5 rounded-xl border border-gray-100 shadow-sm">
+                            <div class="bg-pink-50 text-[#E1306C] p-2 rounded-lg text-sm group-hover:bg-[#E1306C] group-hover:text-white transition duration-300"><i class="fa-brands fa-instagram"></i></div>
+                            <div class="text-left">
+                                <p class="text-[9px] text-zinc-400 uppercase tracking-wider font-black mb-0">Instagram</p>
+                                <p class="text-[12px] font-black">@dawetdurianbarbarpwt</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
         </div>
-        <div class="footer-loop"></div>
+
+        <div class="bg-[#39AE1F] text-center py-3 relative z-20 shadow-inner">
+            <p class="font-bold text-white text-xs md:text-sm tracking-widest uppercase">
+                &copy; {{ date('Y') }} <span class="text-[#FFD429] font-black italic">BAR BAR KULINER GROUP</span>. All Rights Reserved.
+            </p>
+        </div>
+
+        <div class="relative z-10" style="width: 100%; height: 200px; background-image: url('{{ asset('image/footer.png') }}'); background-repeat: repeat-x; background-size: contain; background-position: bottom; margin-top: -10px;"></div>
     </footer>
 
+    <script>
+        // 1. LOGIKA LOADING BAR
+        window.addEventListener('load', () => {
+            const bar = document.getElementById('bar');
+            const percentText = document.getElementById('percent');
+            let width = 0;
+            const interval = setInterval(() => {
+                if (width >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        document.body.classList.add('loaded');
+                        setTimeout(() => { document.getElementById('loading-screen').style.display = 'none'; }, 500);
+                    }, 300);
+                } else {
+                    width += 5;
+                    bar.style.width = width + '%';
+                    percentText.innerText = width + '%';
+                }
+            }, 30);
+        });
+
+        // 2. LOGIKA HAMBURGER MENU MOBILE
+        const menuBtn = document.getElementById('menuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const menuIcon = document.getElementById('menuIcon');
+
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            
+            if (mobileMenu.classList.contains('hidden')) {
+                menuIcon.classList.replace('fa-times', 'fa-bars');
+            } else {
+                menuIcon.classList.replace('fa-bars', 'fa-times');
+            }
+        });
+    </script>
 </body>
 </html>

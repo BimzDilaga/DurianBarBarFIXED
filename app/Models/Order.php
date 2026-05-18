@@ -2,9 +2,19 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
-    protected $fillable = ['number', 'total_price', 'status', 'nama_pelanggan', 'alamat', 'item_details'];
+    use HasFactory;
+
+    // Kolom yang boleh diisi otomatis
+    protected $fillable = ['user_id', 'nama_produk', 'harga'];
+
+    // Bikin relasi supaya Order tau ini punyanya User siapa
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

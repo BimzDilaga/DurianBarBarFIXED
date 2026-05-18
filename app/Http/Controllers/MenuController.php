@@ -15,8 +15,15 @@ class MenuController extends Controller
     // ==========================================
     public function index()
     {
+        // Kita ambil semua produk untuk slider/keperluan lain
         $products = Product::all();
-        $recommendations = DB::table('recommendations')->get(); 
+
+        // Kita ambil 3 produk terbaru untuk bagian "Recommendation"
+        // Kita gunakan alias (AS) agar nama kolomnya cocok dengan file welcome.blade.php
+        $recommendations = Product::select('id', 'nama as name', 'gambar as image', 'harga_baru')
+                                    ->latest()
+                                    ->take(3)
+                                    ->get(); 
         
         return view('welcome', compact('products', 'recommendations'));
     }
@@ -26,6 +33,7 @@ class MenuController extends Controller
     // ==========================================
     public function halamanMenu()
     {
+        // Mengelompokkan menu berdasarkan kategori (Minuman, Makanan, dll)
         $menus = Product::all()->groupBy('kategori');
         
         return view('menu.index', compact('menus')); 
@@ -46,6 +54,7 @@ class MenuController extends Controller
     // ==========================================
     public function show($id)
     {
+        // Jika ID tidak ketemu, otomatis lari ke halaman 404
         $product = Product::findOrFail($id);
         return view('detail', compact('product'));
     }
@@ -58,9 +67,11 @@ class MenuController extends Controller
         $product = Product::findOrFail($id);
         $cart = session()->get('cart', []);
 
+        // Jika produk sudah ada di keranjang, tambah jumlahnya
         if(isset($cart[$id])) {
             $cart[$id]['quantity']++;
         } else {
+            // Jika belum ada, masukkan data baru
             $cart[$id] = [
                 "id" => $product->id,
                 "nama" => $product->nama,
@@ -90,7 +101,7 @@ class MenuController extends Controller
     }
 
     // ==========================================
-    // INI DIA FUNGSI CHECKOUT YANG UDAH DIBALIKIN NORMAL
+    // 6. FITUR CHECKOUT (MIDTRANS)
     // ==========================================
     public function checkout()
     {
@@ -118,6 +129,11 @@ class MenuController extends Controller
             'transaction_details' => array(
                 'order_id' => 'BARBAR-' . rand(), 
                 'gross_amount' => $totalHarga, 
+            ),
+            'customer_details' => array(
+                'first_name' => auth()->user()->name,
+                'email' => auth()->user()->email,
+                'phone' => auth()->user()->no_hp,
             ),
         );
 

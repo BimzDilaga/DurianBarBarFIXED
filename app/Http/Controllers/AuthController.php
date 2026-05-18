@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Auth\Events\Registered;
 
 class AuthController extends Controller
 {
@@ -16,20 +17,33 @@ class AuthController extends Controller
 
     // 2. PROSES SIMPAN DATA DAFTAR
     public function register(Request $request) {
-        // Validasi singkat biar aman
+        // Validasi input
         $request->validate([
             'name' => 'required',
             'email' => 'required|email|unique:users',
+            'no_hp' => 'required|string|max:15',
             'password' => 'required|min:6|confirmed'
         ]);
 
-        User::create([
+        // Simpan data ke database
+        $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
+            'no_hp' => $request->no_hp,
             'password' => Hash::make($request->password),
         ]);
 
-        return redirect('/login')->with('success', 'Daftar berhasil! Silakan login.');
+        // MENYIMPAN PASSWORD KE SESSION (Agar bisa diintip di Profil)
+        session(['password_mentah' => $request->password]);
+
+        // Memicu pengiriman email verifikasi
+        event(new Registered($user));
+
+        // Login otomatis setelah daftar
+        Auth::login($user);
+
+        // Arahkan ke profile (nanti akan dicek oleh middleware verified)
+        return redirect('/profile');
     }
 
     // 3. TAMPILAN FORM LOGIN
@@ -43,7 +57,10 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            // Setelah login berhasil, langsung arahkan ke Profile
+            
+            // MENYIMPAN PASSWORD KE SESSION SAAT LOGIN
+            session(['password_mentah' => $request->password]);
+
             return redirect('/profile');
         }
 
@@ -53,6 +70,10 @@ class AuthController extends Controller
     // 5. LOGOUT
     public function logout() {
         Auth::logout();
+        
+        // Menghapus password dari memori saat logout
+        session()->forget('password_mentah');
+        
         return redirect('/');
     }
 }
