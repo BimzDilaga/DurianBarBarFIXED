@@ -70,19 +70,6 @@
             border-radius: 50%; z-index: -1;
         }
 
-        .nav-link {
-            position: relative;
-            padding-bottom: 4px;
-        }
-        .nav-link::after {
-            content: ''; position: absolute; width: 0; height: 3px;
-            bottom: 0; left: 50%; background-color: #39AE1F;
-            transition: width 0.3s ease, left 0.3s ease;
-        }
-        .nav-link:hover::after, .nav-link.active::after {
-            width: 100%; left: 0;
-        }
-
         /* BACKGROUND ASSET POHON */
         .bg-pohon {
             position: absolute; top: 150px; right: 0px; width: 500px; height: auto;
@@ -129,11 +116,11 @@
 
             <nav class="hidden md:block">
                 <ul class="flex space-x-10 text-[15px] font-[900] text-zinc-700 uppercase tracking-wider">
-                    <li><a href="/" class="nav-link hover:text-[#39AE1F] transition duration-300">Home</a></li>
-                    <li><a href="/menu" class="nav-link text-[#39AE1F] active">Menu</a></li>
-                    <li><a href="/outlet" class="nav-link hover:text-[#39AE1F] transition duration-300">Outlet</a></li>
-                    <li><a href="/about" class="nav-link hover:text-[#39AE1F] transition duration-300">About Us</a></li>
-                    <li><a href="/contact" class="nav-link hover:text-[#39AE1F] transition duration-300">Contact Us</a></li>
+                    <li><a href="/" class="hover:text-[#39AE1F] transition duration-300">Home</a></li>
+                    <li><a href="/menu" class="text-[#39AE1F] border-b-[3px] border-[#39AE1F] pb-1 transition duration-300">Menu</a></li>
+                    <li><a href="/outlet" class="hover:text-[#39AE1F] transition duration-300">Outlet</a></li>
+                    <li><a href="/about" class="hover:text-[#39AE1F] transition duration-300">About Us</a></li>
+                    <li><a href="/contact" class="hover:text-[#39AE1F] transition duration-300">Contact Us</a></li>
                 </ul>
             </nav>
             
@@ -324,7 +311,9 @@
                         setTimeout(() => { document.getElementById('loading-screen').style.display = 'none'; }, 500);
                     }, 300);
                 } else {
-                    width += 5; bar.style.width = width + '%'; percentText.innerText = width + '%';
+                    width += 5; 
+                    if(bar) bar.style.width = width + '%'; 
+                    if(percentText) percentText.innerText = width + '%';
                 }
             }, 30);
         });
@@ -332,11 +321,13 @@
         const menuBtn = document.getElementById('menuBtn');
         const mobileMenu = document.getElementById('mobileMenu');
         const menuIcon = document.getElementById('menuIcon');
-        menuBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-            if (mobileMenu.classList.contains('hidden')) { menuIcon.classList.replace('fa-times', 'fa-bars'); } 
-            else { menuIcon.classList.replace('fa-bars', 'fa-times'); }
-        });
+        if(menuBtn && mobileMenu) {
+            menuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+                if (mobileMenu.classList.contains('hidden')) { menuIcon.classList.replace('fa-times', 'fa-bars'); } 
+                else { menuIcon.classList.replace('fa-bars', 'fa-times'); }
+            });
+        }
 
         let cartData = JSON.parse(localStorage.getItem('barbar_cart')) || [];
 
@@ -407,8 +398,10 @@
             document.getElementById('cartSubtotal').innerText = formatRupiah(totalHarga);
             document.getElementById('cartItemCount').innerText = totalBarang + ' Item';
             const badge = document.getElementById('cartBadge');
-            badge.innerText = totalBarang;
-            badge.style.display = totalBarang > 0 ? 'block' : 'none';
+            if(badge) {
+                badge.innerText = totalBarang;
+                badge.style.display = totalBarang > 0 ? 'block' : 'none';
+            }
         }
 
         function removeItem(index) {

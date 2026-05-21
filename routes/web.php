@@ -4,6 +4,7 @@ use App\Http\Controllers\ContactController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CheckoutController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 
@@ -20,10 +21,29 @@ Route::get('/menu/{kategori}', [MenuController::class, 'showByCategory'])->name(
 Route::get('/detail/{id}', [MenuController::class, 'show']);
 
 // ==========================================
-// 3. FITUR KERANJANG (Bisa diakses siapa saja / disimpan di session)
+// 3. FITUR KERANJANG & CHECKOUT
 // ==========================================
 Route::get('/beli/{id}', [MenuController::class, 'beli']); 
 Route::get('/kurang/{id}', [MenuController::class, 'kurang']); 
+
+// FITUR CHECKOUT (Wajib Login Dulu!)
+// Pakai "match" biar bisa nerima klik biasa (GET) maupun lemparan data dari pop-up keranjang Navbar (POST)
+Route::match(['get', 'post'], '/checkout', [CheckoutController::class, 'index'])->middleware('auth')->name('checkout.proses');
+
+// RUTE KHUSUS AJAX MIDTRANS (Ditembak diam-diam saat klik tombol "BAYAR SEKARANG")
+Route::post('/proses-checkout', function (Request $request) {
+    // 1. Jalankan proses checkout dari controller seperti biasa
+    $response = app(CheckoutController::class)->prosesCheckout($request);
+    
+    // 2. KOSONGKAN KERANJANG seketika setelah pesanan berhasil diproses!
+    session()->forget('cart');
+    
+    // 3. Kembalikan respon ke Midtrans
+    return $response;
+})->middleware('auth')->name('midtrans.bayar');
+
+// WEBHOOK MIDTRANS (Terima Notifikasi Otomatis - Tidak Boleh Pakai Auth!)
+Route::post('/midtrans-callback', [CheckoutController::class, 'callback']);
 
 // ==========================================
 // 4. HALAMAN STATIS (Bisa diakses siapa saja)
@@ -45,13 +65,21 @@ Route::get('/outlet', function () {
 });
 
 // ==========================================
-// 5. AUTENTIKASI (LOGIN, REGISTER, LOGOUT)
+// 5. AUTENTIKASI (LOGIN, REGISTER, LUPA PASSWORD, LOGOUT)
 // ==========================================
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 Route::post('/register', [AuthController::class, 'register']);
 
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
+
+// === RUTE LUPA PASSWORD BARU ===
+Route::get('/forgot-password', [AuthController::class, 'showForgotPassword'])->name('password.request');
+Route::post('/forgot-password', [AuthController::class, 'sendResetLinkEmail'])->name('password.email');
+
+// === RUTE RESET PASSWORD (KLIK LINK DARI EMAIL) ===
+Route::get('/reset-password/{token}', [AuthController::class, 'showResetPassword'])->name('password.reset');
+Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update');
 
 // Logout wajib login dulu
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
@@ -66,7 +94,7 @@ Route::get('/email/verify', function () {
     return view('auth.verify-email');
 })->middleware('auth')->name('verification.notice');
 
-// 2. Proses ketika user mengklik link verifikasi di email (SUDAH DIUBAH)
+// 2. Proses ketika user mengklik link verifikasi di email
 Route::get('/email/verify/{id}/{hash}', function ($id, $hash, Request $request) {
     $user = \App\Models\User::findOrFail($id);
 
@@ -81,7 +109,7 @@ Route::get('/email/verify/{id}/{hash}', function ($id, $hash, Request $request) 
     // Paksa login otomatis
     \Illuminate\Support\Facades\Auth::login($user);
 
-    // DIARAHKAN KE HALAMAN SUKSES (Bukan langsung profil)
+    // DIARAHKAN KE HALAMAN SUKSES
     return redirect('/verifikasi-sukses'); 
 })->middleware(['signed'])->name('verification.verify');
 
@@ -98,7 +126,7 @@ Route::post('/email/verification-notification', function (Request $request) {
 
 
 // ==========================================
-// 7. HALAMAN TERKUNCI (WAJIB LOGIN & VERIFIKASI EMAIL)
+// 7. HAL halaman TERKUNCI (WAJIB LOGIN & VERIFIKASI EMAIL)
 // ==========================================
 Route::middleware(['auth', 'verified'])->group(function () {
     
@@ -107,13 +135,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return view('profile');
     })->name('profile');
 
-    // Halaman Checkout (Mendukung GET dan POST sekaligus)
-    Route::get('/checkout', [MenuController::class, 'checkout'])->name('checkout'); 
-    Route::post('/checkout', [MenuController::class, 'checkout'])->name('checkout.proses'); 
-
     // Halaman Pembayaran Sukses
     Route::get('/pembayaran-sukses', function () {
-        session()->forget('cart'); 
+        session()->forget('cart'); // Backup tambahan
         return view('pembayaran-sukses');
     })->name('pembayaran.sukses');
 

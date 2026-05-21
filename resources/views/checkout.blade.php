@@ -4,233 +4,367 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checkout - Bar Bar Es Duren</title>
+    
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
-        /* ================= LOADING SCREEN ANIMATION ================= */
-        #loading-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: white; z-index: 9999;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transition: opacity 0.5s ease, visibility 0.5s;
-        }
-
-        .loader-logo {
-            width: 150px; margin-bottom: 30px;
-            animation: bounce 1.5s infinite ease-in-out;
-        }
-
-        .progress-container {
-            width: 250px; height: 10px;
-            background-color: #f3f4f6; border-radius: 20px;
-            overflow: hidden; position: relative; border: 2px solid #39AE1F;
-        }
-
-        .progress-bar {
-            height: 100%; width: 0%;
-            background: linear-gradient(to right, #39AE1F, #8CFF00);
-            transition: width 0.3s ease;
-        }
-
-        .loading-text {
-            margin-top: 15px; font-weight: 900; color: #39AE1F;
-            font-size: 18px; font-style: italic;
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0) scale(1); }
-            50% { transform: translateY(-20px) scale(1.1); }
-        }
-
-        .loaded #loading-screen { opacity: 0; visibility: hidden; }
-
-        /* ================= PENGATURAN UMUM ================= */
-        body { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            display: flex; flex-direction: column; min-height: 100vh;
-            margin: 0; padding: 0; background-color: #ffffff;
-            overflow-x: hidden;
-        }
-        main { flex: 1; position: relative; }
-        
-        .top-line {
-            width: 100%; height: 45px;
-            background-image: url("{{ asset('image/texture.png') }}"), linear-gradient(to bottom, #39AE1F, #8CFF00);
-            background-repeat: repeat; background-size: auto; position: relative; z-index: 100;
-        }
-
-        .logo-glow {
-            position: relative; display: flex; align-items: center; justify-content: center;
-        }
-        .logo-glow::before {
-            content: ''; position: absolute; width: 130px; height: 130px;
-            background: radial-gradient(circle, rgba(255,255,255,1) 40%, rgba(255,255,255,0) 70%);
-            border-radius: 50%; z-index: -1;
-        }
-
-        /* CUSTOM ANIMASI UNDERLINE UNTUK NAV LINK */
-        .nav-link {
-            position: relative;
-            padding-bottom: 4px;
-        }
-        .nav-link::after {
-            content: ''; position: absolute; width: 0; height: 3px;
-            bottom: 0; left: 50%; background-color: #39AE1F;
-            transition: width 0.3s ease, left 0.3s ease;
-        }
-        .nav-link:hover::after {
-            width: 100%; left: 0;
-        }
-
-        /* AUTOMATIC TYPOGRAPHY HIERARCHY MANAGER */
-        h1, h2, h3, h4, h5, h6, .loading-text, button {
-            font-family: 'Outfit', sans-serif !important;
-        }
-        footer, footer p, footer a, footer h4, footer span, footer div {
-            font-family: 'Plus Jakarta Sans', sans-serif !important;
-        }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; display: flex; flex-direction: column; min-height: 100vh; background-color: #f1f5f9; overflow-x: hidden; } 
+        main { flex: 1; }
+        .top-line { width: 100%; height: 45px; background-image: url("{{ asset('image/texture.png') }}"), linear-gradient(to bottom, #39AE1F, #8CFF00); background-repeat: repeat; }
+        h1, h2, h3, h4, h5, h6, button, select, input, textarea { font-family: 'Outfit', sans-serif !important; }
+        .nav-link::after { content: ''; position: absolute; width: 0; height: 3px; bottom: 0; left: 50%; background-color: #39AE1F; transition: width 0.3s ease, left 0.3s ease; }
+        .nav-link:hover::after { width: 100%; left: 0; }
+        select::-webkit-scrollbar { width: 8px; }
+        select::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        select::-webkit-scrollbar-thumb:hover { background: #39AE1F; }
     </style>
-
-    <script type="text/javascript"
-      src="https://app.sandbox.midtrans.com/snap/snap.js"
-      data-client-key="{{ env('MIDTRANS_CLIENT_KEY') }}"></script>
+    <script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ env('MIDTRANS_CLIENT_KEY') }}"></script>
 </head>
-<body class="bg-white">
-
-    <div id="loading-screen">
-        <img src="{{ asset('image/Logo.png') }}" alt="Logo Bar Bar" class="loader-logo">
-        <div class="progress-container">
-            <div class="progress-bar" id="bar"></div>
-        </div>
-        <div class="loading-text" id="percent">0%</div>
-    </div>
-
+<body>
     <div class="top-line"></div>
+    
+    @include('components.navbar')
 
-    <header class="sticky top-0 bg-white/95 backdrop-blur-md py-4 shadow-sm border-b border-gray-100 z-50 transition duration-300">
-        <div class="container mx-auto max-w-7xl px-6 flex justify-between items-center">
-            
-            <div class="logo-glow">
-                <a href="/" class="block transform hover:scale-105 transition duration-300">
-                    <img src="{{ asset('image/Logo.png') }}" alt="Logo" class="h-[80px] md:h-[90px] object-contain">
-                </a>
-            </div>
-
-            <nav class="hidden md:block">
-                <ul class="flex space-x-10 text-[15px] font-[900] text-zinc-700 uppercase tracking-wider">
-                    <li><a href="/" class="nav-link hover:text-[#39AE1F] transition duration-300">Home</a></li>
-                    <li><a href="/menu" class="nav-link hover:text-[#39AE1F] transition duration-300">Menu</a></li>
-                    <li><a href="/outlet" class="nav-link hover:text-[#39AE1F] transition duration-300">Outlet</a></li>
-                    <li><a href="/about" class="nav-link hover:text-[#39AE1F] transition duration-300">About Us</a></li>
-                    <li><a href="/contact" class="nav-link hover:text-[#39AE1F] transition duration-300">Contact Us</a></li>
-                </ul>
-            </nav>
-            
-            <div class="flex items-center gap-4">
-                <div class="user-profile relative">
-                    @auth
-                        <a href="/profile" class="group flex items-center justify-center p-1 rounded-full bg-gradient-to-tr from-green-500 to-lime-400 shadow-md group hover:shadow-lg transition duration-300">
-                            <i class="fas fa-user-circle shadow-sm bg-white rounded-full hover:scale-110 transition duration-300 text-[#39AE1F] text-[42px]"></i>
-                        </a>
-                    @else
-                        <a href="/login" class="group flex items-center justify-center p-1 rounded-full bg-gray-100 border border-gray-200 hover:bg-gray-200 shadow-sm transition duration-300">
-                            <i class="fas fa-user-circle text-[42px] text-gray-400 group-hover:text-gray-500 transition duration-300"></i>
-                        </a>
-                    @endauth
-                </div>
-
-                <button id="menuBtn" class="block md:hidden text-gray-700 text-2xl focus:outline-none p-2 hover:text-[#39AE1F] transition">
-                    <i class="fas fa-bars" id="menuIcon"></i>
-                </button>
-            </div>
-        </div>
-
-        <nav id="mobileMenu" class="hidden md:hidden bg-white w-full border-t border-gray-100 shadow-lg absolute top-full left-0 z-50">
-            <ul class="flex flex-col text-[15px] font-[900] text-zinc-800 uppercase tracking-widest py-4">
-                <li><a href="/" class="block px-8 py-3 hover:bg-gray-50 hover:text-[#39AE1F] transition">Home</a></li>
-                <li><a href="/menu" class="block px-8 py-3 hover:bg-gray-50 hover:text-[#39AE1F] transition">Menu</a></li>
-                <li><a href="/outlet" class="block px-8 py-3 hover:bg-gray-50 hover:text-[#39AE1F] transition">Outlet</a></li>
-                <li><a href="/about" class="block px-8 py-3 hover:bg-gray-50 hover:text-[#39AE1F] transition">About Us</a></li>
-                <li><a href="/contact" class="block px-8 py-3 hover:bg-gray-50 hover:text-[#39AE1F] transition">Contact Us</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <div class="bg-[#FFC107] w-full py-4 shadow-md text-center relative z-20">
-        <h1 class="text-white text-[45px] font-black uppercase tracking-tighter m-0">Checkout Page</h1>
+    <div class="bg-gradient-to-r from-[#FFC107] to-[#FF9800] w-full py-10 shadow-lg text-center relative overflow-hidden border-b-4 border-[#39AE1F]">
+        <h1 class="text-white text-[50px] font-black uppercase tracking-tighter m-0 drop-shadow-md relative z-10">Checkout</h1>
+        <div class="absolute -top-10 -left-10 w-40 h-40 bg-white opacity-10 rounded-full blur-2xl"></div>
+        <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-white opacity-10 rounded-full blur-2xl"></div>
     </div>
 
-    <main class="relative flex-1 w-full overflow-hidden pt-10 pb-16">
-        
-        <div class="absolute inset-y-0 left-0 w-[200px] xl:w-[320px] z-0 pointer-events-none hidden lg:block opacity-80">
-            <img src="{{ asset('image/pohon-durian.png') }}" alt="Pohon Kiri" class="w-full h-full object-cover object-center scale-x-[-1]">
-        </div>
-
-        <div class="absolute inset-y-0 right-0 w-[200px] xl:w-[320px] z-0 pointer-events-none hidden lg:block opacity-80">
-            <img src="{{ asset('image/pohon-durian.png') }}" alt="Pohon Kanan" class="w-full h-full object-cover object-center">
-        </div>
-
-        <div class="max-w-6xl mx-auto px-6 relative z-10">
+    <main class="max-w-7xl mx-auto px-6 py-12">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             
-            <h2 class="text-[#39AE1F] text-5xl font-black mb-10 tracking-tighter text-center uppercase">Checkout</h2>
-
-            <div class="max-w-2xl mx-auto bg-white shadow-xl rounded-[50px] p-8 border border-gray-100">
-                <h3 class="text-2xl font-black text-gray-400 mb-2 text-center uppercase">Product Detail</h3>
-                <div class="w-full border-t-4 border-[#FFC107] mb-8 rounded-full"></div>
+            <div class="bg-white p-8 md:p-10 rounded-[30px] border-t-[12px] border-[#39AE1F] shadow-2xl relative">
+                <h3 class="text-2xl font-black text-gray-800 mb-8 flex items-center gap-4 uppercase border-b-2 border-gray-100 pb-4">
+                    <span class="bg-gradient-to-br from-[#39AE1F] to-green-600 text-white w-12 h-12 flex items-center justify-center rounded-2xl shadow-md"><i class="fas fa-truck text-xl"></i></span> 
+                    Alamat Pengiriman
+                </h3>
                 
-                @php $totalHarga = 0; @endphp
+                <div class="space-y-5">
+                    <div class="relative group">
+                        <i class="fas fa-map-marked-alt absolute left-4 top-4 text-gray-400 group-hover:text-[#39AE1F] transition"></i>
+                        <select id="provinsi" onchange="updateKabupaten()" class="w-full bg-slate-50 border-2 border-gray-100 rounded-2xl pl-12 pr-4 py-3.5 font-bold text-gray-700 focus:bg-white focus:border-[#39AE1F] focus:ring-4 focus:ring-green-50 outline-none transition-all cursor-pointer">
+                            <option value="">Pilih Provinsi</option>
+                            <option value="Jawa Tengah">Jawa Tengah</option>
+                            <option value="Jawa Barat">Jawa Barat</option>
+                            <option value="Jawa Timur">Jawa Timur</option>
+                            <option value="Daerah Istimewa Yogyakarta">Daerah Istimewa Yogyakarta</option>
+                        </select>
+                    </div>
+                    
+                    <div class="relative group">
+                        <i class="fas fa-city absolute left-4 top-4 text-gray-400 group-hover:text-[#39AE1F] transition"></i>
+                        <select id="kabupaten" onchange="updateOutlet()" class="w-full bg-slate-50 border-2 border-gray-100 rounded-2xl pl-12 pr-4 py-3.5 font-bold text-gray-700 focus:bg-white focus:border-[#39AE1F] focus:ring-4 focus:ring-green-50 outline-none transition-all cursor-pointer">
+                            <option value="">Pilih Kabupaten/Kota</option>
+                        </select>
+                    </div>
 
-                @if(session('cart') && count(session('cart')) > 0)
-                    @foreach(session('cart') as $id => $details)
+                    <div class="relative group">
+                        <i class="fas fa-store absolute left-4 top-4 text-gray-400 group-hover:text-[#39AE1F] transition"></i>
+                        <select id="outlet" class="w-full bg-slate-50 border-2 border-gray-100 rounded-2xl pl-12 pr-4 py-3.5 font-bold text-[13px] md:text-sm text-gray-700 focus:bg-white focus:border-[#39AE1F] focus:ring-4 focus:ring-green-50 outline-none appearance-none transition-all cursor-pointer">
+                            <option value="">Pilih Kabupaten/Kota Dulu Untuk Melihat Outlet</option>
+                        </select>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <input type="text" id="desa" placeholder="Kecamatan/Desa" class="w-full bg-slate-50 border-2 border-gray-100 rounded-2xl px-6 py-3.5 font-bold text-gray-700 focus:bg-white focus:border-[#39AE1F] focus:ring-4 focus:ring-green-50 outline-none transition-all placeholder-gray-400">
+                        <input type="text" id="kodepos" placeholder="Kode Pos" class="w-full bg-slate-50 border-2 border-gray-100 rounded-2xl px-6 py-3.5 font-bold text-gray-700 focus:bg-white focus:border-[#39AE1F] focus:ring-4 focus:ring-green-50 outline-none transition-all placeholder-gray-400">
+                    </div>
+                    
+                    <textarea id="alamat_detail" placeholder="Alamat Lengkap (Jl. Nama, No Rumah, Patokan, dll)" class="w-full bg-slate-50 border-2 border-gray-100 rounded-2xl px-6 py-4 font-bold text-gray-700 h-28 focus:bg-white focus:border-[#39AE1F] focus:ring-4 focus:ring-green-50 outline-none transition-all placeholder-gray-400 resize-none"></textarea>
+                </div>
+            </div>
+
+            <div class="bg-white p-8 md:p-10 rounded-[30px] border-t-[12px] border-[#FFC107] shadow-2xl flex flex-col h-full">
+                <h3 class="text-2xl font-black text-gray-800 mb-8 flex items-center gap-4 uppercase border-b-2 border-gray-100 pb-4">
+                    <span class="bg-gradient-to-br from-[#FFC107] to-orange-400 text-white w-12 h-12 flex items-center justify-center rounded-2xl shadow-md"><i class="fas fa-shopping-basket text-xl"></i></span> 
+                    Rincian Pesanan
+                </h3>
+                
+                @php 
+                    $totalHarga = 0; 
+                    $displayItems = [];
+
+                    if(isset($buyNowData)) {
+                        $parsedData = json_decode($buyNowData, true);
+                        if(is_array($parsedData) && count($parsedData) > 0) {
+                            $item = $parsedData[0];
+                            $gambarPath = parse_url($item['image'], PHP_URL_PATH);
+                            $gambarFile = basename($gambarPath);
+
+                            $displayItems[$item['id']] = [
+                                'nama' => $item['name'],
+                                'harga_baru' => $item['price'],
+                                'quantity' => $item['qty'],
+                                'gambar' => $gambarFile
+                            ];
+                        }
+                    } else {
+                        $displayItems = session('cart', []);
+                    }
+                @endphp
+
+                <div id="keranjang-container" class="flex-grow overflow-y-auto max-h-[350px] pr-2 space-y-4 mb-6">
+                    @foreach($displayItems as $id => $details)
                         @php $totalHarga += $details['harga_baru'] * $details['quantity']; @endphp
                         
-                        <div class="flex items-center gap-6 mb-6 bg-gray-50 p-5 rounded-[30px] border border-gray-200">
-                            <div class="bg-[#FFC107] p-2 rounded-2xl w-[100px] h-[100px] flex items-center justify-center shadow-md flex-shrink-0">
-                                <img src="{{ asset('image/' . $details['gambar']) }}" class="max-h-full object-contain">
+                        <div id="chk-produk-{{ $id }}" class="chk-product-item flex items-center gap-4 bg-slate-50 p-3.5 rounded-2xl border border-gray-200 hover:border-[#FFC107] hover:shadow-md transition-all duration-300 group" data-price="{{ $details['harga_baru'] }}">
+                            <div class="bg-white p-1 rounded-xl shadow-sm border border-gray-100">
+                                <img src="{{ asset('image/' . $details['gambar']) }}" class="w-16 h-16 object-contain rounded-lg group-hover:scale-105 transition duration-300">
                             </div>
-                            <div class="flex flex-col flex-grow text-left">
-                                <h4 class="text-2xl font-black text-gray-700 tracking-tighter uppercase leading-none m-0">{{ $details['nama'] }}</h4>
-                                <p class="text-[#39AE1F] text-xl font-black mt-2 mb-0">Rp. {{ number_format($details['harga_baru'], 0, ',', '.') }}</p>
-                                
-                                <div class="flex items-center bg-[#39AE1F] text-white rounded-full w-[100px] mt-3 px-3 py-1 justify-between shadow-sm">
-                                    <a href="/kurang/{{ $id }}"><i class="fas fa-minus-circle text-[#FFD429]"></i></a>
-                                    <span class="font-black">{{ $details['quantity'] }}</span>
-                                    <a href="/beli/{{ $id }}"><i class="fas fa-plus-circle text-[#FFD429]"></i></a>
-                                </div>
+                            <div class="flex-grow">
+                                <h4 class="chk-nama-produk font-black uppercase text-gray-800 text-[15px] leading-tight mb-1">{{ $details['nama'] }}</h4>
+                                <p class="text-[#39AE1F] font-bold text-[14px]">Rp {{ number_format($details['harga_baru'], 0, ',', '.') }}</p>
+                            </div>
+                            
+                            <div class="flex items-center gap-1 bg-white px-2 py-1.5 rounded-full border border-gray-200 shadow-sm">
+                                <button type="button" onclick="updateChkQty('{{ $id }}', 'kurang')" class="text-red-500 font-black hover:bg-red-50 w-7 h-7 rounded-full flex items-center justify-center transition">-</button>
+                                <span class="chk-qty-val font-black w-6 text-center text-gray-700 text-sm" id="chk-qty-{{ $id }}">{{ $details['quantity'] }}</span>
+                                <button type="button" onclick="updateChkQty('{{ $id }}', 'beli')" class="text-green-500 font-black hover:bg-green-50 w-7 h-7 rounded-full flex items-center justify-center transition">+</button>
                             </div>
                         </div>
                     @endforeach
-                @endif
-
-                <div class="flex justify-center mt-4">
-                    <a href="/menu" class="flex items-center gap-4 group">
-                        <div class="bg-[#39AE1F] rounded-xl w-12 h-12 flex items-center justify-center text-white text-2xl font-black group-hover:scale-110 transition">+</div>
-                        <span class="font-black text-gray-400 group-hover:text-[#39AE1F] transition uppercase">Tambah Produk</span>
-                    </a>
                 </div>
 
-                <div class="mt-10 p-8 bg-[#222222] rounded-[40px] shadow-2xl">
-                    <div class="flex justify-between items-center mb-6">
-                        <span class="text-2xl font-black text-gray-400 uppercase">Total:</span>
-                        <span class="text-[#FFD429] text-4xl font-black tracking-tighter">
-                            Rp. {{ number_format($totalHarga, 0, ',', '.') }}
-                        </span>
-                    </div>
+                <a href="/menu" class="block w-full text-center border-2 border-dashed border-gray-300 bg-gray-50 py-3 rounded-2xl font-bold text-gray-500 hover:bg-green-50 hover:border-[#39AE1F] hover:text-[#39AE1F] transition-all mb-4">
+                    <i class="fa-solid fa-plus mr-2"></i> Tambah Produk Lain
+                </a>
 
-                    @if($totalHarga > 0)
-                        <button id="tombol-bayar" class="w-full bg-[#39AE1F] hover:bg-green-500 text-white py-4 rounded-full font-black text-2xl transition-all uppercase flex items-center justify-center gap-3 tracking-wider">
-                            <i class="fas fa-lock"></i> BAYAR SEKARANG
-                        </button>
-                    @else
-                        <button disabled class="w-full bg-gray-600 text-gray-400 py-4 rounded-full font-black text-2xl cursor-not-allowed uppercase tracking-wider">KOSONG</button>
-                    @endif
+                <div class="mb-6 relative group">
+                    <div class="absolute -inset-0.5 bg-gradient-to-r from-[#FFC107] to-orange-400 rounded-2xl blur opacity-0 group-hover:opacity-20 transition duration-300"></div>
+                    <div class="relative bg-white rounded-2xl">
+                        <textarea id="catatan_pesanan" placeholder="Catatan pesanan (Misal: mie ayam pedas, es dipisah, dll...)" class="w-full bg-slate-50 border-2 border-gray-100 rounded-2xl px-5 py-4 font-bold text-gray-700 h-24 focus:bg-white focus:border-[#FFC107] focus:ring-4 focus:ring-yellow-50 outline-none transition-all placeholder-gray-400 resize-none"></textarea>
+                        <i class="fas fa-edit absolute right-4 top-4 text-gray-300 group-hover:text-[#FFC107] transition"></i>
+                    </div>
+                </div>
+
+                <div class="mt-auto p-6 bg-gradient-to-br from-[#1a1a1a] to-[#2d2d2d] rounded-3xl text-white shadow-xl relative overflow-hidden border border-gray-800">
+                    <i class="fas fa-wallet absolute -right-6 -top-6 text-[100px] text-white opacity-5 rotate-12"></i>
+                    
+                    <div class="flex justify-between items-center mb-6 relative z-10 border-b border-gray-600 pb-4">
+                        <span class="text-lg font-black uppercase text-gray-400 tracking-wider">Total Tagihan</span>
+                        <span id="total-harga-display" class="text-[#FFC107] text-3xl font-black tracking-tight drop-shadow-md">Rp {{ number_format($totalHarga, 0, ',', '.') }}</span>
+                    </div>
+                    
+                    <button type="button" id="tombol-bayar" class="w-full relative z-10 bg-gradient-to-r from-[#39AE1F] to-[#2b8a16] py-4 rounded-2xl font-black text-[17px] tracking-wider uppercase hover:from-[#2b8a16] hover:to-[#1e610f] transition-all shadow-lg shadow-green-900/40 hover:scale-[1.02]">
+                        <i class="fas fa-lock mr-2 text-green-200"></i> BAYAR SEKARANG
+                    </button>
                 </div>
             </div>
-            
         </div>
     </main>
+
+    <script type="text/javascript">
+        // --- 1. DATA WILAYAH & OUTLET ---
+        const dataKab = {
+            "Jawa Tengah": ["Kabupaten Banjarnegara", "Kabupaten Banyumas", "Kabupaten Batang", "Kabupaten Blora", "Kabupaten Boyolali", "Kabupaten Brebes", "Kabupaten Cilacap", "Kabupaten Demak", "Kabupaten Grobogan", "Kabupaten Jepara", "Kabupaten Karanganyar", "Kabupaten Kebumen", "Kabupaten Kendal", "Kabupaten Klaten", "Kabupaten Kudus", "Kabupaten Magelang", "Kabupaten Pati", "Kabupaten Pekalongan", "Kabupaten Pemalang", "Kabupaten Purbalingga", "Kabupaten Purworejo", "Kabupaten Rembang", "Kabupaten Semarang", "Kabupaten Sragen", "Kabupaten Sukoharjo", "Kabupaten Tegal", "Kabupaten Temanggung", "Kabupaten Wonogiri", "Kabupaten Wonosobo", "Kota Magelang", "Kota Pekalongan", "Kota Salatiga", "Kota Semarang", "Kota Surakarta", "Kota Tegal"],
+            "Jawa Barat": ["Kabupaten Bandung", "Kabupaten Bandung Barat", "Kabupaten Bekasi", "Kabupaten Bogor", "Kabupaten Ciamis", "Kabupaten Cianjur", "Kabupaten Cirebon", "Kabupaten Garut", "Kabupaten Indramayu", "Kabupaten Karawang", "Kabupaten Kuningan", "Kabupaten Majalengka", "Kabupaten Pangandaran", "Kabupaten Purwakarta", "Kabupaten Subang", "Kabupaten Sukabumi", "Kabupaten Sumedang", "Kabupaten Tasikmalaya", "Kota Bandung", "Kota Banjar", "Kota Bekasi", "Kota Bogor", "Kota Cimahi", "Kota Cirebon", "Kota Depok", "Kota Sukabumi", "Kota Tasikmalaya"],
+            "Jawa Timur": ["Kabupaten Bangkalan", "Kabupaten Banyuwangi", "Kabupaten Blitar", "Kabupaten Bojonegoro", "Kabupaten Bondowoso", "Kabupaten Gresik", "Kabupaten Jember", "Kabupaten Jombang", "Kabupaten Kediri", "Kabupaten Lamongan", "Kabupaten Lumajang", "Kabupaten Madiun", "Kabupaten Magetan", "Kabupaten Malang", "Kabupaten Mojokerto", "Kabupaten Nganjuk", "Kabupaten Ngawi", "Kabupaten Pacitan", "Kabupaten Pamekasan", "Kabupaten Pasuruan", "Kabupaten Ponorogo", "Kabupaten Probolinggo", "Kabupaten Sampang", "Kabupaten Sidoarjo", "Kabupaten Situbondo", "Kabupaten Sumenep", "Kabupaten Trenggalek", "Kabupaten Tuban", "Kabupaten Tulungagung", "Kota Batu", "Kota Blitar", "Kota Kediri", "Kota Madiun", "Kota Malang", "Kota Mojokerto", "Kota Pasuruan", "Kota Probolinggo", "Kota Surabaya"],
+            "Daerah Istimewa Yogyakarta": ["Kabupaten Bantul", "Kabupaten Gunungkidul", "Kabupaten Kulon Progo", "Kabupaten Sleman", "Kota Yogyakarta"]
+        };
+
+        const dataSemuaOutlet = [
+            { prov: "Jawa Tengah", kab: "Kabupaten Banyumas", text: "1. Es Dawet Durian bar bar - Ajibarang" },
+            { prov: "Jawa Tengah", kab: "Kabupaten Cilacap", text: "2. Dawet Durian bar bar - Cilacap (Kawungaten)" },
+            { prov: "Jawa Tengah", kab: "Kabupaten Cilacap", text: "3. Dawet durian bar bar raben - Cilacap" },
+            { prov: "Jawa Tengah", kab: "Kabupaten Cilacap", text: "4. Dawet durian bar bar Sultan - Cilacap (Kroya)" },
+            { prov: "Jawa Tengah", kab: "Kabupaten Kebumen", text: "5. Dawet durian bar bar sultan - Kebumen" },
+            { prov: "Daerah Istimewa Yogyakarta", kab: "Kabupaten Sleman", text: "6. Es Dawet durian bar bar Outlet 1 - Yogyakarta (Gamping)" },
+            { prov: "Daerah Istimewa Yogyakarta", kab: "Kabupaten Sleman", text: "7. Dawet durian bar bar Maguwoharjo - Yogyakarta" },
+            { prov: "Jawa Tengah", kab: "Kabupaten Klaten", text: "8. Dawet durian bar bar Prambanan - Klaten" },
+            { prov: "Jawa Tengah", kab: "Kabupaten Magelang", text: "9. Dawet durian bar bar magelang Blondo" },
+            { prov: "Jawa Tengah", kab: "Kabupaten Magelang", text: "10. Dawet durian bar bar magelang" },
+            { prov: "Jawa Tengah", kab: "Kabupaten Banjarnegara", text: "11. Radja es teler sultan & Dawet durian bar bar - Banjarnegara" },
+            { prov: "Jawa Tengah", kab: "Kabupaten Banjarnegara", text: "12. Dawet durian bar bar & Raja Es teler Sultan - Banjarnegara (Klampok)" },
+            { prov: "Jawa Tengah", kab: "Kabupaten Banyumas", text: "13. Dawet durian bar bar & radja es teler sultan - Purwokerto Utara" },
+            { prov: "Jawa Tengah", kab: "Kota Semarang", text: "14. Dawet durian bar bar - Semarang (Pedurungan)" },
+            { prov: "Jawa Tengah", kab: "Kabupaten Cilacap", text: "15. Dawet durian bar bar Majenang - Cilacap" },
+            { prov: "Jawa Tengah", kab: "Kabupaten Brebes", text: "16. Dawet Durian Barbar Jatibarang - Brebes" },
+            { prov: "Jawa Tengah", kab: "Kabupaten Tegal", text: "17. Dawet durian barbar Slawi - Tegal" },
+            { prov: "Jawa Tengah", kab: "Kabupaten Brebes", text: "18. Dawet Durian barbar - Brebes" },
+            { prov: "Jawa Tengah", kab: "Kota Tegal", text: "19. Dawet durian barbar Tegal - Kota Tegal" },
+            { prov: "Jawa Tengah", kab: "Kabupaten Pemalang", text: "20. Dawet Durian Bar Bar Kaligelang - Pemalang" },
+            { prov: "Jawa Tengah", kab: "Kabupaten Pemalang", text: "21. Dawet durian Bar bar Comal - Pemalang" },
+            { prov: "Jawa Tengah", kab: "Kota Pekalongan", text: "22. Dawet durian barbar rajanya es durian - Kota Pekalongan" },
+            { prov: "Jawa Tengah", kab: "Kabupaten Batang", text: "23. Dawet Durian barbar & rajanya es teler sultan Batang" },
+            { prov: "Jawa Tengah", kab: "Kabupaten Pekalongan", text: "24. Es Dawet durian barbar Tambor - Kajen Pekalongan" }
+        ];
+
+        function updateKabupaten() {
+            const prov = document.getElementById('provinsi').value;
+            const kabSelect = document.getElementById('kabupaten');
+            
+            kabSelect.innerHTML = '<option value="">Pilih Kabupaten/Kota</option>';
+            if(dataKab[prov]) {
+                dataKab[prov].forEach(k => {
+                    let opt = document.createElement('option'); opt.value = k; opt.innerHTML = k; kabSelect.appendChild(opt);
+                });
+            }
+            updateOutlet(); 
+        }
+
+        function updateOutlet() {
+            const prov = document.getElementById('provinsi').value;
+            const kab = document.getElementById('kabupaten').value;
+            const outletSelect = document.getElementById('outlet');
+            
+            outletSelect.innerHTML = ''; 
+            
+            if (kab === "") {
+                outletSelect.innerHTML = '<option value="">Pilih Kabupaten/Kota Dulu Untuk Melihat Outlet</option>';
+                return;
+            }
+
+            let outletFiltered = dataSemuaOutlet.filter(outlet => outlet.kab === kab);
+            let message = "Pilih Outlet Terdekat Dengan Anda";
+
+            if (outletFiltered.length === 0) {
+                outletFiltered = dataSemuaOutlet.filter(outlet => outlet.prov === prov);
+                message = "Outlet belum ada di kota ini. Ini cabang terdekat di Provinsi Anda:";
+            }
+
+            if (outletFiltered.length === 0) {
+                outletFiltered = dataSemuaOutlet;
+                message = "Outlet belum ada di wilayah Anda. Silakan pilih cabang alternatif:";
+            }
+
+            let defaultOpt = document.createElement('option');
+            defaultOpt.value = "";
+            defaultOpt.innerHTML = message;
+            outletSelect.appendChild(defaultOpt);
+
+            outletFiltered.forEach(outlet => {
+                let opt = document.createElement('option'); 
+                opt.value = outlet.text; 
+                opt.innerHTML = outlet.text; 
+                outletSelect.appendChild(opt);
+            });
+        }
+
+        // --- 3. LOGIKA TAMBAH/KURANG (ANTI-BENTROK DENGAN NAVBAR) ---
+        function updateChkQty(id, action) {
+            let qtyElement = document.getElementById('chk-qty-' + id);
+            let productElement = document.getElementById('chk-produk-' + id);
+            let currentQty = parseInt(qtyElement.innerText);
+            
+            let newQty = action === 'beli' ? currentQty + 1 : currentQty - 1;
+
+            if (newQty <= 0) {
+                productElement.remove();
+            } else {
+                qtyElement.innerText = newQty;
+            }
+
+            recalculateTotal();
+
+            fetch('/' + action + '/' + id, { method: 'GET' })
+                .catch(error => console.log('Gagal update session:', error));
+        }
+
+        function recalculateTotal() {
+            let total = 0;
+            let items = document.querySelectorAll('.chk-product-item');
+            
+            items.forEach(item => {
+                let price = parseInt(item.getAttribute('data-price'));
+                let qty = parseInt(item.querySelector('.chk-qty-val').innerText);
+                total += (price * qty);
+            });
+
+            document.getElementById('total-harga-display').innerText = 'Rp ' + total.toLocaleString('id-ID');
+        }
+
+        // --- 4. VALIDASI & PEMBAYARAN VIA AJAX ---
+        document.getElementById('tombol-bayar').onclick = async function (e) {
+            e.preventDefault(); 
+
+            const fields = ['provinsi', 'kabupaten', 'outlet', 'desa', 'alamat_detail'];
+            for (let f of fields) { 
+                let val = document.getElementById(f).value;
+                if (!val) { 
+                    alert("Waduh bos, alamat dan outlet terdekat diisi dulu biar nggak nyasar!"); 
+                    return; 
+                } 
+            }
+            
+            let totalText = document.getElementById('total-harga-display').innerText;
+            if(totalText === 'Rp 0') {
+                alert("Keranjang kosong bos! Tambah produk dulu ya.");
+                return;
+            }
+
+            const payload = {
+                provinsi: document.getElementById('provinsi').value,
+                kabupaten: document.getElementById('kabupaten').value,
+                outlet: document.getElementById('outlet').value,
+                desa: document.getElementById('desa').value,
+                kodepos: document.getElementById('kodepos').value,
+                alamat_detail: document.getElementById('alamat_detail').value,
+                catatan: document.getElementById('catatan_pesanan') ? document.getElementById('catatan_pesanan').value : '',
+                items: []
+            };
+
+            // Mengambil barang berdasarkan Class yang kebal bentrok
+            document.querySelectorAll('.chk-product-item').forEach(item => {
+                const idFull = item.getAttribute('id');
+                const id = idFull.replace('chk-produk-', ''); 
+                const harga = parseInt(item.getAttribute('data-price'));
+                const qty = parseInt(item.querySelector('.chk-qty-val').innerText);
+                const nama = item.querySelector('.chk-nama-produk').innerText;
+
+                payload.items.push({ id: id, nama: nama, harga_baru: harga, quantity: qty });
+            });
+
+            const btn = document.getElementById('tombol-bayar');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> MEMPROSES...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch('/proses-checkout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest', 
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+
+                if(data.status === 'success' && data.snap_token) {
+                    window.snap.pay(data.snap_token, {
+                        onSuccess: function(result){ window.location.href = "/pembayaran-sukses"; },
+                        onPending: function(result){ alert("Menunggu pembayaran Anda..."); },
+                        onError: function(result){ 
+                            alert("Pembayaran gagal!"); 
+                            btn.innerHTML = originalText;
+                            btn.disabled = false;
+                        },
+                        onClose: function(){ 
+                            alert("Popup ditutup tanpa menyelesaikan pembayaran."); 
+                            btn.innerHTML = originalText;
+                            btn.disabled = false;
+                        }
+                    });
+                } else {
+                    alert('Terjadi kesalahan: ' + (data.message || 'Gagal memproses pesanan.'));
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }
+            } catch (error) {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                alert('Terjadi kesalahan jaringan atau server.');
+                console.error(error);
+            }
+        };
+    </script>
 
     <footer class="mt-8 relative z-30 bg-white border-t-4 border-[#FFD429]">
         <div class="max-w-7xl mx-auto px-6 py-6 grid grid-cols-1 md:grid-cols-3 gap-6 items-start text-center md:text-left relative z-20">
@@ -297,58 +431,7 @@
         <div class="relative z-10" style="width: 100%; height: 200px; background-image: url('{{ asset('image/footer.png') }}'); background-repeat: repeat-x; background-size: contain; background-position: bottom; margin-top: -10px;"></div>
     </footer>
 
-    <script>
-        // 1. LOGIKA LOADING BAR
-        window.addEventListener('load', () => {
-            const bar = document.getElementById('bar');
-            const percentText = document.getElementById('percent');
-            let width = 0;
-            
-            const interval = setInterval(() => {
-                if (width >= 100) {
-                    clearInterval(interval);
-                    setTimeout(() => {
-                        document.body.classList.add('loaded');
-                        setTimeout(() => {
-                            document.getElementById('loading-screen').style.display = 'none';
-                        }, 500);
-                    }, 300);
-                } else {
-                    width += 5;
-                    bar.style.width = width + '%';
-                    percentText.innerText = width + '%';
-                }
-            }, 30);
-        });
-
-        // 2. LOGIKA HAMBURGER MENU MOBILE
-        const menuBtn = document.getElementById('menuBtn');
-        const mobileMenu = document.getElementById('mobileMenu');
-        const menuIcon = document.getElementById('menuIcon');
-
-        menuBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-            
-            if (mobileMenu.classList.contains('hidden')) {
-                menuIcon.classList.replace('fa-times', 'fa-bars');
-            } else {
-                menuIcon.classList.replace('fa-bars', 'fa-times');
-            }
-        });
-    </script>
-
-    @if(isset($snapToken))
-    <script type="text/javascript">
-      document.getElementById('tombol-bayar').onclick = function () {
-        window.snap.pay('{{ $snapToken }}', {
-          onSuccess: function(result){ window.location.href = "/pembayaran-sukses"; },
-          onPending: function(result){ alert("Harap selesaikan pembayaran sesuai instruksi!"); },
-          onError: function(result){ alert("Waduh bos, pembayaran gagal!"); },
-          onClose: function(){ alert('Loh kok pop-up ditutup? Belum bayar lho bos!'); }
-        });
-      };
-    </script>
-    @endif
-
+        @include('components.cart-script')
+        
 </body>
 </html>

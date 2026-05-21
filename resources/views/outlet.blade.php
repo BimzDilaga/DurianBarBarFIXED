@@ -112,55 +112,7 @@
 
     <div class="top-line"></div>
 
-    <header class="sticky top-0 bg-white/95 backdrop-blur-md py-4 shadow-sm border-b border-gray-100 z-50 transition duration-300">
-        <div class="container mx-auto max-w-7xl px-6 flex justify-between items-center">
-            
-            <div class="logo-glow">
-                <a href="/" class="block transform hover:scale-105 transition duration-300">
-                    <img src="{{ asset('image/Logo.png') }}" alt="Logo" class="h-[80px] md:h-[90px] object-contain">
-                </a>
-            </div>
-
-            <nav class="hidden md:block">
-                <ul class="flex space-x-10 text-[15px] font-[900] text-zinc-700 uppercase tracking-wider">
-                    <li><a href="/" class="nav-link hover:text-[#39AE1F] transition duration-300">Home</a></li>
-                    <li><a href="/menu" class="nav-link hover:text-[#39AE1F] transition duration-300">Menu</a></li>
-                    <li><a href="/outlet" class="nav-link text-[#39AE1F] active">Outlet</a></li>
-                    <li><a href="/about" class="nav-link hover:text-[#39AE1F] transition duration-300">About Us</a></li>
-                    <li><a href="/contact" class="nav-link hover:text-[#39AE1F] transition duration-300">Contact Us</a></li>
-                </ul>
-            </nav>
-            
-            <div class="flex items-center gap-4">
-                <div class="user-profile relative">
-                    @auth
-                        <a href="/profile" class="group flex items-center justify-center p-1 rounded-full bg-gradient-to-tr from-green-500 to-lime-400 shadow-md group hover:shadow-lg transition duration-300">
-                            <i class="fas fa-user-circle shadow-sm bg-white rounded-full hover:scale-110 transition duration-300 text-[#39AE1F] text-[42px]"></i>
-                        </a>
-                    @else
-                        <a href="/login" class="group flex items-center justify-center p-1 rounded-full bg-gray-100 border border-gray-200 hover:bg-gray-200 shadow-sm transition duration-300">
-                            <i class="fas fa-user-circle text-[42px] text-gray-400 group-hover:text-gray-500 transition duration-300"></i>
-                        </a>
-                    @endauth
-                </div>
-
-                <button id="menuBtn" class="block md:hidden text-gray-700 text-2xl focus:outline-none p-2 hover:text-[#39AE1F] transition">
-                    <i class="fas fa-bars" id="menuIcon"></i>
-                </button>
-            </div>
-        </div>
-
-        <nav id="mobileMenu" class="hidden md:hidden bg-white w-full border-t border-gray-100 shadow-lg absolute top-full left-0 z-50">
-            <ul class="flex flex-col text-[15px] font-[900] text-zinc-800 uppercase tracking-widest py-4">
-                <li><a href="/" class="block px-8 py-3 hover:bg-gray-50 hover:text-[#39AE1F] transition">Home</a></li>
-                <li><a href="/menu" class="block px-8 py-3 hover:bg-gray-50 hover:text-[#39AE1F] transition">Menu</a></li>
-                <li><a href="/outlet" class="block px-8 py-3 bg-green-50 text-[#39AE1F] border-l-4 border-[#39AE1F]">Outlet</a></li>
-                <li><a href="/about" class="block px-8 py-3 hover:bg-gray-50 hover:text-[#39AE1F] transition">About Us</a></li>
-                <li><a href="/contact" class="block px-8 py-3 hover:bg-gray-50 hover:text-[#39AE1F] transition">Contact Us</a></li>
-            </ul>
-        </nav>
-    </header>
-
+    @include('components.navbar')
     <main>
         <div class="banner-outlet relative z-20 shadow-md">
             <h1 class="text-center text-white text-[50px] font-black uppercase tracking-tighter m-0">OUTLET</h1>
@@ -250,7 +202,7 @@
     </footer>
 
     <script>
-        // 1. LOGIKA LOADING BAR
+        // 1. LOGIKA LOADING BAR (Biarkan ini tetap ada biar loading layarnya jalan)
         window.addEventListener('load', () => {
             const bar = document.getElementById('bar');
             const percentText = document.getElementById('percent');
@@ -260,30 +212,20 @@
                     clearInterval(interval);
                     setTimeout(() => {
                         document.body.classList.add('loaded');
-                        setTimeout(() => { document.getElementById('loading-screen').style.display = 'none'; }, 500);
+                        setTimeout(() => { 
+                            const loadingScreen = document.getElementById('loading-screen');
+                            if(loadingScreen) loadingScreen.style.display = 'none'; 
+                        }, 500);
                     }, 300);
                 } else {
                     width += 5;
-                    bar.style.width = width + '%';
-                    percentText.innerText = width + '%';
+                    if(bar) bar.style.width = width + '%';
+                    if(percentText) percentText.innerText = width + '%';
                 }
             }, 30);
         });
-
-        // 2. LOGIKA HAMBURGER MENU MOBILE
-        const menuBtn = document.getElementById('menuBtn');
-        const mobileMenu = document.getElementById('mobileMenu');
-        const menuIcon = document.getElementById('menuIcon');
-
-        menuBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-            
-            if (mobileMenu.classList.contains('hidden')) {
-                menuIcon.classList.replace('fa-times', 'fa-bars');
-            } else {
-                menuIcon.classList.replace('fa-bars', 'fa-times');
-            }
-        });
     </script>
+    
+    @include('components.cart-script')
 </body>
 </html>

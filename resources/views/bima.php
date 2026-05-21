@@ -1,1 +1,1 @@
-<?php
+verify-email.blade.php

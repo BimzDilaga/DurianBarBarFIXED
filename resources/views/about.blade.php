@@ -48,20 +48,6 @@
             border-radius: 50%; z-index: -1;
         }
 
-        /* CUSTOM ANIMASI UNDERLINE UNTUK NAV LINK */
-        .nav-link {
-            position: relative;
-            padding-bottom: 4px;
-        }
-        .nav-link::after {
-            content: ''; position: absolute; width: 0; height: 3px;
-            bottom: 0; left: 50%; background-color: #39AE1F;
-            transition: width 0.3s ease, left 0.3s ease;
-        }
-        .nav-link:hover::after, .nav-link.active::after {
-            width: 100%; left: 0;
-        }
-
         /* ================= DEKORASI POHON JUMBO ================= */
         .tree-wrapper { position: relative; width: 100%; max-width: 1400px; margin: 0 auto; }
         .tree-decor {
@@ -69,6 +55,19 @@
         }
         .tree-left { left: -180px; transform: scaleX(-1); }
         .tree-right { right: -180px; }
+
+        /* ================= KELAS ANIMASI SCROLL ================= */
+        .reveal-up { opacity: 0; transform: translateY(40px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        .reveal-left { opacity: 0; transform: translateX(-50px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        .reveal-right { opacity: 0; transform: translateX(50px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        .reveal-active { opacity: 1; transform: translate(0, 0); }
+
+        /* Animasi berputar untuk watermark */
+        @keyframes slowSpin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .animate-slow-spin { animation: slowSpin 60s linear infinite; }
 
         /* AUTOMATIC TYPOGRAPHY HIERARCHY MANAGER */
         h1, h2, h3, h4, h5, h6, .loading-text {
@@ -102,15 +101,44 @@
 
             <nav class="hidden md:block">
                 <ul class="flex space-x-10 text-[15px] font-[900] text-zinc-700 uppercase tracking-wider">
-                    <li><a href="/" class="nav-link hover:text-[#39AE1F] transition duration-300">Home</a></li>
-                    <li><a href="/menu" class="nav-link hover:text-[#39AE1F] transition duration-300">Menu</a></li>
-                    <li><a href="/outlet" class="nav-link hover:text-[#39AE1F] transition duration-300">Outlet</a></li>
-                    <li><a href="/about" class="nav-link text-[#39AE1F] active">About Us</a></li>
-                    <li><a href="/contact" class="nav-link hover:text-[#39AE1F] transition duration-300">Contact Us</a></li>
+                    <li><a href="/" class="hover:text-[#39AE1F] transition duration-300">Home</a></li>
+                    <li><a href="/menu" class="hover:text-[#39AE1F] transition duration-300">Menu</a></li>
+                    <li><a href="/outlet" class="hover:text-[#39AE1F] transition duration-300">Outlet</a></li>
+                    <li><a href="/about" class="text-[#39AE1F] border-b-[3px] border-[#39AE1F] pb-1 transition duration-300">About Us</a></li>
+                    <li><a href="/contact" class="hover:text-[#39AE1F] transition duration-300">Contact Us</a></li>
                 </ul>
             </nav>
             
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-4 relative">
+                
+                <div class="relative">
+                    <button id="cartBtn" class="group flex items-center justify-center p-2.5 rounded-full bg-gray-100 border border-gray-200 hover:bg-green-50 hover:border-green-200 shadow-sm transition duration-300 relative">
+                        <i class="fas fa-shopping-cart text-[20px] text-gray-400 group-hover:text-[#39AE1F] transition duration-300"></i>
+                        <span id="cartBadge" class="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[10px] font-black px-1.5 py-0.5 rounded-full border-2 border-white shadow-sm" style="display: none;">0</span>
+                    </button>
+
+                    <div id="cartDropdown" class="hidden absolute right-0 mt-3 w-[350px] bg-white rounded-2xl shadow-2xl border border-gray-100 z-[100] transform opacity-0 scale-95 transition-all duration-300 origin-top-right overflow-hidden">
+                        <div class="p-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
+                            <h3 class="font-[900] text-zinc-800 text-[15px] italic">Keranjang Saya</h3>
+                            <span id="cartItemCount" class="text-xs font-bold text-gray-500">0 Item</span>
+                        </div>
+                        
+                        <div id="cartItemsContainer" class="max-h-[250px] overflow-y-auto p-4 space-y-4"></div>
+
+                        <div class="p-4 border-t border-gray-100 bg-white">
+                            <div class="flex justify-between items-center mb-3">
+                                <span class="text-[13px] font-[800] text-zinc-500">Subtotal:</span>
+                                <span id="cartSubtotal" class="text-[18px] font-[900] text-[#39AE1F]">Rp 0</span>
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                <a href="/checkout" class="block w-full bg-[#39AE1F] text-white text-center py-2.5 rounded-xl font-[900] uppercase tracking-wider text-[13px] hover:bg-green-700 transition shadow-md italic">
+                                    Lanjut Checkout
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="user-profile relative">
                     @auth
                         <a href="/profile" class="group flex items-center justify-center p-1 rounded-full bg-gradient-to-tr from-green-500 to-lime-400 shadow-md group hover:shadow-lg transition duration-300">
@@ -150,28 +178,29 @@
             <img src="{{ asset('image/pohon-durian.png') }}" class="tree-decor tree-right hidden xl:block">
 
             <div class="container mx-auto max-w-5xl px-6 relative z-10 py-16 text-center">
-                <div class="absolute inset-0 flex justify-center items-center z-0 pointer-events-none opacity-5">
-                    <img src="{{ asset('image/Logo.png') }}" alt="Watermark" class="w-[500px] object-contain">
+                <div class="absolute inset-0 flex justify-center items-center z-0 pointer-events-none opacity-[0.15]">
+                <img src="{{ asset('image/Logo.png') }}" alt="Watermark" class="w-[500px] object-contain animate-slow-spin">
                 </div>
 
-                <h2 class="text-3xl md:text-[40px] font-black mb-10 tracking-tight uppercase">
+                <h2 class="text-3xl md:text-[40px] font-black mb-10 tracking-tight uppercase reveal-up js-reveal">
                     <span class="text-[#39AE1F]">Selamat datang</span> 
                     <span class="text-[#FFD429]">di website kami!</span>
                 </h2>
 
-                <p class="text-zinc-700 font-bold text-lg md:text-[17px] leading-[1.8] mb-16 px-2 md:px-10 text-justify md:text-center">
+                <p class="text-zinc-700 font-bold text-lg md:text-[17px] leading-[1.8] mb-16 px-2 md:px-10 text-justify md:text-center reveal-up js-reveal" style="transition-delay: 150ms;">
                     Kami menyediakan berbagai makanan dan minuman favorit seperti es durian, mie ayam, es dawet, dan aneka camilan dengan rasa terbaik dan kualitas terjamin. Kami berkomitmen memberikan pengalaman kuliner yang mudah, cepat, dan menyenangkan dengan mengutamakan bahan berkualitas, pelayanan ramah, serta harga terjangkau. Kami juga terus berinovasi menghadirkan menu baru sesuai selera pelanggan.
                 </p>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-14 text-left">
-                    <div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-14 text-left overflow-hidden">
+                    <div class="reveal-left js-reveal" style="transition-delay: 300ms;">
                         <img src="{{ asset('image/visi.png') }}" alt="Visi BarBar" class="w-full h-64 object-cover rounded-[35px] shadow-lg mb-6 border-4 border-white transition-all duration-300 hover:-translate-y-3 hover:scale-[1.03] hover:shadow-2xl cursor-pointer">
                         <h3 class="text-[#39AE1F] text-2xl font-black mb-3 uppercase tracking-tight">Visi:</h3>
                         <p class="text-zinc-700 text-base font-bold leading-relaxed">
                             Menjadi pilihan utama masyarakat dalam menikmati makanan dan minuman berkualitas.
                         </p>
                     </div>
-                    <div>
+                    
+                    <div class="reveal-right js-reveal" style="transition-delay: 450ms;">
                         <img src="{{ asset('image/misi.png') }}" alt="Misi BarBar" class="w-full h-64 object-cover rounded-[35px] shadow-lg mb-6 border-4 border-white transition-all duration-300 hover:-translate-y-3 hover:scale-[1.03] hover:shadow-2xl cursor-pointer">
                         <h3 class="text-[#FFD429] text-2xl font-black mb-3 uppercase tracking-tight">Misi:</h3>
                         <ul class="text-zinc-700 text-base font-bold leading-relaxed list-disc pl-5 space-y-2">
@@ -182,7 +211,7 @@
                     </div>
                 </div>
 
-                <div class="mt-20">
+                <div class="mt-20 reveal-up js-reveal" style="transition-delay: 600ms;">
                     <p class="font-black text-zinc-800 text-base md:text-xl uppercase tracking-tight">
                         Terima kasih telah mempercayai kami. Kami berharap dapat menjadi bagian dari momen spesial Anda.
                     </p>
@@ -267,30 +296,55 @@
                     clearInterval(interval);
                     setTimeout(() => {
                         document.body.classList.add('loaded');
-                        setTimeout(() => { document.getElementById('loading-screen').style.display = 'none'; }, 500);
+                        setTimeout(() => { 
+                            const loadingScreen = document.getElementById('loading-screen');
+                            if(loadingScreen) loadingScreen.style.display = 'none'; 
+                        }, 500);
                     }, 300);
                 } else {
                     width += 5;
-                    bar.style.width = width + '%';
-                    percentText.innerText = width + '%';
+                    if(bar) bar.style.width = width + '%';
+                    if(percentText) percentText.innerText = width + '%';
                 }
             }, 30);
         });
 
-        // 2. LOGIKA HAMBURGER MENU MOBILE
+        // 2. LOGIKA NAVBAR MOBILE
         const menuBtn = document.getElementById('menuBtn');
         const mobileMenu = document.getElementById('mobileMenu');
         const menuIcon = document.getElementById('menuIcon');
+        if(menuBtn && mobileMenu) {
+            menuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+                if (mobileMenu.classList.contains('hidden')) { menuIcon.classList.replace('fa-times', 'fa-bars'); } 
+                else { menuIcon.classList.replace('fa-bars', 'fa-times'); }
+            });
+        }
 
-        menuBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-            
-            if (mobileMenu.classList.contains('hidden')) {
-                menuIcon.classList.replace('fa-times', 'fa-bars');
-            } else {
-                menuIcon.classList.replace('fa-bars', 'fa-times');
-            }
+        // 3. LOGIKA ANIMASI SCROLL (INTERSECTION OBSERVER)
+        document.addEventListener("DOMContentLoaded", function() {
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.15
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('reveal-active');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            const revealElements = document.querySelectorAll('.js-reveal');
+            revealElements.forEach(el => {
+                observer.observe(el);
+            });
         });
     </script>
+    
+    @include('components.cart-script')
 </body>
 </html>

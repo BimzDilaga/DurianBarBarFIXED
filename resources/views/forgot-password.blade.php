@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lupa Password - Bar Bar Es Duren</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        body { 
+            font-family: 'Montserrat', sans-serif; 
+            background-color: #f3f4f6; 
+            background-image: url("{{ asset('image/texture.png') }}"); 
+            background-blend-mode: multiply;
+        }
+    </style>
+</head>
+<body class="flex justify-center items-center min-h-screen p-4 relative">
+
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#39AE1F] opacity-20 blur-[100px] rounded-full z-0"></div>
+
+    <div class="bg-white p-8 md:p-10 rounded-[40px] shadow-2xl w-full max-w-md border-2 border-gray-100 relative z-10">
+        
+        <div class="flex justify-center mb-4">
+            <img src="{{ asset('image/logo.png') }}" alt="Logo Bar Bar" class="h-20 object-contain drop-shadow-md">
+        </div>
+
+        <h1 class="text-2xl font-black text-center mb-2 italic uppercase tracking-tighter text-black">
+            Lupa Password
+        </h1>
+        <p class="text-center text-sm font-bold text-gray-500 mb-8">
+            Masukkan email kamu, kami akan mengirimkan instruksi untuk mereset password.
+        </p>
+
+        <form action="/forgot-password" method="POST" class="space-y-4">
+            @csrf
+            <div>
+                <input type="email" name="email" placeholder="Alamat Email Terdaftar" required 
+                    class="w-full px-5 py-4 bg-gray-50 border-2 border-gray-200 rounded-2xl font-bold text-gray-800 focus:bg-white focus:border-[#39AE1F] focus:outline-none transition">
+            </div>
+            
+            <button type="submit" class="w-full bg-[#39AE1F] hover:bg-green-700 text-white font-black text-lg py-4 rounded-2xl uppercase italic tracking-widest shadow-lg hover:-translate-y-1 transition duration-300 mt-4">
+                Kirim Link Reset
+            </button>
+        </form>
+        
+        <p class="text-center mt-8 font-bold text-gray-500">
+            Ingat passwordmu? <a href="/login" class="text-[#39AE1F] hover:text-green-700 border-b-2 border-[#39AE1F] pb-0.5 transition">Kembali ke Login</a>
+        </p>
+    </div>
+
+</body>
+</html>

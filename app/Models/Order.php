@@ -8,13 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class Order extends Model
 {
     use HasFactory;
+    
+    // Wajib ditambahkan agar kolom 'items' JSON bisa menerima data keranjang
+    protected $casts = [
+        'items' => 'array',
+    ];
 
-    // Kolom yang boleh diisi otomatis
-    protected $fillable = ['user_id', 'nama_produk', 'harga'];
-
-    // Bikin relasi supaya Order tau ini punyanya User siapa
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
+    // Mengizinkan penyimpanan data secara langsung (Mass Assignment)
+    protected $guarded = []; 
 }

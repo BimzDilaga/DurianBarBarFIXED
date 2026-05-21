@@ -63,5 +63,16 @@
 
     </main>
 
+    <script>
+        window.onload = function() {
+            // Hapus data keranjang dari memori browser menggunakan nama kunci yang TEPAT
+            localStorage.removeItem('barbar_cart');
+            
+            // Atur kembali menjadi array kosong agar fungsi renderCartHeader tidak error
+            localStorage.setItem('barbar_cart', JSON.stringify([]));
+        };
+    </script>
+
+
 </body>
 </html>

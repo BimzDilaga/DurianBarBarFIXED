@@ -110,85 +110,7 @@
 
     <div class="top-line"></div>
 
-    <header class="sticky top-0 bg-white/95 backdrop-blur-md py-4 shadow-sm border-b border-gray-100 z-50 transition duration-300">
-        <div class="container mx-auto max-w-7xl px-6 flex justify-between items-center">
-            
-            <div class="logo-glow">
-                <a href="/" class="block transform hover:scale-105 transition duration-300">
-                    <img src="{{ asset('image/Logo.png') }}" alt="Logo" class="h-[80px] md:h-[90px] object-contain">
-                </a>
-            </div>
-
-            <nav class="hidden md:block">
-                <ul class="flex space-x-10 text-[15px] font-[900] text-zinc-700 uppercase tracking-wider">
-                    <li><a href="/" class="nav-link hover:text-[#39AE1F] transition duration-300">Home</a></li>
-                    <li><a href="/menu" class="nav-link text-[#39AE1F] active">Menu</a></li>
-                    <li><a href="/outlet" class="nav-link hover:text-[#39AE1F] transition duration-300">Outlet</a></li>
-                    <li><a href="/about" class="nav-link hover:text-[#39AE1F] transition duration-300">About Us</a></li>
-                    <li><a href="/contact" class="nav-link hover:text-[#39AE1F] transition duration-300">Contact Us</a></li>
-                </ul>
-            </nav>
-            
-            <div class="flex items-center gap-4 relative">
-                
-                <div class="relative">
-                    <button id="cartBtn" class="group flex items-center justify-center p-2.5 rounded-full bg-gray-100 border border-gray-200 hover:bg-green-50 hover:border-green-200 shadow-sm transition duration-300 relative">
-                        <i class="fas fa-shopping-cart text-[20px] text-gray-400 group-hover:text-[#39AE1F] transition duration-300"></i>
-                        <span id="cartBadge" class="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[10px] font-black px-1.5 py-0.5 rounded-full border-2 border-white shadow-sm" style="display: none;">0</span>
-                    </button>
-
-                    <div id="cartDropdown" class="hidden absolute right-0 mt-3 w-[350px] bg-white rounded-2xl shadow-2xl border border-gray-100 z-[100] transform opacity-0 scale-95 transition-all duration-300 origin-top-right overflow-hidden">
-                        <div class="p-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
-                            <h3 class="font-[900] text-zinc-800 text-[15px] italic">Keranjang Saya</h3>
-                            <span id="cartItemCount" class="text-xs font-bold text-gray-500">0 Item</span>
-                        </div>
-                        
-                        <div id="cartItemsContainer" class="max-h-[250px] overflow-y-auto p-4 space-y-4"></div>
-
-                        <div class="p-4 border-t border-gray-100 bg-white">
-                            <div class="flex justify-between items-center mb-3">
-                                <span class="text-[13px] font-[800] text-zinc-500">Subtotal:</span>
-                                <span id="cartSubtotal" class="text-[18px] font-[900] text-[#39AE1F]">Rp 0</span>
-                            </div>
-                            <div class="flex flex-col gap-2">
-                                <a href="/checkout" class="block w-full bg-[#39AE1F] text-white text-center py-2.5 rounded-xl font-[900] uppercase tracking-wider text-[13px] hover:bg-green-700 transition shadow-md italic">
-                                    Lanjut Checkout
-                                </a>
-                                <a href="/menu" class="block w-full bg-green-50 text-[#39AE1F] border border-[#39AE1F] text-center py-2 rounded-xl font-[800] uppercase tracking-wider text-[12px] hover:bg-[#39AE1F] hover:text-white transition italic">
-                                    + Kategori Menu Lain
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="user-profile relative">
-                    @auth
-                        <a href="/profile" class="group flex items-center justify-center p-1 rounded-full bg-gradient-to-tr from-green-500 to-lime-400 shadow-md group hover:shadow-lg transition duration-300">
-                            <i class="fas fa-user-circle shadow-sm bg-white rounded-full hover:scale-110 transition duration-300 text-[#39AE1F] text-[42px]"></i>
-                        </a>
-                    @else
-                        <a href="/login" class="group flex items-center justify-center p-1 rounded-full bg-gray-100 border border-gray-200 hover:bg-gray-200 shadow-sm transition duration-300">
-                            <i class="fas fa-user-circle text-[42px] text-gray-400 group-hover:text-gray-500 transition duration-300"></i>
-                        </a>
-                    @endauth
-                </div>
-
-                <button id="menuBtn" class="block md:hidden text-gray-700 text-2xl focus:outline-none p-2 hover:text-[#39AE1F] transition">
-                    <i class="fas fa-bars" id="menuIcon"></i>
-                </button>
-            </div>
-        </div>
-
-        <nav id="mobileMenu" class="hidden md:hidden bg-white w-full border-t border-gray-100 shadow-lg absolute top-full left-0 z-50">
-            <ul class="flex flex-col text-[15px] font-[900] text-zinc-800 uppercase tracking-widest py-4">
-                <li><a href="/" class="block px-8 py-3 hover:bg-gray-50 hover:text-[#39AE1F] transition">Home</a></li>
-                <li><a href="/menu" class="block px-8 py-3 bg-green-50 text-[#39AE1F] border-l-4 border-[#39AE1F]">Menu</a></li>
-                <li><a href="/outlet" class="block px-8 py-3 hover:bg-gray-50 hover:text-[#39AE1F] transition">Outlet</a></li>
-                <li><a href="/about" class="block px-8 py-3 hover:bg-gray-50 hover:text-[#39AE1F] transition">About Us</a></li>
-                <li><a href="/contact" class="block px-8 py-3 hover:bg-gray-50 hover:text-[#39AE1F] transition">Contact Us</a></li>
-            </ul>
-        </nav>
-    </header>
+    @include('components.navbar')
 
     <main>
         <div class="bg-[#FFC107] w-full py-3 relative shadow-md flex justify-center items-center">
@@ -222,7 +144,7 @@
                                 </p>
                             </div>
                             
-                            <div class="flex justify-between items-center mt-4 border-t-2 border-gray-100 pt-4">
+                            <div class="flex justify-between items-center mt-4 border-t-2 border-gray-100 pt-4 flex-wrap gap-y-4">
                                 <div class="flex flex-col price-badge">
                                     @if($item->harga_lama && $item->harga_lama > $item->harga_baru)
                                         <span class="text-sm text-gray-400 line-through font-bold leading-none mb-1">
@@ -234,13 +156,18 @@
                                     </span>
                                 </div>
                                 
-                                <div class="flex items-center gap-4">
-                                    <a href="/detail/{{ $item->id }}" class="text-[#39AE1F] font-[900] text-sm uppercase tracking-widest italic border-b-[3px] border-[#39AE1F] pb-[2px] hover:opacity-75 transition">
+                                <div class="flex items-center flex-wrap gap-2 md:gap-3">
+                                    <a href="/detail/{{ $item->id }}" class="text-[#39AE1F] font-[900] text-[13px] uppercase tracking-widest italic border-b-[3px] border-[#39AE1F] pb-[2px] hover:opacity-75 transition mr-1">
                                         Details
                                     </a>
-                                    <button type="button" onclick="addToCart('{{ $item->id }}', '{{ $item->nama }}', {{ $item->harga_baru }}, '{{ asset('image/' . $item->gambar) }}')" class="bg-[#39AE1F] text-white px-6 py-2 rounded-full font-black text-sm flex items-center gap-2 hover:bg-green-700 transition shadow-sm uppercase tracking-wider cursor-pointer">
-                                        <i class="fas fa-shopping-cart"></i> Buy
+                                    
+                                    <button type="button" onclick="addToCart('{{ $item->id }}', '{{ $item->nama }}', {{ $item->harga_baru }}, '{{ asset('image/' . $item->gambar) }}')" class="bg-[#39AE1F] text-white px-4 py-2 rounded-full font-black text-[11px] md:text-[12px] flex items-center gap-1.5 hover:bg-green-700 transition shadow-sm uppercase tracking-wider cursor-pointer">
+                                        <i class="fas fa-shopping-cart"></i> Keranjang
                                     </button>
+                                    
+                                    <a href="{{ url('/checkout') }}?action=buy_now&product_id={{ $item->id }}" class="bg-[#FFD429] text-gray-800 px-4 py-2 rounded-full font-black text-[11px] md:text-[12px] flex items-center gap-1.5 hover:bg-orange-500 hover:text-white transition-all duration-300 shadow-sm uppercase tracking-wider cursor-pointer">
+                                        <i class="fas fa-bolt"></i> Checkout
+                                    </a>
                                 </div>
                             </div>
                             
@@ -340,141 +267,8 @@
                 }
             }, 30);
         });
-
-        // 2. LOGIKA HAMBURGER MENU MOBILE
-        const menuBtn = document.getElementById('menuBtn');
-        const mobileMenu = document.getElementById('mobileMenu');
-        const menuIcon = document.getElementById('menuIcon');
-        menuBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-            if (mobileMenu.classList.contains('hidden')) { menuIcon.classList.replace('fa-times', 'fa-bars'); } 
-            else { menuIcon.classList.replace('fa-bars', 'fa-times'); }
-        });
-
-        // ==========================================
-        // 3. MESIN KERANJANG (LOCAL STORAGE)
-        // ==========================================
-        let cartData = JSON.parse(localStorage.getItem('barbar_cart')) || [];
-
-        function formatRupiah(angka) {
-            return 'Rp ' + angka.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-        }
-
-        function saveCart() {
-            localStorage.setItem('barbar_cart', JSON.stringify(cartData));
-        }
-
-        // Buka tutup dropdown keranjang
-        const cartBtn = document.getElementById('cartBtn');
-        const cartDropdown = document.getElementById('cartDropdown');
-
-        if(cartBtn && cartDropdown) {
-            cartBtn.addEventListener('click', (e) => {
-                e.stopPropagation(); 
-                if (cartDropdown.classList.contains('hidden')) {
-                    cartDropdown.classList.remove('hidden');
-                    setTimeout(() => {
-                        cartDropdown.classList.remove('opacity-0', 'scale-95');
-                        cartDropdown.classList.add('opacity-100', 'scale-100');
-                    }, 10);
-                } else {
-                    cartDropdown.classList.remove('opacity-100', 'scale-100');
-                    cartDropdown.classList.add('opacity-0', 'scale-95');
-                    setTimeout(() => { cartDropdown.classList.add('hidden'); }, 300); 
-                }
-            });
-
-            document.addEventListener('click', (e) => {
-                if (!cartBtn.contains(e.target) && !cartDropdown.contains(e.target) && !cartDropdown.classList.contains('hidden')) {
-                    cartDropdown.classList.remove('opacity-100', 'scale-100');
-                    cartDropdown.classList.add('opacity-0', 'scale-95');
-                    setTimeout(() => { cartDropdown.classList.add('hidden'); }, 300);
-                }
-            });
-        }
-
-        // Tampilkan data keranjang ke Dropdown
-        function renderCartHeader() {
-            const container = document.getElementById('cartItemsContainer');
-            if(!container) return;
-
-            container.innerHTML = ''; 
-            let totalHarga = 0; let totalBarang = 0;
-
-            if (cartData.length === 0) {
-                container.innerHTML = `<p class="text-center text-gray-400 text-xs py-4 font-bold">Keranjang masih kosong nih :(</p>`;
-            } else {
-                cartData.forEach((item, index) => {
-                    totalHarga += item.price * item.qty;
-                    totalBarang += item.qty;
-                    container.innerHTML += `
-                        <div class="flex gap-3">
-                            <img src="${item.img}" class="w-16 h-16 rounded-xl object-cover border border-gray-100 shadow-sm" alt="Item">
-                            <div class="flex-1 flex flex-col justify-between py-0.5">
-                                <div class="flex justify-between items-start">
-                                    <h4 class="text-[13px] font-[800] text-zinc-800 leading-tight">${item.name}</h4>
-                                    <button type="button" onclick="removeItem(${index})" class="text-gray-300 hover:text-red-500 transition"><i class="fas fa-trash-alt text-[12px]"></i></button>
-                                </div>
-                                <div class="flex items-center justify-between mt-2">
-                                    <span class="text-[13px] font-[900] text-[#39AE1F]">${formatRupiah(item.price)}</span>
-                                    <div class="flex items-center bg-gray-100 rounded-lg p-0.5">
-                                        <button type="button" onclick="changeQty(${index}, -1)" class="w-6 h-6 flex items-center justify-center bg-white rounded-md text-gray-600 hover:text-red-500 shadow-sm transition"><i class="fas fa-minus text-[10px]"></i></button>
-                                        <span class="w-7 text-center text-[12px] font-bold text-zinc-800">${item.qty}</span>
-                                        <button type="button" onclick="changeQty(${index}, 1)" class="w-6 h-6 flex items-center justify-center bg-white rounded-md text-gray-600 hover:text-[#39AE1F] shadow-sm transition"><i class="fas fa-plus text-[10px]"></i></button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                });
-            }
-            document.getElementById('cartSubtotal').innerText = formatRupiah(totalHarga);
-            document.getElementById('cartItemCount').innerText = totalBarang + ' Item';
-            const badge = document.getElementById('cartBadge');
-            badge.innerText = totalBarang;
-            badge.style.display = totalBarang > 0 ? 'block' : 'none';
-        }
-
-        // FUNGSI UTAMA: NAMBAH BARANG KE KERANJANG DARI TOMBOL BUY
-        function addToCart(id, name, price, img) {
-            const existingItem = cartData.find(item => item.id === id);
-            if (existingItem) {
-                existingItem.qty += 1;
-            } else {
-                cartData.push({id, name, price, img, qty: 1});
-            }
-            saveCart();
-            renderCartHeader();
-            
-            // Buka keranjang otomatis biar keliatan nambah
-            if (cartDropdown && cartDropdown.classList.contains('hidden')) {
-                cartDropdown.classList.remove('hidden');
-                setTimeout(() => {
-                    cartDropdown.classList.remove('opacity-0', 'scale-95');
-                    cartDropdown.classList.add('opacity-100', 'scale-100');
-                }, 10);
-            }
-        }
-
-        function removeItem(index) {
-            if(event) event.stopPropagation();
-            cartData.splice(index, 1);
-            saveCart();
-            renderCartHeader();
-        }
-
-        function changeQty(index, amount) {
-            if(event) event.stopPropagation();
-            if (cartData[index].qty + amount >= 1) {
-                cartData[index].qty += amount;
-                saveCart();
-                renderCartHeader();
-            }
-        }
-
-        window.addEventListener('DOMContentLoaded', () => {
-            renderCartHeader();
-        });
     </script>
+    
+    @include('components.cart-script')
 </body>
 </html>

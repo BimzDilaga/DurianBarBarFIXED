@@ -15,11 +15,8 @@ class MenuController extends Controller
     // ==========================================
     public function index()
     {
-        // Kita ambil semua produk untuk slider/keperluan lain
         $products = Product::all();
 
-        // Kita ambil 3 produk terbaru untuk bagian "Recommendation"
-        // Kita gunakan alias (AS) agar nama kolomnya cocok dengan file welcome.blade.php
         $recommendations = Product::select('id', 'nama as name', 'gambar as image', 'harga_baru')
                                     ->latest()
                                     ->take(3)
@@ -33,9 +30,7 @@ class MenuController extends Controller
     // ==========================================
     public function halamanMenu()
     {
-        // Mengelompokkan menu berdasarkan kategori (Minuman, Makanan, dll)
         $menus = Product::all()->groupBy('kategori');
-        
         return view('menu.index', compact('menus')); 
     }
 
@@ -54,24 +49,21 @@ class MenuController extends Controller
     // ==========================================
     public function show($id)
     {
-        // Jika ID tidak ketemu, otomatis lari ke halaman 404
         $product = Product::findOrFail($id);
         return view('detail', compact('product'));
     }
 
     // ==========================================
-    // 5. FITUR KERANJANG (CART) & CHECKOUT
+    // 5. FITUR KERANJANG (CART)
     // ==========================================
     public function beli($id)
     {
         $product = Product::findOrFail($id);
         $cart = session()->get('cart', []);
 
-        // Jika produk sudah ada di keranjang, tambah jumlahnya
         if(isset($cart[$id])) {
             $cart[$id]['quantity']++;
         } else {
-            // Jika belum ada, masukkan data baru
             $cart[$id] = [
                 "id" => $product->id,
                 "nama" => $product->nama,
@@ -103,8 +95,29 @@ class MenuController extends Controller
     // ==========================================
     // 6. FITUR CHECKOUT (MIDTRANS)
     // ==========================================
-    public function checkout()
+    public function checkout(Request $request)
     {
+        // TANGKAP DATA DARI JAVASCRIPT (LOCAL STORAGE)
+        // Jika ada form POST yang masuk membawa cart_data
+        if ($request->isMethod('post') && $request->has('cart_data')) {
+            $jsCart = json_decode($request->input('cart_data'), true);
+            $formattedCart = [];
+            
+            if (is_array($jsCart)) {
+                foreach ($jsCart as $item) {
+                    $formattedCart[$item['id']] = [
+                        'id' => $item['id'],
+                        'nama' => $item['name'], // Key dari JS
+                        'gambar' => basename($item['img']), // Ambil nama filenya saja
+                        'harga_baru' => $item['price'],
+                        'quantity' => $item['qty']
+                    ];
+                }
+            }
+            // Simpan sinkronisasi data ke Session Laravel
+            session()->put('cart', $formattedCart);
+        }
+
         $cart = session('cart');
         
         // Kalau keranjang kosong, lempar balik ke menu

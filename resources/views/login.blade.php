@@ -29,7 +29,7 @@
             background-color: #f3f4f6; 
             background-image: url("{{ asset('image/texture.png') }}"); 
             background-blend-mode: multiply;
-            overflow: hidden; /* Biar gak bisa scroll pas loading */
+            overflow: hidden; 
         }
         .loaded { overflow: auto; }
     </style>
@@ -83,12 +83,19 @@
                 <input type="email" name="email" placeholder="Alamat Email" required 
                     class="w-full px-5 py-4 bg-gray-50 border-2 border-gray-200 rounded-2xl font-bold text-gray-800 focus:bg-white focus:border-[#39AE1F] focus:outline-none transition">
             </div>
+            
             <div>
                 <input type="password" name="password" placeholder="Password" required 
                     class="w-full px-5 py-4 bg-gray-50 border-2 border-gray-200 rounded-2xl font-bold text-gray-800 focus:bg-white focus:border-[#39AE1F] focus:outline-none transition">
+                
+                <div class="text-right mt-2">
+                    <a href="/forgot-password" class="text-xs font-bold text-gray-400 hover:text-[#39AE1F] transition duration-300">
+                        Lupa password?
+                    </a>
+                </div>
             </div>
             
-            <button type="submit" class="w-full bg-[#39AE1F] hover:bg-green-700 text-white font-black text-lg py-4 rounded-2xl uppercase italic tracking-widest shadow-lg hover:-translate-y-1 transition duration-300 mt-4">
+            <button type="submit" class="w-full bg-[#39AE1F] hover:bg-green-700 text-white font-black text-lg py-4 rounded-2xl uppercase italic tracking-widest shadow-lg hover:-translate-y-1 transition duration-300 mt-2">
                 Login Sekarang
             </button>
         </form>

@@ -135,5 +135,6 @@
             }, 30);
         });
     </script>
+    @include('components.cart-script')
 </body>
 </html>
