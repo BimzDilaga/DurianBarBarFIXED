@@ -1,147 +1,108 @@
 <?php
 
-use App\Http\Controllers\ContactController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
+
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CheckoutController;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
-use Illuminate\Http\Request;
+// ==========================================
+// PANEL DEVELOPER / ADMIN (Wajib Login & Wajib Admin)
+// ==========================================
+use App\Http\Middleware\AdminMiddleware; 
 
-// Selipkan di dalam kelompok middleware (['auth', 'verified']) kamu yang di bagian bawah:
-Route::get('/riwayat', [CheckoutController::class, 'riwayat'])->name('riwayat.index');
+// Sesuaikan 'AdminController' dengan nama controller tempat bos menaruh fungsi di atas tadi
+Route::post('/admin/pesanan/update-status/{id}', [App\Http\Controllers\AdminController::class, 'updateStatusPesanan']);
+
+Route::middleware(['auth', AdminMiddleware::class])->group(function () {
+    Route::get('/admin/produk', [AdminController::class, 'index']);
+    Route::post('/admin/produk/simpan', [AdminController::class, 'simpanProduk']);
+   Route::post('/admin/produk/update-stok/{id}', [AdminController::class, 'updateStok']);
+    Route::post('/admin/produk/tambah-stok/{id}', [AdminController::class, 'tambahStok']);
+    Route::post('/admin/produk/kurang-stok/{id}', [AdminController::class, 'kurangStok']);
+    Route::post('/admin/produk/hapus/{id}', [AdminController::class, 'hapusProduk']);
+    Route::post('/admin/produk/update-stok-massal', [App\Http\Controllers\AdminController::class, 'updateStokMassal']);
+});
 
 // ==========================================
-// 1. HALAMAN UTAMA (Bisa diakses siapa saja)
+// HALAMAN UTAMA & MENU
 // ==========================================
 Route::get('/', [MenuController::class, 'index'])->name('home');
-
-// ==========================================
-// 2. MENU & DETAIL PRODUK (Bisa diakses siapa saja)
-// ==========================================
 Route::get('/menu', [MenuController::class, 'halamanMenu'])->name('menu.index');
 Route::get('/menu/{kategori}', [MenuController::class, 'showByCategory'])->name('menu.category');
 Route::get('/detail/{id}', [MenuController::class, 'show']);
 
 // ==========================================
-// 3. FITUR KERANJANG & CHECKOUT
+// FITUR KERANJANG & CHECKOUT
 // ==========================================
 Route::get('/beli/{id}', [MenuController::class, 'beli']); 
 Route::get('/kurang/{id}', [MenuController::class, 'kurang']); 
-
-// FITUR CHECKOUT (Wajib Login Dulu!)
-// Pakai "match" biar bisa nerima klik biasa (GET) maupun lemparan data dari pop-up keranjang Navbar (POST)
 Route::match(['get', 'post'], '/checkout', [CheckoutController::class, 'index'])->middleware('auth')->name('checkout.proses');
 
-// RUTE KHUSUS AJAX MIDTRANS (Ditembak diam-diam saat klik tombol "BAYAR SEKARANG")
 Route::post('/proses-checkout', function (Request $request) {
-    // 1. Jalankan proses checkout dari controller seperti biasa
     $response = app(CheckoutController::class)->prosesCheckout($request);
-    
-    // 2. KOSONGKAN KERANJANG seketika setelah pesanan berhasil diproses!
     session()->forget('cart');
-    
-    // 3. Kembalikan respon ke Midtrans
     return $response;
 })->middleware('auth')->name('midtrans.bayar');
 
-// WEBHOOK MIDTRANS (Terima Notifikasi Otomatis - Tidak Boleh Pakai Auth!)
 Route::post('/midtrans-callback', [CheckoutController::class, 'callback']);
 
 // ==========================================
-// 4. HALAMAN STATIS (Bisa diakses siapa saja)
+// HALAMAN STATIS
 // ==========================================
-Route::get('/about', function () {
-    return view('about');
-})->name('about');
-
-// Nampilin form Contact Us
-Route::get('/contact', function () {
-    return view('contact');
-});
-
-// Proses ngirim Email pas tombol "SEND IT!" diklik
+Route::get('/about', function () { return view('about'); })->name('about');
+Route::get('/outlet', function () { return view('outlet'); });
+Route::get('/contact', function () { return view('contact'); });
 Route::post('/contact', [ContactController::class, 'sendEmail']);
 
-Route::get('/outlet', function () {
-    return view('outlet');
-});
-
 // ==========================================
-// 5. AUTENTIKASI (LOGIN, REGISTER, LUPA PASSWORD, LOGOUT)
+// AUTENTIKASI (LOGIN, DLL)
 // ==========================================
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 Route::post('/register', [AuthController::class, 'register']);
-
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
-
-// === RUTE LUPA PASSWORD BARU ===
 Route::get('/forgot-password', [AuthController::class, 'showForgotPassword'])->name('password.request');
 Route::post('/forgot-password', [AuthController::class, 'sendResetLinkEmail'])->name('password.email');
-
-// === RUTE RESET PASSWORD (KLIK LINK DARI EMAIL) ===
 Route::get('/reset-password/{token}', [AuthController::class, 'showResetPassword'])->name('password.reset');
 Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update');
-
-// Logout wajib login dulu
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
 
-
 // ==========================================
-// 6. FITUR VERIFIKASI EMAIL
+// VERIFIKASI EMAIL
 // ==========================================
+Route::get('/email/verify', function () { return view('auth.verify-email'); })->middleware('auth')->name('verification.notice');
 
-// 1. Halaman "Tolong cek email kamu"
-Route::get('/email/verify', function () {
-    return view('auth.verify-email');
-})->middleware('auth')->name('verification.notice');
-
-// 2. Proses ketika user mengklik link verifikasi di email
 Route::get('/email/verify/{id}/{hash}', function ($id, $hash, Request $request) {
     $user = \App\Models\User::findOrFail($id);
-
     if (! hash_equals((string) $hash, sha1($user->getEmailForVerification()))) {
-        return abort(403, 'Link verifikasi tidak valid atau sudah kadaluarsa.');
+        return abort(403, 'Link kadaluarsa.');
     }
-
     if (! $user->hasVerifiedEmail()) {
         $user->markEmailAsVerified();
     }
-
-    // Paksa login otomatis
     \Illuminate\Support\Facades\Auth::login($user);
-
-    // DIARAHKAN KE HALAMAN SUKSES
     return redirect('/verifikasi-sukses'); 
 })->middleware(['signed'])->name('verification.verify');
 
-// 3. RUTE BARU: Menampilkan halaman sukses verifikasi
-Route::get('/verifikasi-sukses', function () {
-    return view('auth.verifikasi-sukses');
-})->middleware('auth');
+Route::get('/verifikasi-sukses', function () { return view('auth.verifikasi-sukses'); })->middleware('auth');
 
-// 4. Tombol untuk mengirim ulang email
 Route::post('/email/verification-notification', function (Request $request) {
     $request->user()->sendEmailVerificationNotification();
-    return back()->with('message', 'Link verifikasi yang baru sudah dikirim ke email kamu!');
+    return back()->with('message', 'Link dikirim!');
 })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 
-
 // ==========================================
-// 7. HAL halaman TERKUNCI (WAJIB LOGIN & VERIFIKASI EMAIL)
+// HALAMAN TERKUNCI
 // ==========================================
 Route::middleware(['auth', 'verified'])->group(function () {
-    
-    // Halaman Profil
-    Route::get('/profile', function () {
-        return view('profile');
-    })->name('profile');
-
-    // Halaman Pembayaran Sukses
+    Route::get('/profile', function () { return view('profile'); })->name('profile');
     Route::get('/pembayaran-sukses', function () {
-        session()->forget('cart'); // Backup tambahan
+        session()->forget('cart');
         return view('pembayaran-sukses');
     })->name('pembayaran.sukses');
-
+    Route::get('/riwayat', [CheckoutController::class, 'riwayat'])->name('riwayat.index');// Rute untuk memproses form tambah produk
+Route::post('/admin/produk/tambah', [AdminController::class, 'simpanProduk']);
 });

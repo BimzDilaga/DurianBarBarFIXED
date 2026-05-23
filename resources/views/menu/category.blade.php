@@ -44,7 +44,6 @@
             50% { transform: translateY(-20px) scale(1.1); }
         }
 
-        /* Hilangkan loading saat selesai */
         .loaded #loading-screen { opacity: 0; visibility: hidden; }
 
         /* ================= PENGATURAN UMUM ================= */
@@ -55,7 +54,6 @@
             overflow-x: hidden;
         }
         
-        /* Ditambahkan relative agar patokan koordinat top pohon mengacu pada main content */
         main { 
             flex: 1; 
             position: relative; 
@@ -80,10 +78,9 @@
             border-radius: 50%; z-index: -1;
         }
 
-        /* BACKGROUND ASSET POHON DIUBAH KE ABSOLUTE AGAR TETAP DI TEMPAT SAAT SCROLL */
         .bg-pohon {
             position: absolute; 
-            top: 50%;                 /* Berada di tengah-tengah tinggi elemen main */
+            top: 50%;                
             transform: translateY(-50%); 
             right: 0px; 
             width: 500px; 
@@ -97,7 +94,7 @@
 
         .bg-pohon-kiri {
             position: absolute; 
-            top: 50%;                 /* Berada di tengah-tengah tinggi elemen main */
+            top: 50%;                
             transform: translateY(-50%) scaleX(-1); 
             left: 0px; 
             width: 500px; 
@@ -109,7 +106,6 @@
             mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
         }
 
-        /* CUSTOM ANIMASI UNDERLINE UNTUK NAV LINK */
         .nav-link {
             position: relative;
             padding-bottom: 4px;
@@ -123,7 +119,6 @@
             width: 100%; left: 0;
         }
 
-        /* AUTOMATIC TYPOGRAPHY HIERARCHY MANAGER */
         h1, h2, h3, h4, h5, h6, .loading-text, .price-badge {
             font-family: 'Outfit', sans-serif !important;
         }
@@ -144,88 +139,9 @@
 
     <div class="top-line"></div>
 
-    <header class="sticky top-0 bg-white/95 backdrop-blur-md py-4 shadow-sm border-b border-gray-100 z-50 transition duration-300">
-        <div class="container mx-auto max-w-7xl px-6 flex justify-between items-center">
-            
-            <div class="logo-glow">
-                <a href="/" class="block transform hover:scale-105 transition duration-300">
-                    <img src="{{ asset('image/Logo.png') }}" alt="Logo" class="h-[80px] md:h-[90px] object-contain">
-                </a>
-            </div>
-
-            <nav class="hidden md:block">
-                <ul class="flex space-x-10 text-[15px] font-[900] text-zinc-700 uppercase tracking-wider">
-                    <li><a href="/" class="nav-link hover:text-[#39AE1F] transition duration-300">Home</a></li>
-                    <li><a href="/menu" class="nav-link text-[#39AE1F] active">Menu</a></li>
-                    <li><a href="/outlet" class="nav-link hover:text-[#39AE1F] transition duration-300">Outlet</a></li>
-                    <li><a href="/about" class="nav-link hover:text-[#39AE1F] transition duration-300">About Us</a></li>
-                    <li><a href="/contact" class="nav-link hover:text-[#39AE1F] transition duration-300">Contact Us</a></li>
-                </ul>
-            </nav>
-            
-            <div class="flex items-center gap-4 relative">
-                
-                <div class="relative">
-                    <button id="cartBtn" class="group flex items-center justify-center p-2.5 rounded-full bg-gray-100 border border-gray-200 hover:bg-green-50 hover:border-green-200 shadow-sm transition duration-300 relative">
-                        <i class="fas fa-shopping-cart text-[20px] text-gray-400 group-hover:text-[#39AE1F] transition duration-300"></i>
-                        <span id="cartBadge" class="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[10px] font-black px-1.5 py-0.5 rounded-full border-2 border-white shadow-sm" style="display: none;">0</span>
-                    </button>
-
-                    <div id="cartDropdown" class="hidden absolute right-0 mt-3 w-[350px] bg-white rounded-2xl shadow-2xl border border-gray-100 z-[100] transform opacity-0 scale-95 transition-all duration-300 origin-top-right overflow-hidden">
-                        <div class="p-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
-                            <h3 class="font-[900] text-zinc-800 text-[15px] italic">Keranjang Saya</h3>
-                            <span id="cartItemCount" class="text-xs font-bold text-gray-500">0 Item</span>
-                        </div>
-                        
-                        <div id="cartItemsContainer" class="max-h-[250px] overflow-y-auto p-4 space-y-4"></div>
-
-                        <div class="p-4 border-t border-gray-100 bg-white">
-                            <div class="flex justify-between items-center mb-3">
-                                <span class="text-[13px] font-[800] text-zinc-500">Subtotal:</span>
-                                <span id="cartSubtotal" class="text-[18px] font-[900] text-[#39AE1F]">Rp 0</span>
-                            </div>
-                            <div class="flex flex-col gap-2">
-                                <a href="/checkout" class="block w-full bg-[#39AE1F] text-white text-center py-2.5 rounded-xl font-[900] uppercase tracking-wider text-[13px] hover:bg-green-700 transition shadow-md italic">
-                                    Lanjut Checkout
-                                </a>
-                                <a href="/menu" class="block w-full bg-green-50 text-[#39AE1F] border border-[#39AE1F] text-center py-2 rounded-xl font-[800] uppercase tracking-wider text-[12px] hover:bg-[#39AE1F] hover:text-white transition italic">
-                                    + Kategori Menu Lain
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="user-profile relative">
-                    @auth
-                        <a href="/profile" class="group flex items-center justify-center p-1 rounded-full bg-gradient-to-tr from-green-500 to-lime-400 shadow-md group hover:shadow-lg transition duration-300">
-                            <i class="fas fa-user-circle shadow-sm bg-white rounded-full hover:scale-110 transition duration-300 text-[#39AE1F] text-[42px]"></i>
-                        </a>
-                    @else
-                        <a href="/login" class="group flex items-center justify-center p-1 rounded-full bg-gray-100 border border-gray-200 hover:bg-gray-200 shadow-sm transition duration-300">
-                            <i class="fas fa-user-circle text-[42px] text-gray-400 group-hover:text-gray-500 transition duration-300"></i>
-                        </a>
-                    @endauth
-                </div>
-
-                <button id="menuBtn" class="block md:hidden text-gray-700 text-2xl focus:outline-none p-2 hover:text-[#39AE1F] transition">
-                    <i class="fas fa-bars" id="menuIcon"></i>
-                </button>
-            </div>
-        </div>
-
-        <nav id="mobileMenu" class="hidden md:hidden bg-white w-full border-t border-gray-100 shadow-lg absolute top-full left-0 z-50">
-            <ul class="flex flex-col text-[15px] font-[900] text-zinc-800 uppercase tracking-widest py-4">
-                <li><a href="/" class="block px-8 py-3 hover:bg-gray-50 hover:text-[#39AE1F] transition">Home</a></li>
-                <li><a href="/menu" class="block px-8 py-3 bg-green-50 text-[#39AE1F] border-l-4 border-[#39AE1F]">Menu</a></li>
-                <li><a href="/outlet" class="block px-8 py-3 hover:bg-gray-50 hover:text-[#39AE1F] transition">Outlet</a></li>
-                <li><a href="/about" class="block px-8 py-3 hover:bg-gray-50 hover:text-[#39AE1F] transition">About Us</a></li>
-                <li><a href="/contact" class="block px-8 py-3 hover:bg-gray-50 hover:text-[#39AE1F] transition">Contact Us</a></li>
-            </ul>
-        </nav>
-    </header>
+    @include('components.navbar')
 
     <main>
-        <!-- ELEMEN GAMBAR POHON ABSOLUTE (Dimasukkan ke dalam induk <main> agar posisinya terkunci statis di halaman) -->
         <img src="{{ asset('image/pohon-durian.png') }}" class="bg-pohon" alt="Background Pohon Kanan">
         <img src="{{ asset('image/pohon-durian.png') }}" class="bg-pohon-kiri" alt="Background Pohon Kiri">
 
@@ -244,41 +160,74 @@
 
                 <div class="flex flex-col gap-6 mt-4">
                     @forelse($products as $item)
-                    <div class="bg-white rounded-[25px] p-5 flex flex-col md:flex-row gap-6 items-stretch shadow-md hover:-translate-y-1 transition duration-300">
-                        <div class="bg-[#FFC107] rounded-2xl w-full md:w-40 h-40 flex-shrink-0 flex items-center justify-center p-2 shadow-inner">
+                    
+                    <div class="bg-white rounded-[25px] p-5 flex flex-col md:flex-row gap-6 items-stretch shadow-md hover:-translate-y-1 transition duration-300 relative overflow-hidden">
+                        
+                        @if($item->stock == 0)
+                            <div class="absolute inset-0 bg-white/40 backdrop-blur-[1px] z-10 flex items-center justify-center">
+                                <div class="bg-gray-800 text-white transform -rotate-12 px-8 py-2 font-black text-2xl uppercase tracking-widest border-4 border-dashed border-gray-600 shadow-xl opacity-90">
+                                    SOLD OUT
+                                </div>
+                            </div>
+                        @endif
+                        
+                        <div class="bg-[#FFC107] rounded-2xl w-full md:w-40 h-40 flex-shrink-0 flex items-center justify-center p-2 shadow-inner relative {{ $item->stock == 0 ? 'grayscale opacity-75' : '' }}">
                             <img src="{{ asset('image/' . $item->gambar) }}" alt="{{ $item->nama }}" class="max-h-full object-contain drop-shadow-md">
                         </div>
-                        <div class="flex-1 flex flex-col justify-between py-1">
+                        
+                        <div class="flex-1 flex flex-col justify-between py-1 relative z-0">
                             <div>
                                 <a href="/detail/{{ $item->id }}">
-                                    <h3 class="text-3xl font-black text-gray-700 hover:text-[#39AE1F] transition cursor-pointer uppercase tracking-tighter m-0">
+                                    <h3 class="text-3xl font-black {{ $item->stock == 0 ? 'text-gray-400' : 'text-gray-700 hover:text-[#39AE1F]' }} transition cursor-pointer uppercase tracking-tighter m-0">
                                         {{ $item->nama }}
                                     </h3>
                                 </a>
-                                <p class="text-sm text-gray-600 mt-2 font-bold leading-relaxed md:pr-4">
+                                <p class="text-sm text-gray-600 mt-2 font-bold leading-relaxed md:pr-4 {{ $item->stock == 0 ? 'opacity-50' : '' }}">
                                     {{ $item->deskripsi }}
                                 </p>
                             </div>
                             
-                            <div class="flex justify-between items-center mt-4 border-t-2 border-gray-100 pt-4">
+                            <div class="mt-2 flex items-center">
+                                @if($item->stock > 5)
+                                    <span class="bg-green-100 text-green-700 text-[11px] font-black px-2.5 py-1 rounded-md border border-green-200">
+                                        <i class="fas fa-check-circle mr-1"></i> Stok: {{ $item->stock }}
+                                    </span>
+                                @elseif($item->stock > 0)
+                                    <span class="bg-red-100 text-red-600 text-[11px] font-black px-2.5 py-1 rounded-md border border-red-200 animate-pulse">
+                                        <i class="fas fa-exclamation-circle mr-1"></i> Sisa {{ $item->stock }}!
+                                    </span>
+                                @else
+                                    <span class="bg-gray-100 text-gray-500 text-[11px] font-black px-2.5 py-1 rounded-md border border-gray-200">
+                                        <i class="fas fa-times-circle mr-1"></i> Habis Terjual
+                                    </span>
+                                @endif
+                            </div>
+                            <div class="flex justify-between items-center mt-3 border-t-2 border-gray-100 pt-3">
                                 <div class="flex flex-col price-badge">
                                     @if($item->harga_lama && $item->harga_lama > $item->harga_baru)
                                         <span class="text-sm text-gray-400 line-through font-bold leading-none mb-1">
                                             Rp. {{ number_format($item->harga_lama, 0, ',', '.') }}
                                         </span>
                                     @endif
-                                    <span class="text-[#FFC107] font-black text-3xl tracking-tighter leading-none">
+                                    <span class="{{ $item->stock == 0 ? 'text-gray-400' : 'text-[#FFC107]' }} font-black text-3xl tracking-tighter leading-none">
                                         Rp. {{ number_format($item->harga_baru, 0, ',', '.') }}
                                     </span>
                                 </div>
                                 
-                                <div class="flex items-center gap-4">
-                                    <a href="/detail/{{ $item->id }}" class="text-[#39AE1F] font-[900] text-sm uppercase tracking-widest italic border-b-[3px] border-[#39AE1F] pb-[2px] hover:opacity-75 transition">
+                                <div class="flex items-center gap-4 relative z-20">
+                                    <a href="/detail/{{ $item->id }}" class="{{ $item->stock == 0 ? 'text-gray-400 border-gray-400' : 'text-[#39AE1F] border-[#39AE1F]' }} font-[900] text-sm uppercase tracking-widest italic border-b-[3px] pb-[2px] hover:opacity-75 transition">
                                         Details
                                     </a>
-                                    <button type="button" onclick="addToCart('{{ $item->id }}', '{{ $item->nama }}', {{ $item->harga_baru }}, '{{ asset('image/' . $item->gambar) }}')" class="bg-[#39AE1F] text-white px-6 py-2 rounded-full font-black text-sm flex items-center gap-2 hover:bg-green-700 transition shadow-sm uppercase tracking-wider cursor-pointer">
-                                        <i class="fas fa-shopping-cart"></i> Buy
-                                    </button>
+                                    
+                                    @if($item->stock > 0)
+                                        <button type="button" onclick="addToCart('{{ $item->id }}', '{{ $item->nama }}', {{ $item->harga_baru }}, '{{ asset('image/' . $item->gambar) }}')" class="bg-[#39AE1F] text-white px-6 py-2 rounded-full font-black text-sm flex items-center gap-2 hover:bg-green-700 transition shadow-sm uppercase tracking-wider cursor-pointer">
+                                            <i class="fas fa-shopping-cart"></i> Buy
+                                        </button>
+                                    @else
+                                        <button type="button" disabled class="bg-gray-300 text-gray-500 px-6 py-2 rounded-full font-black text-sm flex items-center gap-2 shadow-sm uppercase tracking-wider cursor-not-allowed">
+                                            <i class="fas fa-ban"></i> Kosong
+                                        </button>
+                                    @endif
                                 </div>
                             </div>
                             
@@ -348,7 +297,6 @@
                     </div>
                 </div>
             </div>
-            
         </div>
 
         <div class="bg-[#39AE1F] text-center py-3 relative z-20 shadow-inner">
@@ -469,8 +417,10 @@
             document.getElementById('cartSubtotal').innerText = formatRupiah(totalHarga);
             document.getElementById('cartItemCount').innerText = totalBarang + ' Item';
             const badge = document.getElementById('cartBadge');
-            badge.innerText = totalBarang;
-            badge.style.display = totalBarang > 0 ? 'block' : 'none';
+            if(badge) {
+                badge.innerText = totalBarang;
+                badge.style.display = totalBarang > 0 ? 'block' : 'none';
+            }
         }
 
         // FUNGSI UTAMA: NAMBAH BARANG KE KERANJANG DARI TOMBOL BUY
@@ -513,6 +463,8 @@
         window.addEventListener('DOMContentLoaded', () => {
             renderCartHeader();
         });
+
+        
     </script>
 </body>
 </html>

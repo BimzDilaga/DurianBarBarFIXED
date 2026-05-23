@@ -24,6 +24,16 @@
                 <li><a href="/about" class="nav-link {{ request()->is('about') ? 'text-[#39AE1F] border-b-[3px] border-[#39AE1F] pb-1' : 'hover:text-[#39AE1F]' }} transition duration-300">About Us</a></li>
                 
                 <li><a href="/contact" class="nav-link {{ request()->is('contact') ? 'text-[#39AE1F] border-b-[3px] border-[#39AE1F] pb-1' : 'hover:text-[#39AE1F]' }} transition duration-300">Contact Us</a></li>
+
+                @auth
+                    @if(auth()->user()->customer === 'admin')
+                        <li>
+                            <a href="{{ url('/admin/produk') }}" class="nav-link {{ request()->is('admin*') ? 'text-red-500 border-b-[3px] border-red-500 pb-1' : 'text-red-500 hover:text-red-600' }} transition duration-300 flex items-center gap-1.5">
+                                <i class="fas fa-tools text-xs"></i> Admin Panel
+                            </a>
+                        </li>
+                    @endif
+                @endauth
             </ul>
         </nav>
         
@@ -49,7 +59,6 @@
                             <span id="cartSubtotal" class="text-[18px] font-[900] text-[#39AE1F]">Rp 0</span>
                         </div>
                         <div class="flex flex-col gap-2">
-                            
                             <form id="formSyncCart" action="/checkout" method="POST" class="hidden">
                                 @csrf
                                 <input type="hidden" name="cart_data" id="cartDataInput">
@@ -69,7 +78,7 @@
 
             <div class="user-profile relative">
                 @auth
-                    <a href="/profile" class="group flex items-center justify-center p-1 rounded-full bg-gradient-to-tr from-green-500 to-lime-400 shadow-md group hover:shadow-lg transition duration-300">
+                    <a href="/profile" class="group flex items-center justify-center p-1 rounded-full bg-gradient-to-tr from-green-500 to-lime-400 shadow-md hover:shadow-lg transition duration-300">
                         <i class="fas fa-user-circle shadow-sm bg-white rounded-full hover:scale-110 transition duration-300 text-[#39AE1F] text-[42px]"></i>
                     </a>
                 @else
@@ -98,6 +107,16 @@
             <li><a href="/about" class="block px-8 py-3 {{ request()->is('about') ? 'bg-green-50 text-[#39AE1F] border-l-4 border-[#39AE1F]' : 'hover:bg-gray-50 hover:text-[#39AE1F]' }} transition">About Us</a></li>
             
             <li><a href="/contact" class="block px-8 py-3 {{ request()->is('contact') ? 'bg-green-50 text-[#39AE1F] border-l-4 border-[#39AE1F]' : 'hover:bg-gray-50 hover:text-[#39AE1F]' }} transition">Contact Us</a></li>
+
+            @auth
+                @if(auth()->user()->customer === 'admin')
+                    <li>
+                        <a href="{{ url('/admin/produk') }}" class="block px-8 py-3 {{ request()->is('admin*') ? 'bg-red-50 text-red-500 border-l-4 border-red-500' : 'text-red-500 hover:bg-red-50' }} transition">
+                            <i class="fas fa-tools text-xs mr-1"></i> Admin Panel
+                        </a>
+                    </li>
+                @endif
+            @endauth
         </ul>
     </nav>
 </header>

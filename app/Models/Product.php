@@ -9,14 +9,9 @@ class Product extends Model
 {
     use HasFactory;
 
-    // 'detail_lengkap' sudah ditambahkan ke dalam array fillable
     protected $fillable = [
-        'nama', 
-        'deskripsi', 
-        'detail_lengkap', 
-        'harga_lama', 
-        'harga_baru', 
-        'gambar', 
-        'warna_bg'
-    ];
+    'nama', 'kategori', 'harga_baru', 'harga_lama', 
+    'deskripsi', 'detail_lengkap', 'gambar', 'warna_bg', 'is_promo', 'stock'
+];
+    
 }

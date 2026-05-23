@@ -238,38 +238,75 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-[1000px] mx-auto mt-12 px-6">
                 
                 @php
+                    // Mengambil data produk berdasarkan kata kunci utama agar lebih akurat
+                    $pUdangKeju     = \App\Models\Product::where('nama', 'like', '%Udang%')->first();
+                    $pDawetJumbo    = \App\Models\Product::where('nama', 'like', '%Dawet%')->first();
+                    $pMieBakso      = \App\Models\Product::where('nama', 'like', '%Mie%')->first();
+                    $pDurianCoklat  = \App\Models\Product::where('nama', 'like', '%Coklat%')->first();
+                    $pTelerJumbo    = \App\Models\Product::where('nama', 'like', '%Teler%')->first();
+                    $pKentangGoreng = \App\Models\Product::where('nama', 'like', '%Kentang%')->first();
+
+                    // Diubah menjadi ->stock (disamakan dengan database halaman kategori yang berhasil)
                     $products_data = [
-                        ['id' => $pUdangKeju->id ?? 17, 'nama' => $pUdangKeju->nama ?? 'Udang Keju', 'harga' => $pUdangKeju->harga_baru ?? 15000, 'img' => $pUdangKeju->gambar ?? 'UdangKeju.png'],
-                        ['id' => $pDawetJumbo->id ?? 12, 'nama' => $pDawetJumbo->nama ?? 'Es Dawet Durian (Jumbo)', 'harga' => $pDawetJumbo->harga_baru ?? 15000, 'img' => $pDawetJumbo->gambar ?? 'DawetDurianJumbo.png'],
-                        ['id' => $pMieBakso->id ?? 9, 'nama' => $pMieBakso->nama ?? 'Mie Ayam Bakso', 'harga' => $pMieBakso->harga_baru ?? 12000, 'img' => $pMieBakso->gambar ?? 'mie ayam bakso.png'],
-                        ['id' => $pDurianCoklat->id ?? 13, 'nama' => $pDurianCoklat->nama ?? 'Es Durian Coklat', 'harga' => $pDurianCoklat->harga_baru ?? 18000, 'img' => $pDurianCoklat->gambar ?? 'EsDurianCoklat.png'],
-                        ['id' => $pTelerJumbo->id ?? 14, 'nama' => $pTelerJumbo->nama ?? 'Es Teler Durian Jumbo', 'harga' => $pTelerJumbo->harga_baru ?? 20000, 'img' => $pTelerJumbo->gambar ?? 'EsTelerJumbo.png'],
-                        ['id' => $pKentangGoreng->id ?? 15, 'nama' => $pKentangGoreng->nama ?? 'Kentang Goreng', 'harga' => $pKentangGoreng->harga_baru ?? 10000, 'img' => $pKentangGoreng->gambar ?? 'KentangGoreng.png'],
+                        ['id' => $pUdangKeju?->id, 'nama' => $pUdangKeju?->nama, 'harga' => $pUdangKeju?->harga_baru, 'img' => $pUdangKeju?->gambar, 'stock' => $pUdangKeju?->stock],
+                        ['id' => $pDawetJumbo?->id, 'nama' => $pDawetJumbo?->nama, 'harga' => $pDawetJumbo?->harga_baru, 'img' => $pDawetJumbo?->gambar, 'stock' => $pDawetJumbo?->stock],
+                        ['id' => $pMieBakso?->id, 'nama' => $pMieBakso?->nama, 'harga' => $pMieBakso?->harga_baru, 'img' => $pMieBakso?->gambar, 'stock' => $pMieBakso?->stock],
+                        ['id' => $pDurianCoklat?->id, 'nama' => $pDurianCoklat?->nama, 'harga' => $pDurianCoklat?->harga_baru, 'img' => $pDurianCoklat?->gambar, 'stock' => $pDurianCoklat?->stock],
+                        ['id' => $pTelerJumbo?->id, 'nama' => $pTelerJumbo?->nama, 'harga' => $pTelerJumbo?->harga_baru, 'img' => $pTelerJumbo?->gambar, 'stock' => $pTelerJumbo?->stock],
+                        ['id' => $pKentangGoreng?->id, 'nama' => $pKentangGoreng?->nama, 'harga' => $pKentangGoreng?->harga_baru, 'img' => $pKentangGoreng?->gambar, 'stock' => $pKentangGoreng?->stock],
                     ];
                 @endphp
 
                 @foreach($products_data as $index => $p)
                 <div class="reveal-on-scroll opacity-0 translate-y-12 transition-all duration-700 ease-out bg-white p-6 hover:shadow-2xl hover:-translate-y-3 flex flex-col relative z-40 group" style="border: 1px solid #9CA3AF; border-radius: 35px; height: 100%;">
                     
-                    <div class="overflow-hidden rounded-2xl mb-5 w-full">
+                    <div class="overflow-hidden rounded-2xl mb-5 w-full relative">
                         <img src="{{ asset('image/' . $p['img']) }}" alt="{{ $p['nama'] }}" class="w-full h-52 object-cover transform transition-transform duration-500 group-hover:scale-110">
+                        
+                        {{-- Logika pengecekan diganti ke $p['stock'] --}}
+                        @if($p['stock'] <= 0)
+                            <div class="absolute inset-0 bg-black/50 flex items-center justify-center rounded-2xl">
+                                <span class="bg-red-600 text-white font-black uppercase tracking-widest text-xs px-4 py-2 rounded-xl italic">Habis</span>
+                            </div>
+                        @endif
                     </div>
                     
                     <div class="w-full text-left flex flex-col flex-grow">
                         <h3 class="font-[900] text-[24px] tracking-tight text-zinc-800">{{ $p['nama'] }}</h3>
                         <p class="text-[#39AE1F] font-black text-lg my-1">Rp {{ number_format($p['harga'], 0, ',', '.') }}</p>
                         
+                        {{-- Badges indikator jumlah stok --}}
+                        <div class="mb-4 flex items-center gap-1.5 text-xs font-bold">
+                            <span class="text-zinc-400">Stok:</span>
+                            @if($p['stock'] > 5)
+                                <span class="text-zinc-600 bg-zinc-100 px-2 py-0.5 rounded-full">{{ $p['stock'] }} pcs</span>
+                            @elseif($p['stock'] > 0)
+                                <span class="text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full animate-pulse">Sisa {{ $p['stock'] }} pcs!</span>
+                            @else
+                                <span class="text-red-600 bg-red-50 px-2 py-0.5 rounded-full">Habis</span>
+                            @endif
+                        </div>
+                        
                         <div class="mt-auto pt-3">
                             <div class="flex justify-center mb-2">
                                 <a href="/detail/{{ $p['id'] }}" class="text-[#39AE1F] font-[900] text-sm uppercase tracking-widest italic border-b-[3px] border-[#39AE1F] pb-[2px] transition hover:opacity-75">Details</a>
                             </div>
                             <div class="grid grid-cols-2 gap-2">
-                                <button type="button" onclick="addToCart('{{ $p['id'] }}', '{{ $p['nama'] }}', {{ $p['harga'] }}, '{{ asset('image/' . $p['img']) }}')" class="bg-[#39AE1F] text-white px-2 py-1.5 rounded-full font-bold text-[10px] flex items-center justify-center gap-1 hover:bg-green-700 transition shadow-sm uppercase tracking-tighter truncate">
-                                    <i class="fas fa-shopping-cart text-[9px]"></i> Keranjang
-                                </button>
-                                <a href="{{ url('/checkout') }}?action=buy_now&product_id={{ $p['id'] }}" class="bg-[#FFD429] text-gray-800 px-2 py-1.5 rounded-full font-bold text-[10px] flex items-center justify-center gap-1 hover:bg-orange-500 hover:text-white transition-all duration-300 shadow-sm uppercase tracking-tighter truncate">
-                                    <i class="fas fa-bolt text-[9px]"></i> Checkout
-                                </a>
+                                @if($p['stock'] > 0)
+                                    <button type="button" onclick="addToCart('{{ $p['id'] }}', '{{ $p['nama'] }}', {{ $p['harga'] }}, '{{ asset('image/' . $p['img']) }}')" class="bg-[#39AE1F] text-white px-2 py-1.5 rounded-full font-bold text-[10px] flex items-center justify-center gap-1 hover:bg-green-700 transition shadow-sm uppercase tracking-tighter truncate">
+                                        <i class="fas fa-shopping-cart text-[9px]"></i> Keranjang
+                                    </button>
+                                    <a href="{{ url('/checkout') }}?action=buy_now&product_id={{ $p['id'] }}" class="bg-[#FFD429] text-gray-800 px-2 py-1.5 rounded-full font-bold text-[10px] flex items-center justify-center gap-1 hover:bg-orange-500 hover:text-white transition-all duration-300 shadow-sm uppercase tracking-tighter truncate">
+                                        <i class="fas fa-bolt text-[9px]"></i> Checkout
+                                    </a>
+                                @else
+                                    <button type="button" disabled class="bg-gray-200 text-gray-400 px-2 py-1.5 rounded-full font-bold text-[10px] flex items-center justify-center gap-1 cursor-not-allowed uppercase tracking-tighter truncate">
+                                        <i class="fas fa-shopping-cart text-[9px]"></i> Keranjang
+                                    </button>
+                                    <button type="button" disabled class="bg-gray-100 text-gray-400 px-2 py-1.5 rounded-full font-bold text-[10px] flex items-center justify-center gap-1 cursor-not-allowed uppercase tracking-tighter truncate">
+                                        <i class="fas fa-ban text-[9px]"></i> Habis
+                                    </button>
+                                @endif
                             </div>
                         </div>
                     </div>
