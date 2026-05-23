@@ -8,10 +8,16 @@
         </div>
 
         <nav class="hidden md:block">
-            <ul class="flex space-x-10 text-[15px] font-[900] text-zinc-700 uppercase tracking-wider">
+            <ul class="flex space-x-10 text-[15px] font-[900] text-zinc-700 uppercase tracking-wider items-center">
                 <li><a href="/" class="nav-link {{ request()->is('/') ? 'text-[#39AE1F] border-b-[3px] border-[#39AE1F] pb-1' : 'hover:text-[#39AE1F]' }} transition duration-300">Home</a></li>
                 
                 <li><a href="/menu" class="nav-link {{ request()->is('menu*') || request()->is('detail*') ? 'text-[#39AE1F] border-b-[3px] border-[#39AE1F] pb-1' : 'hover:text-[#39AE1F]' }} transition duration-300">Menu</a></li>
+                
+                <li>
+                    <a href="/riwayat" class="nav-link {{ request()->is('riwayat') ? 'text-[#39AE1F] border-b-[3px] border-[#39AE1F] pb-1' : 'hover:text-[#39AE1F]' }} transition duration-300 flex items-center gap-1.5">
+                        <i class="fas fa-clock-rotate-left text-xs"></i> Riwayat
+                    </a>
+                </li>
                 
                 <li><a href="/outlet" class="nav-link {{ request()->is('outlet') ? 'text-[#39AE1F] border-b-[3px] border-[#39AE1F] pb-1' : 'hover:text-[#39AE1F]' }} transition duration-300">Outlet</a></li>
                 
@@ -84,6 +90,8 @@
             <li><a href="/" class="block px-8 py-3 {{ request()->is('/') ? 'bg-green-50 text-[#39AE1F] border-l-4 border-[#39AE1F]' : 'hover:bg-gray-50 hover:text-[#39AE1F]' }} transition">Home</a></li>
             
             <li><a href="/menu" class="block px-8 py-3 {{ request()->is('menu*') || request()->is('detail*') ? 'bg-green-50 text-[#39AE1F] border-l-4 border-[#39AE1F]' : 'hover:bg-gray-50 hover:text-[#39AE1F]' }} transition">Menu</a></li>
+            
+            <li><a href="/riwayat" class="block px-8 py-3 {{ request()->is('riwayat') ? 'bg-green-50 text-[#39AE1F] border-l-4 border-[#39AE1F]' : 'hover:bg-gray-50 hover:text-[#39AE1F]' }} transition"><i class="fas fa-clock-rotate-left text-xs mr-1"></i> Riwayat</a></li>
             
             <li><a href="/outlet" class="block px-8 py-3 {{ request()->is('outlet') ? 'bg-green-50 text-[#39AE1F] border-l-4 border-[#39AE1F]' : 'hover:bg-gray-50 hover:text-[#39AE1F]' }} transition">Outlet</a></li>
             

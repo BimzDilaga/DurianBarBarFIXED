@@ -8,6 +8,9 @@ use App\Http\Controllers\CheckoutController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 
+// Selipkan di dalam kelompok middleware (['auth', 'verified']) kamu yang di bagian bawah:
+Route::get('/riwayat', [CheckoutController::class, 'riwayat'])->name('riwayat.index');
+
 // ==========================================
 // 1. HALAMAN UTAMA (Bisa diakses siapa saja)
 // ==========================================

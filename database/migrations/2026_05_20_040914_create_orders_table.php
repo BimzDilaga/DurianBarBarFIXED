@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('status_pembayaran')->default('pending'); // pending, success, failed
             $table->string('snap_token')->nullable();
             $table->timestamps();
+            $table->unsignedBigInteger('user_id')->nullable();
         });
     }
 

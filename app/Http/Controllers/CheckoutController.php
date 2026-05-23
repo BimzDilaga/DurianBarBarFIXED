@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Models\Order; 
 use Midtrans\Config;
 use Midtrans\Snap;
+use Illuminate\Support\Facades\Auth; // Pastikan Auth ini terimport
 
 class CheckoutController extends Controller
 {
@@ -155,18 +156,18 @@ class CheckoutController extends Controller
         }
 
         // --- PENAMBAHAN KEAMANAN DI SINI ---
-        // Tolak transaksi jika total tagihan Rp 0
         if ($gross_amount <= 0) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Total pembayaran tidak boleh Rp 0. Pastikan keranjang Anda tidak kosong dan harga produk valid.'
-            ], 400); // 400 Bad Request
+            ], 400);
         }
-        // -----------------------------------
 
         $order_id = 'ORDER-' . time() . '-' . rand(100, 999);
 
+        // DI SINI KITA SELIPKAN USER_ID YANG SEDANG LOGIN
         $order = Order::create([
+            'user_id'           => Auth::id(), 
             'order_id'          => $order_id,
             'provinsi'          => $data['provinsi'] ?? '',
             'kabupaten'         => $data['kabupaten'] ?? '',
@@ -188,7 +189,7 @@ class CheckoutController extends Controller
         $params = array(
             'transaction_details' => array(
                 'order_id'     => $order_id,
-                'gross_amount' => $gross_amount, // Dijamin > 0 karena sudah dicek di atas
+                'gross_amount' => $gross_amount,
             ),
             'item_details' => $item_details,
             'customer_details' => array(
@@ -204,9 +205,6 @@ class CheckoutController extends Controller
             
             $order->update(['snap_token' => $snapToken]);
 
-            // ==============================================================
-            // EKSEKUSI PENGOSONGAN KERANJANG DI SINI
-            // ==============================================================
             session()->forget('cart');
 
             return response()->json([
@@ -245,5 +243,18 @@ class CheckoutController extends Controller
         }
 
         return response()->json(['message' => 'Callback Midtrans berhasil diproses'], 200);
+    }
+
+    // ==============================================================
+    // 7. FUNGSI BARU UNTUK MENAMPILKAN HALAMAN RIWAYAT
+    // ==============================================================
+    public function riwayat()
+    {
+        // Ambil data belanjaan khusus milik user yang sedang login
+        $orders = Order::where('user_id', Auth::id())
+                        ->orderBy('created_at', 'desc')
+                        ->get();
+
+        return view('riwayat', compact('orders'));
     }
 }

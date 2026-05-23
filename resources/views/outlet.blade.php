@@ -73,25 +73,10 @@
         .banner-outlet {
             background-color: #FFC107; width: 100%; text-align: center; padding: 25px 0;
         }
-        /* PERBAIKAN: MENGHAPUS FONT-STYLE ITALIC BIAR TEGAK LURUS SESUAI REKUES */
         .banner-outlet h1 { color: #ffffff; font-size: 50px; font-weight: 900; letter-spacing: -1px; margin: 0; text-transform: uppercase; }
-        
-        .search-box-wrapper {
-            border: 2px solid #f3f4f6; border-radius: 25px; padding: 14px 28px;
-            display: flex; align-items: center; max-width: 850px; margin: 50px auto;
-            background: white; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-        }
-        .search-input { flex: 1; border: none; outline: none; font-size: 16px; color: #2d2d2d; font-weight: 700; }
-        
-        .map-wrapper {
-            max-width: 900px; margin: 0 auto; height: 480px; 
-            border-radius: 40px; overflow: hidden; border: 4px solid white;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.08); background-color: #f0f0f0;
-        }
-        .map-wrapper iframe { width: 100%; height: 100%; border: none; }
 
         /* AUTOMATIC TYPOGRAPHY HIERARCHY MANAGER */
-        h1, h2, h3, h4, h5, h6, .loading-text, .search-box-wrapper span {
+        h1, h2, h3, h4, h5, h6, .loading-text, .outlet-title {
             font-family: 'Outfit', sans-serif !important;
         }
         footer, footer p, footer a, footer h4, footer span, footer div {
@@ -112,25 +97,116 @@
 
     <div class="top-line"></div>
 
-    @include('components.navbar')
+    <header class="sticky top-0 bg-white/95 backdrop-blur-md py-4 shadow-sm border-b border-gray-100 z-50 transition duration-300">
+        <div class="container mx-auto max-w-7xl px-6 flex justify-between items-center">
+            
+            <div class="logo-glow">
+                <a href="/" class="block transform hover:scale-105 transition duration-300">
+                    <img src="{{ asset('image/Logo.png') }}" alt="Logo" class="h-[80px] md:h-[90px] object-contain">
+                </a>
+            </div>
+
+            <nav class="hidden md:block">
+                <ul class="flex space-x-10 text-[15px] font-[900] text-zinc-700 uppercase tracking-wider">
+                    <li><a href="/" class="nav-link hover:text-[#39AE1F] transition duration-300">Home</a></li>
+                    <li><a href="/menu" class="nav-link hover:text-[#39AE1F] transition duration-300">Menu</a></li>
+                    <li><a href="/outlet" class="nav-link text-[#39AE1F] active">Outlet</a></li>
+                    <li><a href="/about" class="nav-link hover:text-[#39AE1F] transition duration-300">About Us</a></li>
+                    <li><a href="/contact" class="nav-link hover:text-[#39AE1F] transition duration-300">Contact Us</a></li>
+                </ul>
+            </nav>
+            
+            <div class="flex items-center gap-4">
+                <div class="user-profile relative">
+                    @auth
+                        <a href="/profile" class="group flex items-center justify-center p-1 rounded-full bg-gradient-to-tr from-green-500 to-lime-400 shadow-md group hover:shadow-lg transition duration-300">
+                            <i class="fas fa-user-circle shadow-sm bg-white rounded-full hover:scale-110 transition duration-300 text-[#39AE1F] text-[42px]"></i>
+                        </a>
+                    @else
+                        <a href="/login" class="group flex items-center justify-center p-1 rounded-full bg-gray-100 border border-gray-200 hover:bg-gray-200 shadow-sm transition duration-300">
+                            <i class="fas fa-user-circle text-[42px] text-gray-400 group-hover:text-gray-500 transition duration-300"></i>
+                        </a>
+                    @endauth
+                </div>
+
+                <button id="menuBtn" class="block md:hidden text-gray-700 text-2xl focus:outline-none p-2 hover:text-[#39AE1F] transition">
+                    <i class="fas fa-bars" id="menuIcon"></i>
+                </button>
+            </div>
+        </div>
+
+        <nav id="mobileMenu" class="hidden md:hidden bg-white w-full border-t border-gray-100 shadow-lg absolute top-full left-0 z-50">
+            <ul class="flex flex-col text-[15px] font-[900] text-zinc-800 uppercase tracking-widest py-4">
+                <li><a href="/" class="block px-8 py-3 hover:bg-gray-50 hover:text-[#39AE1F] transition">Home</a></li>
+                <li><a href="/menu" class="block px-8 py-3 hover:bg-gray-50 hover:text-[#39AE1F] transition">Menu</a></li>
+                <li><a href="/outlet" class="block px-8 py-3 bg-green-50 text-[#39AE1F] border-l-4 border-[#39AE1F]">Outlet</a></li>
+                <li><a href="/about" class="block px-8 py-3 hover:bg-gray-50 hover:text-[#39AE1F] transition">About Us</a></li>
+                <li><a href="/contact" class="block px-8 py-3 hover:bg-gray-50 hover:text-[#39AE1F] transition">Contact Us</a></li>
+            </ul>
+        </nav>
+    </header>
+
     <main>
         <div class="banner-outlet relative z-20 shadow-md">
             <h1 class="text-center text-white text-[50px] font-black uppercase tracking-tighter m-0">OUTLET</h1>
         </div>
 
         <div class="tree-wrapper">
+            <!-- Pohon Durian Kiri & Kanan Tetap Diam Kokoh di Sini -->
             <img src="{{ asset('image/pohon-durian.png') }}" class="tree-decor tree-left hidden xl:block">
             <img src="{{ asset('image/pohon-durian.png') }}" class="tree-decor tree-right hidden xl:block">
 
-            <div class="px-6 mb-24 relative z-10">
-                <div class="search-box-wrapper bg-white">
-                    <span class="font-black text-[16px] mr-4 text-[#39AE1F] uppercase tracking-tight">Find Location:</span>
-                    <input type="text" class="search-input" placeholder="Enter Search Location...">
-                    <button class="bg-gray-100 border border-gray-300 rounded-xl px-5 py-1.5 font-black text-gray-500 hover:bg-red-500 hover:text-white transition duration-300">X</button>
-                </div>
+            <!-- KOMPONEN INTERAKTIF MAPS & OUTLET -->
+            <div class="max-w-6xl mx-auto mt-12 mb-24 px-6 relative z-10">
+                <div class="bg-[#39AE1F] rounded-[40px] p-6 md:p-10 shadow-2xl border-4 border-white">
+                    
+                    <!-- Judul Section Dalam Box -->
+                    <div class="text-center mb-8">
+                        <h2 class="outlet-title text-3xl font-black text-white uppercase tracking-tight">Lokasi Cabang Kami</h2>
+                        <p class="text-green-100 text-sm font-bold mt-1">Gunakan peta interaktif di bawah untuk melihat seluruh jaringan outlet kami!</p>
+                    </div>
 
-                <div class="map-wrapper">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d126593.41406436662!2d109.16200236087545!3d-7.420845347209772!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e655c313bb2a7d1%3A0x4027a7657154040!2sPurwokerto%2C%20Kabupaten%20Banyumas%2C%20Jawa%2 Tengah!5e0!3m2!1sid!2sid!4v1715690000000!5m2!1sid!2sid" allowfullscreen="" loading="lazy"></iframe>
+                    <!-- WADAH GOOGLE MY MAPS JUMBO -->
+                    <div class="w-full h-[450px] md:h-[550px] rounded-[30px] overflow-hidden shadow-inner border-4 border-white relative bg-zinc-100 mb-8">
+                        <!-- Google My Maps Link Kamu -->
+                        <iframe src="https://www.google.com/maps/d/embed?mid=1JLfDQrD4Bk60tgVY1SRBLXgp7nXYgHA&ehbc=2E312F" 
+                                class="w-full h-full border-0" 
+                                allowfullscreen="" 
+                                loading="lazy"></iframe>
+                    </div>
+
+                    <!-- DAFTAR ALAMAT RESMI (GRID LAYOUT) -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        
+                        <!-- Outlet 1 -->
+                        <div class="bg-white p-5 rounded-2xl border-2 border-[#FFD429] shadow-sm flex gap-3 items-start">
+                            <div class="bg-red-100 text-red-500 p-2.5 rounded-xl shrink-0 mt-0.5"><i class="fas fa-map-marker-alt"></i></div>
+                            <div>
+                                <h4 class="font-black text-base text-zinc-900 leading-tight">Pusat Purwokerto</h4>
+                                <p class="text-xs text-gray-500 font-semibold mt-1 normal-case leading-normal">Jl. Prof. Dr. Suharso, Mangunjaya, Purwokerto Lor, Kec. Purwokerto Timur</p>
+                            </div>
+                        </div>
+
+                        <!-- Outlet 2 -->
+                        <div class="bg-white p-5 rounded-2xl border-2 border-transparent shadow-sm flex gap-3 items-start">
+                            <div class="bg-red-100 text-red-500 p-2.5 rounded-xl shrink-0 mt-0.5"><i class="fas fa-map-marker-alt"></i></div>
+                            <div>
+                                <h4 class="font-black text-base text-zinc-900 leading-tight">Cabang Banjarnegara</h4>
+                                <p class="text-xs text-gray-500 font-semibold mt-1 normal-case leading-normal">Jl. Pemuda, Krandegan, Kec. Banjarnegara, Kab. Banjarnegara</p>
+                            </div>
+                        </div>
+
+                        <!-- Outlet 3 -->
+                        <div class="bg-white p-5 rounded-2xl border-2 border-transparent shadow-sm flex gap-3 items-start">
+                            <div class="bg-red-100 text-red-500 p-2.5 rounded-xl shrink-0 mt-0.5"><i class="fas fa-map-marker-alt"></i></div>
+                            <div>
+                                <h4 class="font-black text-base text-zinc-900 leading-tight">Cabang Wonosobo</h4>
+                                <p class="text-xs text-gray-500 font-semibold mt-1 normal-case leading-normal">Jl. A. Yani, Tosari, Jaraksari, Kec. Wonosobo, Kab. Wonosobo</p>
+                            </div>
+                        </div>
+
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -202,7 +278,7 @@
     </footer>
 
     <script>
-        // 1. LOGIKA LOADING BAR (Biarkan ini tetap ada biar loading layarnya jalan)
+        // 1. LOGIKA LOADING BAR
         window.addEventListener('load', () => {
             const bar = document.getElementById('bar');
             const percentText = document.getElementById('percent');
@@ -212,20 +288,59 @@
                     clearInterval(interval);
                     setTimeout(() => {
                         document.body.classList.add('loaded');
-                        setTimeout(() => { 
-                            const loadingScreen = document.getElementById('loading-screen');
-                            if(loadingScreen) loadingScreen.style.display = 'none'; 
-                        }, 500);
+                        setTimeout(() => { document.getElementById('loading-screen').style.display = 'none'; }, 500);
                     }, 300);
                 } else {
                     width += 5;
-                    if(bar) bar.style.width = width + '%';
-                    if(percentText) percentText.innerText = width + '%';
+                    bar.style.width = width + '%';
+                    percentText.innerText = width + '%';
                 }
             }, 30);
         });
+
+        // 2. LOGIKA HAMBURGER MENU MOBILE
+        const menuBtn = document.getElementById('menuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const menuIcon = document.getElementById('menuIcon');
+
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            
+            if (mobileMenu.classList.contains('hidden')) {
+                menuIcon.classList.replace('fa-times', 'fa-bars');
+            } else {
+                menuIcon.classList.replace('fa-bars', 'fa-times');
+            }
+        });
+
+        // 3. LOGIKA INTERAKTIF GANTI LINK MAPS OUTLET
+        function gantiOutlet(element, linkEmbedMaps) {
+            // Ubah link src iframe
+            document.getElementById('mapFrame').src = linkEmbedMaps;
+            
+            // Atur ulang semua style tombol ke kondisi tidak aktif
+            const semuaTombol = document.querySelectorAll('.outlet-btn');
+            semuaTombol.forEach(btn => {
+                btn.classList.add('opacity-75');
+                btn.classList.remove('border-[#FFD429]');
+                btn.classList.add('border-transparent');
+                
+                // Kembalikan teks kecil ke warna abu-abu bawaan
+                const subTeks = btn.querySelector('p:first-child');
+                subTeks.classList.remove('text-[#39AE1F]');
+                subTeks.classList.add('text-gray-400');
+            });
+            
+            // Setel tombol yang baru saja diklik menjadi aktif
+            element.classList.remove('opacity-75');
+            element.classList.remove('border-transparent');
+            element.classList.add('border-[#FFD429]');
+            
+            // Ganti warna teks kecil tombol aktif jadi hijau bar bar
+            const subTeksAktif = element.querySelector('p:first-child');
+            subTeksAktif.classList.remove('text-gray-400');
+            subTeksAktif.add('text-[#39AE1F]');
+        }
     </script>
-    
-    @include('components.cart-script')
 </body>
 </html>
