@@ -73,6 +73,6 @@
         };
     </script>
 
-
+@include('components.cart-script')
 </body>
 </html>

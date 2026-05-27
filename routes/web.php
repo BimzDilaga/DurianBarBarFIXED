@@ -7,58 +7,79 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\OrderController; 
 use App\Http\Controllers\CheckoutController;
-// ==========================================
-// PANEL DEVELOPER / ADMIN (Wajib Login & Wajib Admin)
-// ==========================================
-use App\Http\Middleware\AdminMiddleware; 
-
-// Sesuaikan 'AdminController' dengan nama controller tempat bos menaruh fungsi di atas tadi
-Route::post('/admin/pesanan/update-status/{id}', [App\Http\Controllers\AdminController::class, 'updateStatusPesanan']);
-
-Route::middleware(['auth', AdminMiddleware::class])->group(function () {
-    Route::get('/admin/produk', [AdminController::class, 'index']);
-    Route::post('/admin/produk/simpan', [AdminController::class, 'simpanProduk']);
-   Route::post('/admin/produk/update-stok/{id}', [AdminController::class, 'updateStok']);
-    Route::post('/admin/produk/tambah-stok/{id}', [AdminController::class, 'tambahStok']);
-    Route::post('/admin/produk/kurang-stok/{id}', [AdminController::class, 'kurangStok']);
-    Route::post('/admin/produk/hapus/{id}', [AdminController::class, 'hapusProduk']);
-    Route::post('/admin/produk/update-stok-massal', [App\Http\Controllers\AdminController::class, 'updateStokMassal']);
-});
 
 // ==========================================
 // HALAMAN UTAMA & MENU
 // ==========================================
-Route::get('/', [MenuController::class, 'index'])->name('home');
-Route::get('/menu', [MenuController::class, 'halamanMenu'])->name('menu.index');
-Route::get('/menu/{kategori}', [MenuController::class, 'showByCategory'])->name('menu.category');
-Route::get('/detail/{id}', [MenuController::class, 'show']);
+// 1. Halaman Home (Landing Page) memanggil fungsi index di MenuController
+Route::get('/', [MenuController::class, 'index'])->name('home'); 
 
-// ==========================================
-// FITUR KERANJANG & CHECKOUT
-// ==========================================
+// 2. Halaman Menu Utama memanggil fungsi halamanMenu di MenuController
+Route::get('/menu', [MenuController::class, 'halamanMenu'])->name('menu.index');
+
+// 3. Jembatan untuk Halaman Kategori (Es Durian, Mie Ayam, dll)
+Route::get('/menu/{kategori}', [MenuController::class, 'showByCategory']); 
+
+// 4. Jembatan untuk Halaman Detail Produk
+Route::get('/detail/{id}', [MenuController::class, 'show']); 
+
 Route::get('/beli/{id}', [MenuController::class, 'beli']); 
 Route::get('/kurang/{id}', [MenuController::class, 'kurang']); 
-Route::match(['get', 'post'], '/checkout', [CheckoutController::class, 'index'])->middleware('auth')->name('checkout.proses');
 
-Route::post('/proses-checkout', function (Request $request) {
-    $response = app(CheckoutController::class)->prosesCheckout($request);
-    session()->forget('cart');
-    return $response;
-})->middleware('auth')->name('midtrans.bayar');
-
-Route::post('/midtrans-callback', [CheckoutController::class, 'callback']);
 
 // ==========================================
-// HALAMAN STATIS
+// JEMBATAN SINKRONISASI KERANJANG (LOCALSTORAGE)
 // ==========================================
-Route::get('/about', function () { return view('about'); })->name('about');
-Route::get('/outlet', function () { return view('outlet'); });
-Route::get('/contact', function () { return view('contact'); });
-Route::post('/contact', [ContactController::class, 'sendEmail']);
+// Menerima data dari JavaScript, menyimpannya ke Session, lalu melempar ke /checkout
+Route::post('/sync-cart', [CheckoutController::class, 'syncCart']);
+
 
 // ==========================================
-// AUTENTIKASI (LOGIN, DLL)
+// FITUR CHECKOUT & MIDTRANS (WAJIB LOGIN)
+// ==========================================
+Route::middleware(['auth'])->group(function () {
+    // 1. Menampilkan halaman form checkout (Membaca data session hasil syncCart)
+    Route::match(['get', 'post'], '/checkout', [OrderController::class, 'halamanCheckout'])->name('checkout');
+
+    // 2. Jalur AJAX ketika tombol "BAYAR SEKARANG" diklik untuk memicu popup Midtrans
+    Route::post('/proses-checkout', [OrderController::class, 'prosesCheckout'])->name('midtrans.bayar');
+
+    // 3. Jalur halaman sukses setelah bayar
+    Route::get('/pembayaran-sukses', function () {
+        session()->forget('cart');
+        return view('pembayaran-sukses');
+    })->name('pembayaran.sukses');
+    
+    Route::get('/profile', function () { return view('profile'); })->name('profile');
+});
+
+// 4. Jalur Webhook Callback Midtrans (Di luar middleware auth agar server Midtrans bisa akses)
+Route::post('/midtrans-callback', [OrderController::class, 'callbackBypass']);
+
+
+// ==========================================
+// PANEL DEVELOPER / ADMIN 
+// ==========================================
+Route::get('/admin/pesanan', [AdminController::class, 'indexPesanan']);
+Route::post('/admin/pesanan/update/{id}', [AdminController::class, 'updateStatusPesanan'])->name('admin.updateStatus');
+Route::post('/admin/pesanan/update-status/{id}', [AdminController::class, 'updateStatusPesanan']);
+Route::post('/admin/produk/tambah', [AdminController::class, 'simpanProduk']);
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/admin/produk', [AdminController::class, 'index']);
+    Route::post('/admin/produk/simpan', [AdminController::class, 'simpanProduk']);
+    Route::post('/admin/produk/update-stok/{id}', [AdminController::class, 'updateStok']);
+    Route::post('/admin/produk/tambah-stok/{id}', [AdminController::class, 'tambahStok']);
+    Route::post('/admin/produk/kurang-stok/{id}', [AdminController::class, 'kurangStok']);
+    Route::post('/admin/produk/hapus/{id}', [AdminController::class, 'hapusProduk']);
+    Route::post('/admin/produk/update-stok-massal', [AdminController::class, 'updateStokMassal']);
+});
+
+
+// ==========================================
+// AUTENTIKASI (LOGIN, REGISTER, DLL)
 // ==========================================
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 Route::post('/register', [AuthController::class, 'register']);
@@ -69,6 +90,7 @@ Route::post('/forgot-password', [AuthController::class, 'sendResetLinkEmail'])->
 Route::get('/reset-password/{token}', [AuthController::class, 'showResetPassword'])->name('password.reset');
 Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update');
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
+
 
 // ==========================================
 // VERIFIKASI EMAIL
@@ -94,15 +116,11 @@ Route::post('/email/verification-notification', function (Request $request) {
     return back()->with('message', 'Link dikirim!');
 })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 
+
 // ==========================================
-// HALAMAN TERKUNCI
+// HALAMAN STATIS
 // ==========================================
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/profile', function () { return view('profile'); })->name('profile');
-    Route::get('/pembayaran-sukses', function () {
-        session()->forget('cart');
-        return view('pembayaran-sukses');
-    })->name('pembayaran.sukses');
-    Route::get('/riwayat', [CheckoutController::class, 'riwayat'])->name('riwayat.index');// Rute untuk memproses form tambah produk
-Route::post('/admin/produk/tambah', [AdminController::class, 'simpanProduk']);
-});
+Route::get('/about', function () { return view('about'); })->name('about');
+Route::get('/outlet', function () { return view('outlet'); });
+Route::get('/contact', function () { return view('contact'); });
+Route::post('/contact', [ContactController::class, 'sendEmail']);

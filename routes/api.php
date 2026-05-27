@@ -2,9 +2,11 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\MidtransController;
+// Ganti import controller-nya ke CheckoutController
+use App\Http\Controllers\CheckoutController; 
 
-Route::post('/midtrans-callback', [MidtransController::class, 'callback']);
+// Arahkan ke CheckoutController agar fungsi potong stoknya jalan
+Route::post('/midtrans-callback', [CheckoutController::class, 'callback']);
 
 Route::get('/user', function (Request $request) {
     return $request->user();

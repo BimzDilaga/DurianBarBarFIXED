@@ -65,6 +65,10 @@
                         <button id="btn-save-all" onclick="simpanSemuaStok()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-xl shadow-md transition duration-300 flex items-center gap-2">
                             <i class="fas fa-save"></i> Simpan Semua Stok
                         </button>
+                        <a href="{{ url('/admin/pesanan') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-lg shadow-sm transition duration-200 border border-indigo-700">
+    <i class="fas fa-clipboard-list text-md"></i> 
+    Kelola Pesanan Customer
+</a>
                         <button onclick="openModal()" class="bg-[#39AE1F] hover:bg-green-600 text-white font-bold py-2 px-4 rounded-xl shadow-md transition duration-300 flex items-center gap-2">
                             <i class="fas fa-plus"></i> Tambah Menu
                         </button>
@@ -82,8 +86,11 @@
                                 <th class="p-4 text-center w-40">Sisa Stok</th>
                                 <th class="p-4 text-center w-32">Aksi</th>
                             </tr>
+                            
                         </thead>
+                        
                         <tbody class="text-gray-700 font-semibold text-sm">
+                            
                             
                             @php
                                 $groupedMenus = collect($menus)->groupBy('kategori');
@@ -105,6 +112,8 @@
                                         </div>
                                     </td>
                                 </tr>
+
+                                
                                 @foreach($items as $product)
                                 <tr class="hover:bg-gray-50 transition duration-200 border-b border-gray-50">
                                     <td class="p-4">
@@ -143,13 +152,12 @@
                                     </td>
                                     
                                     <td class="p-4 text-center">
-                                        <form action="{{ url('/admin/produk/hapus/' . $product->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus {{ $product->nama }} dari database?')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="bg-red-50 text-red-500 hover:bg-red-500 hover:text-white px-3 py-1.5 rounded-lg transition duration-300 shadow-sm font-bold text-xs uppercase tracking-wider">
-                                                <i class="fas fa-trash-alt mr-1"></i> Hapus
-                                            </button>
-                                        </form>
+                                 <form action="{{ url('/admin/produk/hapus/' . $product->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus {{ $product->nama }} dari database?')">
+    @csrf
+    <button type="submit" class="bg-red-50 text-red-500 hover:bg-red-500 hover:text-white px-3 py-1.5 rounded-lg transition duration-300 shadow-sm font-bold text-xs uppercase tracking-wider">
+        <i class="fas fa-trash-alt mr-1"></i> Hapus
+    </button>
+</form>
                                     </td>
                                 </tr>
                                 @endforeach

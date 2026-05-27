@@ -63,6 +63,6 @@
             </button>
         </form>
     </div>
-
+@include('components.cart-script')
 </body>
 </html>

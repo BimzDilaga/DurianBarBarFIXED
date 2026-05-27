@@ -1,3 +1,9 @@
+<form id="formSyncCart" action="/sync-cart" method="POST" class="hidden">
+    @csrf
+    <input type="hidden" id="cartDataInput" name="cart_data">
+</form>
+
+
 <script>
     // ==========================================
     // SCRIPT MOBILE MENU
@@ -83,6 +89,7 @@
                     </div>
                 `;
             });
+            
         }
         document.getElementById('cartSubtotal').innerText = formatRupiah(totalHarga);
         document.getElementById('cartItemCount').innerText = totalBarang + ' Item';

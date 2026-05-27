@@ -26,12 +26,13 @@ class AuthController extends Controller
             'password' => 'required|min:6|confirmed'
         ]);
 
-        // Simpan data ke database
+        // Simpan data ke database (SUDAH DIPERBAIKI)
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'no_hp' => $request->no_hp,
             'password' => Hash::make($request->password),
+            'customer' => 1, // <--- INI TAMBAHANNYA AGAR TIDAK ERROR
         ]);
 
         // MENYIMPAN PASSWORD KE SESSION (Agar bisa diintip di Profil)

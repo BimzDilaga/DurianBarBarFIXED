@@ -101,7 +101,6 @@
             <div class="space-y-6">
                 @forelse($orders as $order)
                     @php
-                        // Menentukan status awal bawaan dari database (jika kosong, default ke 'menyiapkan')
                         $currentStatus = strtolower($order->status_pesanan ?? 'menyiapkan');
                     @endphp
 
@@ -136,21 +135,7 @@
                                 </p>
                             </div>
 
-                            <div class="w-full md:w-auto mt-4 md:mt-0 flex flex-col items-end gap-2">
-                                <span class="text-[10px] font-black text-gray-400 uppercase tracking-wider block">Simulasi Status Pengiriman:</span>
-                                <div class="flex gap-1.5 w-full md:w-auto">
-                                    <button type="button" onclick="simulasiStatus('{{ $order->order_id ?? $order->id }}', 'menyiapkan')" class="bg-gray-100 text-gray-700 hover:bg-green-100 hover:text-green-700 px-3 py-1.5 rounded-lg text-[11px] font-black uppercase tracking-wider transition shadow-sm border border-gray-200">
-                                        Siapkan
-                                    </button>
-                                    <button type="button" onclick="simulasiStatus('{{ $order->order_id ?? $order->id }}', 'mengantar')" class="bg-gray-100 text-gray-700 hover:bg-orange-100 hover:text-orange-700 px-3 py-1.5 rounded-lg text-[11px] font-black uppercase tracking-wider transition shadow-sm border border-gray-200">
-                                        Antar
-                                    </button>
-                                    <button type="button" onclick="simulasiStatus('{{ $order->order_id ?? $order->id }}', 'selesai')" class="bg-gray-100 text-gray-700 hover:bg-blue-100 hover:text-blue-700 px-3 py-1.5 rounded-lg text-[11px] font-black uppercase tracking-wider transition shadow-sm border border-gray-200">
-                                        Sampai
-                                    </button>
-                                </div>
                             </div>
-                        </div>
 
                         <div class="relative px-2 py-2">
                             <div class="absolute top-5 left-8 right-8 h-1 bg-gray-200 rounded-full z-0"></div>
@@ -162,24 +147,24 @@
                             <div class="relative z-10 flex justify-between items-center">
                                 
                                 <div class="flex flex-col items-center">
-                                    <div id="node-menyiapkan-{{ $order->order_id ?? $order->id }}" class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-white shadow-md transition-all duration-300 {{ ($currentStatus == 'menyiapkan' || $currentStatus == 'mengantar' || $currentStatus == 'selesai') ? 'bg-[#39AE1F] ring-4 ring-green-100' : 'bg-gray-300' }}">
-                                        <i id="icon-menyiapkan-{{ $order->order_id ?? $order->id }}" class="fas fa-fire-burner {{ $currentStatus == 'menyiapkan' ? 'animate-bounce' : '' }}"></i>
+                                    <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-white shadow-md {{ ($currentStatus == 'menyiapkan' || $currentStatus == 'mengantar' || $currentStatus == 'selesai') ? 'bg-[#39AE1F] ring-4 ring-green-100' : 'bg-gray-300' }}">
+                                        <i class="fas fa-fire-burner {{ $currentStatus == 'menyiapkan' ? 'animate-bounce' : '' }}"></i>
                                     </div>
-                                    <span id="text-menyiapkan-{{ $order->order_id ?? $order->id }}" class="font-outfit text-[11px] font-black uppercase mt-2 {{ ($currentStatus == 'menyiapkan' || $currentStatus == 'mengantar' || $currentStatus == 'selesai') ? 'text-[#39AE1F]' : 'text-gray-400' }}">Disiapkan</span>
+                                    <span class="font-outfit text-[11px] font-black uppercase mt-2 {{ ($currentStatus == 'menyiapkan' || $currentStatus == 'mengantar' || $currentStatus == 'selesai') ? 'text-[#39AE1F]' : 'text-gray-400' }}">Disiapkan</span>
                                 </div>
 
                                 <div class="flex flex-col items-center">
-                                    <div id="node-mengantar-{{ $order->order_id ?? $order->id }}" class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-white shadow-md transition-all duration-300 {{ ($currentStatus == 'mengantar' || $currentStatus == 'selesai') ? 'bg-orange-500 ring-4 ring-orange-100' : 'bg-gray-200 text-gray-400' }}">
-                                        <i id="icon-mengantar-{{ $order->order_id ?? $order->id }}" class="fas fa-motorcycle {{ $currentStatus == 'mengantar' ? 'animate-pulse' : '' }}"></i>
+                                    <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-white shadow-md {{ ($currentStatus == 'mengantar' || $currentStatus == 'selesai') ? 'bg-orange-500 ring-4 ring-orange-100' : 'bg-gray-200 text-gray-400' }}">
+                                        <i class="fas fa-motorcycle {{ $currentStatus == 'mengantar' ? 'animate-pulse' : '' }}"></i>
                                     </div>
-                                    <span id="text-mengantar-{{ $order->order_id ?? $order->id }}" class="font-outfit text-[11px] font-black uppercase mt-2 {{ ($currentStatus == 'mengantar' || $currentStatus == 'selesai') ? 'text-orange-500' : 'text-gray-400' }}">Diantar</span>
+                                    <span class="font-outfit text-[11px] font-black uppercase mt-2 {{ ($currentStatus == 'mengantar' || $currentStatus == 'selesai') ? 'text-orange-500' : 'text-gray-400' }}">Diantar</span>
                                 </div>
 
                                 <div class="flex flex-col items-center">
-                                    <div id="node-selesai-{{ $order->order_id ?? $order->id }}" class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-white shadow-md transition-all duration-300 {{ $currentStatus == 'selesai' ? 'bg-blue-600 ring-4 ring-blue-100' : 'bg-gray-200 text-gray-400' }}">
+                                    <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-white shadow-md {{ $currentStatus == 'selesai' ? 'bg-blue-600 ring-4 ring-blue-100' : 'bg-gray-200 text-gray-400' }}">
                                         <i class="fas fa-house-chimney-check"></i>
                                     </div>
-                                    <span id="text-selesai-{{ $order->order_id ?? $order->id }}" class="font-outfit text-[11px] font-black uppercase mt-2 {{ $currentStatus == 'selesai' ? 'text-blue-600' : 'text-gray-400' }}">Sampai</span>
+                                    <span class="font-outfit text-[11px] font-black uppercase mt-2 {{ $currentStatus == 'selesai' ? 'text-blue-600' : 'text-gray-400' }}">Sampai</span>
                                 </div>
 
                             </div>
@@ -223,72 +208,7 @@
     </footer>
 
     <script>
-        function simulasiStatus(id, status Baru) {
-            const progressLine = document.getElementById('progress-line-' + id);
-            
-            // Ambil Element Node Bulatan
-            const nodeSiap = document.getElementById('node-menyiapkan-' + id);
-            const nodeAntar = document.getElementById('node-mengantar-' + id);
-            const nodeSelesai = document.getElementById('node-selesai-' + id);
-            
-            // Ambil Element Tulisan Bawah
-            const textSiap = document.getElementById('text-menyiapkan-' + id);
-            const textAntar = document.getElementById('text-mengantar-' + id);
-            const textSelesai = document.getElementById('text-selesai-' + id);
-            
-            // Ambil Element Icon-nya
-            const iconSiap = document.getElementById('icon-menyiapkan-' + id);
-            const iconAntar = document.getElementById('icon-mengantar-' + id);
-
-            // Reset Kelas Animasi & Warna bawaan dulu biar gak tabrakan
-            iconSiap.classList.remove('animate-bounce');
-            iconAntar.classList.remove('animate-pulse');
-
-            if (statusBaru === 'menyiapkan') {
-                progressLine.style.width = '0%';
-                
-                // Nyalakan bulatan 1, matikan bulatan 2 & 3
-                nodeSiap.className = "w-10 h-10 rounded-full flex items-center justify-center font-bold text-white shadow-md transition-all duration-300 bg-[#39AE1F] ring-4 ring-green-100";
-                nodeAntar.className = "w-10 h-10 rounded-full flex items-center justify-center font-bold text-white shadow-md transition-all duration-300 bg-gray-200 text-gray-400";
-                nodeSelesai.className = "w-10 h-10 rounded-full flex items-center justify-center font-bold text-white shadow-md transition-all duration-300 bg-gray-200 text-gray-400";
-                
-                textSiap.className = "font-outfit text-[11px] font-black uppercase mt-2 text-[#39AE1F]";
-                textAntar.className = "font-outfit text-[11px] font-black uppercase mt-2 text-gray-400";
-                textSelesai.className = "font-outfit text-[11px] font-black uppercase mt-2 text-gray-400";
-                
-                iconSiap.classList.add('animate-bounce');
-            } 
-            else if (statusBaru === 'mengantar') {
-                progressLine.style.width = 'calc(50% - 2rem)';
-                
-                // Nyalakan bulatan 1 & 2, matikan bulatan 3
-                nodeSiap.className = "w-10 h-10 rounded-full flex items-center justify-center font-bold text-white shadow-md transition-all duration-300 bg-[#39AE1F]";
-                nodeAntar.className = "w-10 h-10 rounded-full flex items-center justify-center font-bold text-white shadow-md transition-all duration-300 bg-orange-500 ring-4 ring-orange-100";
-                nodeSelesai.className = "w-10 h-10 rounded-full flex items-center justify-center font-bold text-white shadow-md transition-all duration-300 bg-gray-200 text-gray-400";
-                
-                textSiap.className = "font-outfit text-[11px] font-black uppercase mt-2 text-[#39AE1F]";
-                textAntar.className = "font-outfit text-[11px] font-black uppercase mt-2 text-orange-500";
-                textSelesai.className = "font-outfit text-[11px] font-black uppercase mt-2 text-gray-400";
-                
-                iconAntar.classList.add('animate-pulse');
-            } 
-            else if (statusBaru === 'selesai') {
-                progressLine.style.width = 'calc(100% - 4rem)';
-                
-                // Nyalakan semua bulatan sampai ujung
-                nodeSiap.className = "w-10 h-10 rounded-full flex items-center justify-center font-bold text-white shadow-md transition-all duration-300 bg-[#39AE1F]";
-                nodeAntar.className = "w-10 h-10 rounded-full flex items-center justify-center font-bold text-white shadow-md transition-all duration-300 bg-orange-500";
-                nodeSelesai.className = "w-10 h-10 rounded-full flex items-center justify-center font-bold text-white shadow-md transition-all duration-300 bg-blue-600 ring-4 ring-blue-100";
-                
-                textSiap.className = "font-outfit text-[11px] font-black uppercase mt-2 text-[#39AE1F]";
-                textAntar.className = "font-outfit text-[11px] font-black uppercase mt-2 text-orange-500";
-                textSelesai.className = "font-outfit text-[11px] font-black uppercase mt-2 text-blue-600";
-            }
-        }
-    </script>
-
-    <script>
-        // Loading Screen Handler Bawaan
+        // Loading Screen Handler
         window.addEventListener('load', () => {
             const bar = document.getElementById('bar');
             const percentText = document.getElementById('percent');
@@ -308,5 +228,6 @@
             }, 30);
         });
     </script>
+    @include('components.cart-script')
 </body>
 </html>

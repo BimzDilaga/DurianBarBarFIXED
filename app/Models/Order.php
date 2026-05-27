@@ -8,12 +8,16 @@ use Illuminate\Database\Eloquent\Model;
 class Order extends Model
 {
     use HasFactory;
-    
-    // Wajib ditambahkan agar kolom 'items' JSON bisa menerima data keranjang
+
+    // Pastikan kolom ini sesuai dengan database kamu ya
+    protected $fillable = [
+        'user_id', 'order_id', 'provinsi', 'kabupaten', 'outlet', 
+        'desa', 'kodepos', 'alamat_detail', 'catatan_pesanan', 
+        'items', 'total_harga', 'status_pembayaran'
+    ];
+
+    // 👇 TAMBAHKAN KODE INI 👇
     protected $casts = [
         'items' => 'array',
     ];
-
-    // Mengizinkan penyimpanan data secara langsung (Mass Assignment)
-    protected $guarded = []; 
 }
