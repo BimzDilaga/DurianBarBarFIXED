@@ -346,5 +346,6 @@
 
         window.addEventListener('DOMContentLoaded', () => { renderCartHeader(); });
     </script>
+    @include('components.cart-script')
 </body>
 </html>

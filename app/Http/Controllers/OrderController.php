@@ -16,6 +16,9 @@ class OrderController extends Controller
     // ==============================================================
     // 1. MENAMPILKAN HALAMAN CHECKOUT
     // ==============================================================
+    // ==============================================================
+    // 1. MENAMPILKAN HALAMAN CHECKOUT
+    // ==============================================================
     public function halamanCheckout(Request $request)
     {
         // 1. TANGKAP DATA DARI JAVASCRIPT KERANJANG (POST)
@@ -36,6 +39,32 @@ class OrderController extends Controller
             }
             session()->put('cart', $formattedCart);
         }
+
+        // 👇 TAMBAHAN BARU: FITUR BELI CEPAT DARI HOMEPAGE 👇
+        if ($request->query('action') == 'buy_now' && $request->query('product_id')) {
+            $product = \App\Models\Product::find($request->query('product_id'));
+            
+            if ($product && $product->stock > 0) {
+                $cart = session('cart', []);
+                
+                // Tambah ke keranjang session
+                if(isset($cart[$product->id])) {
+                    $cart[$product->id]['quantity'] += 1;
+                } else {
+                    $cart[$product->id] = [
+                        'id' => $product->id,
+                        'nama' => $product->nama,
+                        'gambar' => $product->gambar,
+                        'harga_baru' => $product->harga_baru,
+                        'quantity' => 1
+                    ];
+                }
+                session()->put('cart', $cart);
+            } else {
+                return redirect()->back()->with('error', 'Maaf, produk tidak ditemukan atau stok habis.');
+            }
+        }
+        // 👆 AKHIR TAMBAHAN BARU 👆
 
         // 2. AMBIL DATA DARI SESSION
         $cart = session('cart', []);
@@ -58,7 +87,6 @@ class OrderController extends Controller
             'totalHarga'   => $totalHarga
         ]);
     }
-
     // ==============================================================
     // 2. PROSES TOMBOL BAYAR SEKARANG -> MIDTRANS
     // ==============================================================
@@ -195,5 +223,16 @@ class OrderController extends Controller
             }
         }
         return response()->json(['message' => 'Callback Midtrans berhasil diproses'], 200);
+    }
+
+    // ==============================================================
+    // 4. MENAMPILKAN HALAMAN RIWAYAT PESANAN (CUSTOMER)
+    // ==============================================================
+    public function riwayatPesanan()
+    {
+        // Mengambil pesanan milik user yang sedang login, diurutkan dari yang terbaru
+        $orders = Order::where('user_id', auth()->id())->latest()->get();
+        
+        return view('riwayat', compact('orders'));
     }
 }

@@ -40,22 +40,21 @@ Route::post('/sync-cart', [CheckoutController::class, 'syncCart']);
 // FITUR CHECKOUT & MIDTRANS (WAJIB LOGIN)
 // ==========================================
 Route::middleware(['auth'])->group(function () {
-    // 1. Menampilkan halaman form checkout (Membaca data session hasil syncCart)
     Route::match(['get', 'post'], '/checkout', [OrderController::class, 'halamanCheckout'])->name('checkout');
-
-    // 2. Jalur AJAX ketika tombol "BAYAR SEKARANG" diklik untuk memicu popup Midtrans
     Route::post('/proses-checkout', [OrderController::class, 'prosesCheckout'])->name('midtrans.bayar');
-
-    // 3. Jalur halaman sukses setelah bayar
+    
     Route::get('/pembayaran-sukses', function () {
         session()->forget('cart');
         return view('pembayaran-sukses');
     })->name('pembayaran.sukses');
     
     Route::get('/profile', function () { return view('profile'); })->name('profile');
+
+    // Menampilkan halaman riwayat pesanan customer
+    Route::get('/riwayat', [OrderController::class, 'riwayatPesanan'])->name('riwayat');
 });
 
-// 4. Jalur Webhook Callback Midtrans (Di luar middleware auth agar server Midtrans bisa akses)
+// Jalur Webhook Callback Midtrans (Di luar middleware auth agar server Midtrans bisa akses)
 Route::post('/midtrans-callback', [OrderController::class, 'callbackBypass']);
 
 
