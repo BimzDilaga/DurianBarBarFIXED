@@ -33,6 +33,17 @@
             Masukkan email kamu, kami akan mengirimkan instruksi untuk mereset password.
         </p>
 
+        @if(session('success'))
+            <div class="bg-green-100 border-l-4 border-[#39AE1F] text-green-800 p-4 rounded-xl mb-6 shadow-sm font-bold text-sm text-center">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        @error('email')
+            <div class="bg-red-100 border-l-4 border-red-500 text-red-800 p-4 rounded-xl mb-6 shadow-sm font-bold text-sm text-center">
+                {{ $message }}
+            </div>
+        @enderror
         <form action="/forgot-password" method="POST" class="space-y-4">
             @csrf
             <div>
