@@ -208,66 +208,6 @@
 
         <div class="relative z-10" style="width: 100%; height: 200px; background-image: url('{{ asset('image/footer.png') }}'); background-repeat: repeat-x; background-size: contain; background-position: bottom; margin-top: -10px;"></div>
     </footer>
-
-    <script>
-        // 1. LOGIKA LOADING BAR
-        window.addEventListener('load', () => {
-            const bar = document.getElementById('bar');
-            const percentText = document.getElementById('percent');
-            let width = 0;
-            const interval = setInterval(() => {
-                if (width >= 100) {
-                    clearInterval(interval);
-                    setTimeout(() => {
-                        document.body.classList.add('loaded');
-                        setTimeout(() => { 
-                            const loadingScreen = document.getElementById('loading-screen');
-                            if(loadingScreen) loadingScreen.style.display = 'none'; 
-                        }, 500);
-                    }, 300);
-                } else {
-                    width += 5;
-                    if(bar) bar.style.width = width + '%';
-                    if(percentText) percentText.innerText = width + '%';
-                }
-            }, 30);
-        });
-
-        // 2. LOGIKA NAVBAR MOBILE
-        const menuBtn = document.getElementById('menuBtn');
-        const mobileMenu = document.getElementById('mobileMenu');
-        const menuIcon = document.getElementById('menuIcon');
-        if(menuBtn && mobileMenu) {
-            menuBtn.addEventListener('click', () => {
-                mobileMenu.classList.toggle('hidden');
-                if (mobileMenu.classList.contains('hidden')) { menuIcon.classList.replace('fa-times', 'fa-bars'); } 
-                else { menuIcon.classList.replace('fa-bars', 'fa-times'); }
-            });
-        }
-
-        // 3. LOGIKA ANIMASI SCROLL (INTERSECTION OBSERVER)
-        document.addEventListener("DOMContentLoaded", function() {
-            const observerOptions = {
-                root: null,
-                rootMargin: '0px',
-                threshold: 0.15
-            };
-
-            const observer = new IntersectionObserver((entries, observer) => {
-                entries.forEach((entry) => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('reveal-active');
-                        observer.unobserve(entry.target);
-                    }
-                });
-            }, observerOptions);
-
-            const revealElements = document.querySelectorAll('.js-reveal');
-            revealElements.forEach(el => {
-                observer.observe(el);
-            });
-        });
-    </script>
     
     @include('components.cart-script')
 </body>

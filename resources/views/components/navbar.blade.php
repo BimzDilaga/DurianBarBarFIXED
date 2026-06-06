@@ -13,12 +13,6 @@
                 
                 <li><a href="/menu" class="nav-link {{ request()->is('menu*') || request()->is('detail*') ? 'text-[#39AE1F] border-b-[3px] border-[#39AE1F] pb-1' : 'hover:text-[#39AE1F]' }} transition duration-300">Menu</a></li>
                 
-                <li>
-                    <a href="/riwayat" class="nav-link {{ request()->is('riwayat') ? 'text-[#39AE1F] border-b-[3px] border-[#39AE1F] pb-1' : 'hover:text-[#39AE1F]' }} transition duration-300 flex items-center gap-1.5">
-                        <i class="fas fa-clock-rotate-left text-xs"></i> Riwayat
-                    </a>
-                </li>
-                
                 <li><a href="/outlet" class="nav-link {{ request()->is('outlet') ? 'text-[#39AE1F] border-b-[3px] border-[#39AE1F] pb-1' : 'hover:text-[#39AE1F]' }} transition duration-300">Outlet</a></li>
                 
                 <li><a href="/about" class="nav-link {{ request()->is('about') ? 'text-[#39AE1F] border-b-[3px] border-[#39AE1F] pb-1' : 'hover:text-[#39AE1F]' }} transition duration-300">About Us</a></li>
@@ -38,6 +32,19 @@
         </nav>
         
         <div class="flex items-center gap-4 relative">
+
+            <!-- Tombol Search -->
+            <div class="relative flex items-center">
+                <button id="searchToggle" class="text-gray-600 hover:text-[#39AE1F] transition mr-4">
+                    <i class="fas fa-search text-[18px]"></i>
+                </button>
+
+                <!-- Kotak Input Pencarian (Melayang) -->
+                <div id="searchBox" class="hidden absolute top-12 right-0 bg-white border border-gray-100 shadow-xl rounded-2xl p-2 w-64 z-50">
+                    <input type="text" id="searchInput" placeholder="Cari menu favorit..." 
+                        class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-[#39AE1F] focus:ring-2 focus:ring-green-100 text-[13px] font-bold">
+                </div>
+            </div>
             
             <div class="relative">
                 <button id="cartBtn" class="group flex items-center justify-center p-2.5 rounded-full bg-gray-100 border border-gray-200 hover:bg-green-50 hover:border-green-200 shadow-sm transition duration-300 relative">
@@ -59,11 +66,6 @@
                             <span id="cartSubtotal" class="text-[18px] font-[900] text-[#39AE1F]">Rp 0</span>
                         </div>
                         <div class="flex flex-col gap-2">
-                            <form id="formSyncCart" action="/checkout" method="POST" class="hidden">
-                                @csrf
-                                <input type="hidden" name="cart_data" id="cartDataInput">
-                            </form>
-
                             <button type="button" onclick="prosesCheckout()" class="block w-full bg-[#39AE1F] text-white text-center py-2.5 rounded-xl font-[900] uppercase tracking-wider text-[13px] hover:bg-green-700 transition shadow-md italic">
                                 Lanjut Checkout
                             </button>
@@ -99,8 +101,6 @@
             <li><a href="/" class="block px-8 py-3 {{ request()->is('/') ? 'bg-green-50 text-[#39AE1F] border-l-4 border-[#39AE1F]' : 'hover:bg-gray-50 hover:text-[#39AE1F]' }} transition">Home</a></li>
             
             <li><a href="/menu" class="block px-8 py-3 {{ request()->is('menu*') || request()->is('detail*') ? 'bg-green-50 text-[#39AE1F] border-l-4 border-[#39AE1F]' : 'hover:bg-gray-50 hover:text-[#39AE1F]' }} transition">Menu</a></li>
-            
-            <li><a href="/riwayat" class="block px-8 py-3 {{ request()->is('riwayat') ? 'bg-green-50 text-[#39AE1F] border-l-4 border-[#39AE1F]' : 'hover:bg-gray-50 hover:text-[#39AE1F]' }} transition"><i class="fas fa-clock-rotate-left text-xs mr-1"></i> Riwayat</a></li>
             
             <li><a href="/outlet" class="block px-8 py-3 {{ request()->is('outlet') ? 'bg-green-50 text-[#39AE1F] border-l-4 border-[#39AE1F]' : 'hover:bg-gray-50 hover:text-[#39AE1F]' }} transition">Outlet</a></li>
             

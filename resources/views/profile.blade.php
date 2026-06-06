@@ -173,14 +173,20 @@
 
                         </div>
 
-                        <div class="pt-6 text-left">
-                            <form action="{{ route('logout') }}" method="POST">
+                        <!-- 👇 AREA TOMBOL RIWAYAT & LOGOUT 👇 -->
+                        <div class="pt-8 flex flex-col sm:flex-row items-center gap-4 text-left">
+                            <a href="/riwayat" class="w-full sm:w-auto bg-[#FFD429] hover:bg-[#e6be22] text-gray-800 font-black py-3.5 px-8 rounded-full text-md uppercase tracking-widest hover:-translate-y-1 transition duration-300 shadow-lg flex items-center justify-center gap-3">
+                                <i class="fas fa-clock-rotate-left"></i> Riwayat Pesanan
+                            </a>
+                            
+                            <form action="{{ route('logout') }}" method="POST" class="w-full sm:w-auto m-0">
                                 @csrf
-                                <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-black py-3.5 px-12 rounded-full text-md uppercase tracking-widest hover:-translate-y-1 transition duration-300 shadow-lg flex items-center gap-3">
+                                <button type="submit" class="w-full bg-red-500 hover:bg-red-700 text-white font-black py-3.5 px-8 rounded-full text-md uppercase tracking-widest hover:-translate-y-1 transition duration-300 shadow-lg flex items-center justify-center gap-3">
                                     Logout <i class="fas fa-sign-out-alt"></i>
                                 </button>
                             </form>
                         </div>
+                        <!-- 👆 AREA TOMBOL SELESAI 👆 -->
 
                     </div>
 
@@ -255,7 +261,6 @@
     </footer>
 
     <script>
-        // 1. LOGIKA LOADING BAR
         window.addEventListener('load', () => {
             const bar = document.getElementById('bar');
             const percentText = document.getElementById('percent');
@@ -265,7 +270,9 @@
                     clearInterval(interval);
                     setTimeout(() => {
                         document.body.classList.add('loaded');
-                        setTimeout(() => { document.getElementById('loading-screen').style.display = 'none'; }, 500);
+                        setTimeout(() => {
+                            document.getElementById('loading-screen').style.display = 'none';
+                        }, 500);
                     }, 300);
                 } else {
                     width += 5;
@@ -275,37 +282,21 @@
             }, 30);
         });
 
-        // 2. LOGIKA HAMBURGER MENU MOBILE
-        const menuBtn = document.getElementById('menuBtn');
-        const mobileMenu = document.getElementById('mobileMenu');
-        const menuIcon = document.getElementById('menuIcon');
-
-        menuBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-            
-            if (mobileMenu.classList.contains('hidden')) {
-                menuIcon.classList.replace('fa-times', 'fa-bars');
-            } else {
-                menuIcon.classList.replace('fa-bars', 'fa-times');
-            }
-        });
-
-        // 3. LOGIKA EYE ICON
         function togglePassword() {
-            const pwdInput = document.getElementById('profile-password');
-            const eyeIcon = document.getElementById('eye-icon');
-            
-            if (pwdInput.type === "password") {
-                pwdInput.type = "text";
-                pwdInput.classList.remove('tracking-widest');
-                eyeIcon.classList.replace('fa-eye-slash', 'fa-eye');
+            var passwordInput = document.getElementById("profile-password");
+            var eyeIcon = document.getElementById("eye-icon");
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                eyeIcon.classList.remove("fa-eye-slash");
+                eyeIcon.classList.add("fa-eye");
             } else {
-                pwdInput.type = "password";
-                pwdInput.classList.add('tracking-widest');
-                eyeIcon.classList.replace('fa-eye', 'fa-eye-slash');
+                passwordInput.type = "password";
+                eyeIcon.classList.remove("fa-eye");
+                eyeIcon.classList.add("fa-eye-slash");
             }
         }
     </script>
+
     @include('components.cart-script')
 </body>
 </html>

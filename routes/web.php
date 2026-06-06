@@ -40,7 +40,8 @@ Route::post('/sync-cart', [CheckoutController::class, 'syncCart']);
 // FITUR CHECKOUT & MIDTRANS (WAJIB LOGIN)
 // ==========================================
 Route::middleware(['auth'])->group(function () {
-    Route::match(['get', 'post'], '/checkout', [OrderController::class, 'halamanCheckout'])->name('checkout');
+    // Diubah menjadi GET saja karena data POST keranjang sudah diurus oleh /sync-cart di atas
+    Route::get('/checkout', [OrderController::class, 'halamanCheckout'])->name('checkout');
     Route::post('/proses-checkout', [OrderController::class, 'prosesCheckout'])->name('midtrans.bayar');
     
     Route::get('/pembayaran-sukses', function () {

@@ -1,17 +1,17 @@
+@once
 <form id="formSyncCart" action="/sync-cart" method="POST" class="hidden">
     @csrf
     <input type="hidden" id="cartDataInput" name="cart_data">
 </form>
-
 
 <script>
     // ==========================================
     // SCRIPT MOBILE MENU
     // ==========================================
    
-    const menuBtn = document.getElementById('menuBtn');
-    const mobileMenu = document.getElementById('mobileMenu');
-    const menuIcon = document.getElementById('menuIcon');
+    var menuBtn = document.getElementById('menuBtn');
+    var mobileMenu = document.getElementById('mobileMenu');
+    var menuIcon = document.getElementById('menuIcon');
     if (menuBtn && mobileMenu) {
         menuBtn.addEventListener('click', () => {
             mobileMenu.classList.toggle('hidden');
@@ -23,13 +23,13 @@
     // ==========================================
     // MESIN UTAMA KERANJANG (LOCAL STORAGE)
     // ==========================================
-    let cartData = JSON.parse(localStorage.getItem('barbar_cart')) || [];
+    var cartData = JSON.parse(localStorage.getItem('barbar_cart')) || [];
 
     function formatRupiah(angka) { return 'Rp ' + angka.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."); }
     function saveCart() { localStorage.setItem('barbar_cart', JSON.stringify(cartData)); }
 
-    const cartBtn = document.getElementById('cartBtn');
-    const cartDropdown = document.getElementById('cartDropdown');
+    var cartBtn = document.getElementById('cartBtn');
+    var cartDropdown = document.getElementById('cartDropdown');
 
     if(cartBtn && cartDropdown) {
         cartBtn.addEventListener('click', (e) => {
@@ -57,11 +57,11 @@
     }
 
     function renderCartHeader() {
-        const container = document.getElementById('cartItemsContainer');
+        var container = document.getElementById('cartItemsContainer');
         if(!container) return;
 
         container.innerHTML = ''; 
-        let totalHarga = 0; let totalBarang = 0;
+        var totalHarga = 0; var totalBarang = 0;
 
         if (cartData.length === 0) {
             container.innerHTML = `<p class="text-center text-gray-400 text-xs py-4 font-bold">Keranjang masih kosong nih :(</p>`;
@@ -93,7 +93,7 @@
         }
         document.getElementById('cartSubtotal').innerText = formatRupiah(totalHarga);
         document.getElementById('cartItemCount').innerText = totalBarang + ' Item';
-        const badge = document.getElementById('cartBadge');
+        var badge = document.getElementById('cartBadge');
         if(badge) {
             badge.innerText = totalBarang;
             badge.style.display = totalBarang > 0 ? 'block' : 'none';
@@ -101,7 +101,7 @@
     }
 
     function addToCart(id, name, price, img) {
-        const existingItem = cartData.find(item => item.id === id);
+        var existingItem = cartData.find(item => item.id === id);
         if (existingItem) {
             existingItem.qty += 1; 
         } else {
@@ -136,10 +136,127 @@
             alert('Keranjang masih kosong nih, yuk jajan dulu!');
             return;
         }
-        const cartJsonString = JSON.stringify(cartData);
+        var cartJsonString = JSON.stringify(cartData);
         document.getElementById('cartDataInput').value = cartJsonString;
         document.getElementById('formSyncCart').submit();
     }
 
+    // ==========================================
+    // MESIN ANIMASI LOADING SCREEN (0% - 100%)
+    // ==========================================
+    var loadingScreen = document.getElementById('loading-screen');
+    
+    if (loadingScreen) {
+        // Trik detektif 1: Mencari elemen teks persentase "0%"
+        var allElements = loadingScreen.getElementsByTagName('*');
+        var loadingTextElement = null;
+        for (var i = 0; i < allElements.length; i++) {
+            if (allElements[i].innerText && allElements[i].innerText.trim() === '0%') {
+                loadingTextElement = allElements[i];
+                break;
+            }
+        }
+
+        // Trik detektif 2: Mencari elemen garis (bar)
+        var loadingBarElement = document.getElementById('bar') || loadingScreen.querySelector('.progress-bar');
+        
+        var progress = 0;
+        
+        // Bikin timer yang jalan sangat cepat
+        var interval = setInterval(function() {
+            // Angka naik acak (1 sampai 4) biar kelihatan natural
+            progress += Math.floor(Math.random() * 4) + 1; 
+            
+            if (progress >= 100) {
+                progress = 100;
+                clearInterval(interval); 
+                
+                // Kalau sudah 100%, pudarkan layar
+                setTimeout(function() {
+                    loadingScreen.style.opacity = '0';
+                    loadingScreen.style.transition = 'opacity 0.4s ease'; 
+                    
+                    setTimeout(function() {
+                        loadingScreen.style.display = 'none';
+                        document.body.style.overflow = 'auto'; 
+                    }, 400); 
+                }, 200);
+            }
+            
+            // 1. UPDATE ANGKA
+            if (loadingTextElement) {
+                loadingTextElement.innerText = progress + '%';
+            }
+
+            // 2. UPDATE PANJANG GARIS (Ini yang bikin hijau-hijaunya jalan!)
+            if (loadingBarElement) {
+                loadingBarElement.style.width = progress + '%';
+            }
+            
+        }, 20); // Kecepatan loading (20 milidetik per frame)
+    } else {
+        document.body.style.overflow = 'auto';
+    }
+
+    
     window.addEventListener('DOMContentLoaded', () => { renderCartHeader(); });
+
+    // ==========================================
+// LOGIC TOMBOL PENCARIAN (SEARCH TOGGLE)
+// ==========================================
+var searchToggle = document.getElementById('searchToggle');
+var searchBox = document.getElementById('searchBox');
+var searchInput = document.getElementById('searchInput');
+
+if (searchToggle && searchBox) {
+    // Klik tombol untuk buka/tutup
+    searchToggle.addEventListener('click', function(e) {
+        e.stopPropagation();
+        searchBox.classList.toggle('hidden');
+        if (!searchBox.classList.contains('hidden')) {
+            searchInput.focus(); // Otomatis fokus ke input kalau dibuka
+        }
+    });
+
+    // Menutup pencarian jika klik di luar box
+    document.addEventListener('click', function(e) {
+        if (!searchBox.contains(e.target) && e.target !== searchToggle) {
+            searchBox.classList.add('hidden');
+        }
+    });
+}
+
+// ==========================================
+// MESIN PENYARING MENU (UPDATE)
+// ==========================================
+var searchInput = document.getElementById('searchInput');
+
+if (searchInput) {
+    searchInput.addEventListener('keyup', function() {
+        var filter = this.value.toLowerCase();
+        
+        // Kita targetkan semua link yang mengarah ke menu (/menu/...)
+        // Ini lebih akurat daripada mencari class yang mungkin salah
+        var menuItems = document.querySelectorAll('a[href^="/menu/"]'); 
+
+        menuItems.forEach(function(item) {
+            // Kita cari tulisan di dalam tag <h3> yang ada di dalam link tersebut
+            var titleElement = item.querySelector('h3');
+            if (titleElement) {
+                var title = titleElement.innerText.toLowerCase();
+                
+                // Cek apakah judul menu mengandung teks yang diketik
+                if (title.includes(filter)) {
+                    item.style.display = "flex"; // Tampilkan kembali
+                } else {
+                    item.style.display = "none"; // Sembunyikan
+                }
+            }
+        });
+    });
+}
+
 </script>
+
+
+@endonce
