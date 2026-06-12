@@ -209,6 +209,48 @@
         <div class="relative z-10" style="width: 100%; height: 200px; background-image: url('{{ asset('image/footer.png') }}'); background-repeat: repeat-x; background-size: contain; background-position: bottom; margin-top: -10px;"></div>
     </footer>
     
+    <script>
+        // 1. SCRIPT UNTUK LOADING SCREEN
+        window.addEventListener('load', () => {
+            const bar = document.getElementById('bar');
+            const percentText = document.getElementById('percent');
+            let width = 0;
+            
+            const interval = setInterval(() => {
+                if (width >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        document.body.classList.add('loaded');
+                        setTimeout(() => {
+                            document.getElementById('loading-screen').style.display = 'none';
+                        }, 500);
+                    }, 300);
+                } else {
+                    width += 5;
+                    bar.style.width = width + '%';
+                    percentText.innerText = width + '%';
+                }
+            }, 30);
+        });
+
+        // 2. SCRIPT UNTUK ANIMASI MUNCUL (SCROLL REVEAL)
+        document.addEventListener('DOMContentLoaded', function() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('reveal-active');
+                    }
+                });
+            }, { 
+                threshold: 0.1 // Animasi jalan pas elemen terlihat 10% di layar
+            });
+
+            document.querySelectorAll('.js-reveal').forEach((el) => {
+                observer.observe(el);
+            });
+        });
+    </script>
+
     @include('components.cart-script')
 </body>
 </html>
