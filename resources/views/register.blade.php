@@ -49,7 +49,7 @@
     <div class="bg-white p-8 md:p-10 rounded-[40px] shadow-2xl w-full max-w-md border-2 border-gray-100 relative z-10">
         
         <div class="flex justify-center mb-4">
-            <img src="{{ asset('image/logo.png') }}" alt="Logo Bar Bar" class="h-20 object-contain drop-shadow-md">
+            <img src="{{ asset('image/Logo.png') }}" alt="Logo Bar Bar" class="h-20 object-contain drop-shadow-md">
         </div>
 
         <h1 class="text-3xl font-black text-center mb-6 italic uppercase tracking-tighter text-black">
